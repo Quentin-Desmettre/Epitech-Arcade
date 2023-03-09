@@ -1,16 +1,6 @@
 #!/bin/env python3
 
-#config_file_name="conventional-commits.json"
-
-# checks that jq is usable
-#function check_jq_exists_and_executable {
-#if ! [ -x "$(command -v jq)" ]; then
-#  echo -e "\`commit-msg\` hook failed. Please install jq."
-#  exit 1
-#fi
-#}
-
-import sys, re
+import sys, re, os
 
 TYPES = ['doc', 'feat', 'fix', 'style', 'test', 'chore', 'ci']
 REGEXP = "^[.0-9]+$|^([Rr]evert|[Mm]erge):? .*$|^("
@@ -30,12 +20,12 @@ def get_commit_message():
     return commit_message
 
 def print_error(commit_message):
-    print("\n\e[31m[Invalid Commit Message]")
-    print("------------------------\033[0m\e[0m")
-    print("Valid types: \e[36m{}\033[0m".format(TYPES))
-    print("\e[37mActual commit message: \e[33m\"{}\"\033[0m".format(commit_message))
-    print("\e[37mExample valid commit message: \e[36m\"fix(subject): message\"\033[0m")
-    print("\e[37mRegex: \e[33m\"{}\"\033[0m".format(REGEXP))
+    os.system("echo '\n\e[31m[Invalid Commit Message]'")
+    os.system("echo '------------------------\033[0m\e[0m'")
+    os.system("echo 'Valid types: \e[36m{}\033[0m'".format(TYPES))
+    os.system("echo '\e[37mActual commit message: \e[33m\"{}\"\033[0m'".format(commit_message[:-1]))
+    os.system("echo '\e[37mExample valid commit message: \e[36m\"fix(subject): message\"\033[0m'")
+    os.system("echo '\e[37mRegex: \e[33m\"{}\"\033[0m\n'".format(REGEXP))
 
 if __name__ == "__main__":
     commit_message = get_commit_message()
