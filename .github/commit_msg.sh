@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/env python3
 
 #config_file_name="conventional-commits.json"
 
@@ -10,54 +10,37 @@
 #fi
 #}
 
-# set values from config file to variables
-function set_config_values() {
-#  local_config="$PWD/$config_file_name"
-#
-#  if [ -f "$local_config" ]; then
-#    CONFIG=$local_config
-#    types=($(jq -r '.types[]' "$CONFIG"))
-#  else
-    types=('doc' 'feat' 'fix' 'style' 'test' 'chore' 'ci')
-#  fi
-}
+import sys, re
 
-# build the regex pattern based on the config file
-function build_regex() {
-  set_config_values
+TYPES = ['doc', 'feat', 'fix', 'style', 'test', 'chore', 'ci']
+REGEXP = "^[.0-9]+$|^([Rr]evert|[Mm]erge):? .*$|^("
 
-  regexp="^[.0-9]+$|"
+def build_regex():
+    global REGEXP
+    global TYPES
+    for type in TYPES:
+        REGEXP += type + "|"
+    REGEXP = REGEXP[:-1]
+    REGEXP += ")(\(.+\))?: "
 
-  regexp="${regexp}^([Rr]evert|[Mm]erge):? .*$|^("
+def get_commit_message():
+    commit_message = ""
+    with open(sys.argv[1], "r") as f:
+        commit_message = f.readline()
+    return commit_message
 
-  for type in "${types[@]}"
-  do
-    regexp="${regexp}$type|"
-  done
+def print_error(commit_message):
+    print("\n\e[31m[Invalid Commit Message]")
+    print("------------------------\033[0m\e[0m")
+    print("Valid types: \e[36m{}\033[0m".format(TYPES))
+    print("\e[37mActual commit message: \e[33m\"{}\"\033[0m".format(commit_message))
+    print("\e[37mExample valid commit message: \e[36m\"fix(subject): message\"\033[0m")
+    print("\e[37mRegex: \e[33m\"{}\"\033[0m".format(REGEXP))
 
-  regexp="${regexp%|})(\(.+\))?: "
-}
-
-# get the first line of the commit message
-INPUT_FILE=$1
-commit_message=`head -n1 $INPUT_FILE`
-
-# Print out a standard error message which explains
-# how the commit message should be structured
-function print_error() {
-  regular_expression=$2
-  echo -e "\n\e[31m[Invalid Commit Message]"
-  echo -e "------------------------\033[0m\e[0m"
-  echo -e "Valid types: \e[36m${types[@]}\033[0m"
-  echo -e "\e[37mActual commit message: \e[33m\"$commit_message\"\033[0m"
-  echo -e "\e[37mExample valid commit message: \e[36m\"fix(subject): message\"\033[0m"
-  echo -e "\e[37mRegex: \e[33m\"$regexp\"\033[0m"
-}
-
-build_regex
-
-if [[ ! $commit_message =~ $regexp ]]; then
-  # commit message is invalid according to config - block commit
-  print_error
-  exit 1
-fi
+if __name__ == "__main__":
+    commit_message = get_commit_message()
+    build_regex()
+    if not re.match(REGEXP, commit_message):
+        print_error(commit_message)
+        sys.exit(1)
+    sys.exit(0)

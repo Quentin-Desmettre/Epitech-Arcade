@@ -155,6 +155,8 @@ def main():
 
         # Replace variables in .gitignore
         setupGitignore(variables)
+    else:
+        variables = getVariables("", "", getTemplate())
 
     # Setup pre-push hook (copy ./.github/c_checker.py to ./.git/hooks/pre-push, or ./.github/cpp_checker.py and chmod +x)
     setupHooks(variables)
