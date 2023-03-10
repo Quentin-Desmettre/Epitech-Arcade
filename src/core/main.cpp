@@ -1,7 +1,20 @@
-#include <cstdio>
+/*
+** EPITECH PROJECT, 2023
+** Epitech-Arcade
+** File description:
+** main
+*/
 
-int main()
+#include "Core.hpp"
+#include <iostream>
+
+int main(int ac, char **av)
 {
-    printf("Hello World!");
-    return 0;
+    try {
+        Arcade::Core core(ac, av);
+        return core.run();
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 84;
+    }
 }
