@@ -7,7 +7,7 @@
 
 #ifndef IDISPLAY_HPP_
 #define IDISPLAY_HPP_
-#include "IGame.hpp"
+#include "GameInterfaces.hpp"
 
 namespace Arcade {
     class IDisplay;
