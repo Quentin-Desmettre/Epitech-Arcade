@@ -20,12 +20,18 @@ def get_commit_message():
     return commit_message
 
 def print_error(commit_message):
-    os.system("echo '\n\e[31m[Invalid Commit Message]'")
-    os.system("echo '------------------------\033[0m\e[0m'")
-    os.system("echo 'Valid types: \e[36m{}\033[0m'".format(TYPES))
-    os.system("echo '\e[37mActual commit message: \e[33m\"{}\"\033[0m'".format(commit_message[:-1]))
-    os.system("echo '\e[37mExample valid commit message: \e[36m\"fix(subject): message\"\033[0m'")
-    os.system("echo '\e[37mRegex: \e[33m\"{}\"\033[0m\n'".format(REGEXP))
+    message = \
+    """
+    echo -e '\\n\\e[31m[Invalid Commit Message]'
+    echo -e '------------------------\\033[0m\\e[0m'
+    echo -e 'Valid types: \\e[36m{}\\033[0m'
+    echo -e '\\e[37mActual commit message: \\e[33m\"{}\"\\033[0m'
+    echo -e '\\e[37mExample valid commit message: \\e[36m\"fix(subject): message\"\\033[0m'
+    echo -e '\\e[37mRegex: \\e[33m\"{}\"\\033[0m\\n'
+    """.format(TYPES, commit_message[:-1], REGEXP)
+    with open("/tmp/commit_msg_error", "w+") as f:
+        f.write(message)
+    os.system("cat /tmp/commit_msg_error | bash")
 
 if __name__ == "__main__":
     commit_message = get_commit_message()
