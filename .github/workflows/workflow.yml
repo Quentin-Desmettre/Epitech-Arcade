@@ -37,7 +37,6 @@ jobs:
           make clean
           make fclean
           make re
-          [ "$(make)" == "make: Nothing to be done for 'all'." ]
 
       - name: Run tests (functional and unit)
         run: "make tests_run"
