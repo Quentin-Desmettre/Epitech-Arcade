@@ -6,34 +6,81 @@
 ##
 
 rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
+INCLUDE_DIRS := $(shell find ./include/ -name "*.hpp" -printf '%h\n' | sed 's/ /\\ /g' | sort | uniq | awk '{printf " -I%s", $$0}')
 
-SOURCEDIR = src
+SOURCEDIR_NIBBLER = src/games/nibbler
+SRC_NIBBLER = $(call rwildc,$(SOURCEDIR_NIBBLER),*.cpp)
+OBJ_NIBBLER = $(SRC_NIBBLER:.cpp=.o)
+NIBBLER_NAME = ./lib/arcade_nibbler.so
 
-SRC = $(call rwildc,$(SOURCEDIR),*.cpp)
+SOURCEDIR_PACMAN = src/games/pacman
+SRC_PACMAN = $(call rwildc,$(SOURCEDIR_PACMAN),*.cpp)
+OBJ_PACMAN = $(SRC_PACMAN:.cpp=.o)
+PACMAN_NAME = ./lib/arcade_pacman.so
+
+SOURCEDIR_SFML = src/libs/sfml
+SRC_SFML = $(call rwildc,$(SOURCEDIR_SFML),*.cpp)
+OBJ_SFML = $(SRC_SFML:.cpp=.o)
+SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+SFML_NAME = ./lib/arcade_sfml.so
+
+SOURCEDIR_SDL = src/libs/sdl
+SRC_SDL = $(call rwildc,$(SOURCEDIR_SDL),*.cpp)
+OBJ_SDL = $(SRC_SDL:.cpp=.o)
+SDL_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+SDL_NAME = ./lib/arcade_sdl2.so
+
+SOURCEDIR_NCURSES = src/libs/ncurses
+SRC_NCURSES = $(call rwildc,$(SOURCEDIR_NCURSES),*.cpp)
+OBJ_NCURSES = $(SRC_NCURSES:.cpp=.o)
+NCURSES_FLAGS = -lcurses
+NCURSES_NAME = ./lib/arcade_ncurses.so
+
+SOURCEDIR_CORE = src/core/
+SRC_CORE = $(call rwildc,$(SOURCEDIR_CORE),*.cpp)
+OBJ_CORE = $(SRC_CORE:.cpp=.o)
+
+ALL_SRC = $(SRC_NIBBLER) $(SRC_PACMAN) $(SRC_SFML) $(SRC_SDL) $(SRC_NCURSES) $(SRC_CORE)
+ALL_OBJ = $(OBJ_NIBBLER) $(OBJ_PACMAN) $(OBJ_SFML) $(OBJ_SDL) $(OBJ_NCURSES) $(OBJ_CORE)
 
 CXX = g++
 
-OBJ = $(SRC:.cpp=.o)
-
 NAME = arcade
 
-CXXFLAGS = -Wall -Wextra -I ./include -std=c++20
+BASE_FLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20
+CXXFLAGS = $(BASE_FLAGS)
 
-all: $(NAME)
+all: core games graphicals
 
-$(NAME):   $(OBJ)
-	g++ -o $(NAME) $(OBJ) $(CXXFLAGS)
+core: $(OBJ_CORE)
+	g++ -o $(NAME) $(OBJ_CORE) $(CXXFLAGS)
+
+games: $(OBJ_NIBBLER) $(OBJ_PACMAN)
+	ld -fPIC -shared -o $(NIBBLER_NAME) $(OBJ_NIBBLER)
+	ld -fPIC -shared -o $(PACMAN_NAME) $(OBJ_PACMAN)
+
+graphicals:	CXXFLAGS = $(BASE_FLAGS) $(SFML_FLAGS)
+graphicals: $(OBJ_SFML)
+
+graphicals:	CXXFLAGS = $(BASE_FLAGS) $(SDL_FLAGS)
+graphicals: $(OBJ_SDL)
+
+graphicals:	CXXFLAGS = $(BASE_FLAGS) $(NCURSES_FLAGS)
+graphicals: $(OBJ_NCURSES)
+	ld -fPIC -shared -o $(SFML_NAME) $(OBJ_SFML)
+	ld -fPIC -shared -o $(SDL_NAME) $(OBJ_SDL)
+	ld -fPIC -shared -o $(NCURSES_NAME) $(OBJ_NCURSES)
 
 tests_run:
 	cd tests && make && ./tests
 
 clean:
-	rm -f $(OBJ)
+	rm -f $(ALL_OBJ)
 	find . -name "vgcore.*" -delete
 	find . -name "*~" -delete
 	find . -name "\#*" -delete
 
 fclean:    clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(NIBBLER_NAME) $(PACMAN_NAME) $(SFML_NAME) $(SDL_NAME) $(NCURSES_NAME)
 
 re:        fclean all
