@@ -52,7 +52,7 @@ CXXFLAGS = $(BASE_FLAGS)
 
 all: core games graphicals
 
-core: $(OBJ_CORE)
+core: try-clean-CORE $(OBJ_CORE)
 	g++ -o $(NAME) $(OBJ_CORE) $(CXXFLAGS)
 core-clean:
 	rm -f $(OBJ_CORE)
@@ -60,7 +60,10 @@ core-fclean: core-clean
 	rm -f $(NAME)
 core-re: core-fclean core
 
-games: $(OBJ_NIBBLER) $(OBJ_CENTIPEDE)
+try-clean-%:
+	(ls $(SOURCEDIR_$*)/*.gc* > /dev/null 2>&1 && rm -rf $(OBJ_$*) $(SOURCEDIR_$*)/*.gc*) || true
+
+games: try-clean-NIBBLER try-clean-CENTIPEDE $(OBJ_NIBBLER) $(OBJ_CENTIPEDE)
 	ld -fPIC -shared -o $(NIBBLER_NAME) $(OBJ_NIBBLER)
 	ld -fPIC -shared -o $(CENTIPEDE_NAME) $(OBJ_CENTIPEDE)
 games-clean:
@@ -68,7 +71,7 @@ games-clean:
 games-re: games-clean games
 
 graphicals:	CXXFLAGS = $(BASE_FLAGS) $(SFML_FLAGS)
-graphicals: $(OBJ_SFML)
+graphicals: try-clean-SFML try-clean-SDL try-clean-NCURSES $(OBJ_SFML)
 
 graphicals:	CXXFLAGS = $(BASE_FLAGS) $(SDL_FLAGS)
 graphicals: $(OBJ_SDL)
