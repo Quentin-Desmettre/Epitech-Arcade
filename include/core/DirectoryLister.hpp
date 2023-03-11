@@ -1,11 +1,13 @@
 /*
-** EPITECH PROJECT, 2022
-** B-PDG-300-LIL-3-1-PDGD11-quentin.desmettre
+** EPITECH PROJECT, 2023
+** Epitech-Arcade
 ** File description:
-** DirectoryLister.hpp
+** DirectoryLister
 */
 
-#pragma once
+#ifndef DIRECTORYLISTER_HPP_
+#define DIRECTORYLISTER_HPP_
+
 #include <dirent.h>
 #include <exception>
 #include <string>
@@ -43,3 +45,5 @@ private:
     bool _streamValid;
     bool _hidden;
 };
+
+#endif /* !DIRECTORYLISTER_HPP_ */
