@@ -1,6 +1,12 @@
 #include <cstdio>
 
-extern "C" void coucou()
+extern "C"
 {
-    printf("Coucou\n");
+    void *createDisplay() {
+        return new int;
+    }
+
+    void deleteDisplay(void *display) {
+        delete static_cast<int *>(display);
+    }
 }
