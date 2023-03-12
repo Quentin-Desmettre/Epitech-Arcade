@@ -18,7 +18,7 @@ class Arcade::IDisplay {
         virtual ~IDisplay() = 0;
         virtual std::vector<Key> getPressedKeys() = 0;
         virtual void render(const IGameData &gameData) = 0;
-        virtual void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, int selectedGame, int selectedGraphic) = 0;
+        virtual void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex) = 0;
 };
 
 #endif /* !IDISPLAY_HPP_ */

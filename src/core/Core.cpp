@@ -9,9 +9,9 @@
 #include "DirectoryLister.hpp"
 #include <iostream>
 
-Arcade::Core::LibraryNotLoadedException::LibraryNotLoadedException(const LibLoader &loader)
+Arcade::Core::LibraryNotLoadedException::LibraryNotLoadedException()
 {
-    _message = "Error: " + loader.getLastError();
+    _message = "Error: " + LibLoader::getInstance().getLastError();
 }
 
 const char *Arcade::Core::LibraryNotLoadedException::what() const noexcept
@@ -33,7 +33,9 @@ const char *Arcade::Core::NoLibraryException::what() const noexcept
 }
 
 Arcade::Core::Core(int ac, char **av):
-    _libLoader(LibLoader::getInstance())
+    _libLoader(LibLoader::getInstance()),
+    _display(nullptr),
+    _game(nullptr)
 {
     LibLoader::LibType libType;
     DirectoryLister dirLister;
@@ -69,8 +71,7 @@ Arcade::Core::Core(int ac, char **av):
         throw NoLibraryException(LibLoader::GRAPHICAL);
     if (_gameLibs.empty())
         throw NoLibraryException(LibLoader::GAME);
-    if (!(_display = _libLoader.loadGraphicalLib(av[1])))
-        throw LibraryNotLoadedException(_libLoader);
+    loadGraphicLibrary(av[1]);
 }
 
 Arcade::Core::~Core()
@@ -81,5 +82,104 @@ Arcade::Core::~Core()
 
 int Arcade::Core::run()
 {
+    std::vector<Key> oldKeys, pressedKeys;
+
+    _run = true;
+    _isInMenu = true;
+    _isSelectingGame = false;
+    _selectedIndex = 0;
+    while (_run) {
+        pressedKeys = _display->getPressedKeys();
+        if (!_isInMenu && _game->exit())
+            exitGame();
+        if (_isInMenu) {
+            _display->renderMenu(_gameLibs, _graphicalLibs, _isSelectingGame, _selectedIndex);
+            handleMenuEvents(oldKeys, pressedKeys);
+        } else {
+            _display->render(_game->getGameData());
+            _game->handleKeys(pressedKeys);
+            _game->update();
+        }
+        oldKeys = pressedKeys;
+    }
     return 0;
+}
+
+void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys)
+{
+    std::size_t len;
+    int dir;
+
+    if (isKeyPressed(Key::Enter, oldKeys, newKeys))
+        return loadSelectedLibrary();
+    if (isKeyPressed(Key::Escape, oldKeys, newKeys)) {
+        _run = false;
+        return;
+    }
+    if (isKeyPressed(Key::Left, oldKeys, newKeys)
+    || isKeyPressed(Key::Right, oldKeys, newKeys)) {
+        _isSelectingGame = !_isSelectingGame;
+        len = (_isSelectingGame ? _gameLibs.size() : _graphicalLibs.size());
+        _selectedIndex = (_selectedIndex >= len ? len - 1 : _selectedIndex);
+    }
+    if (isKeyPressed(Key::Up, oldKeys, newKeys)
+    || isKeyPressed(Key::Down, oldKeys, newKeys)) {
+        dir = (isKeyPressed(Key::Up, oldKeys, newKeys) ? -1 : 1);
+        len = (_isSelectingGame ? _gameLibs.size() : _graphicalLibs.size());
+        _selectedIndex += dir;
+        if (_selectedIndex >= len)
+            _selectedIndex = 0;
+    }
+}
+
+void Arcade::Core::exitGame()
+{
+    std::size_t len;
+
+    _isInMenu = true;
+    _libLoader.unloadGameLib(_game);
+    _game = nullptr;
+    len = (_isSelectingGame ? _gameLibs.size() : _graphicalLibs.size());
+    _selectedIndex = (_selectedIndex >= len ? len - 1 : _selectedIndex);
+}
+
+bool Arcade::Core::isKeyPressed(Key key, const std::vector<Key> &pressedKeys) const
+{
+    return std::find(pressedKeys.begin(), pressedKeys.end(), key) != pressedKeys.end();
+}
+
+bool Arcade::Core::isKeyPressed(Key key, const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys) const
+{
+    return !isKeyPressed(key, oldKeys) && isKeyPressed(key, newKeys);
+}
+
+void Arcade::Core::loadSelectedLibrary()
+{
+    if (_isSelectingGame)
+        loadGameLibrary(_gameLibs[_selectedIndex]);
+    else
+        loadGraphicLibrary(_graphicalLibs[_selectedIndex]);
+}
+
+void Arcade::Core::loadGameLibrary(const std::string &name)
+{
+    IGame *newGame = _libLoader.loadGameLib(name);
+
+    if (!newGame)
+        throw LibraryNotLoadedException();
+    if (_game)
+        _libLoader.unloadGameLib(_game);
+    _game = newGame;
+    _isInMenu = false;
+}
+
+void Arcade::Core::loadGraphicLibrary(const std::string &name)
+{
+    IDisplay *newDisplay = _libLoader.loadGraphicalLib(name);
+
+    if (!newDisplay)
+        throw LibraryNotLoadedException();
+    if (_display)
+        _libLoader.unloadGraphicalLib(_display);
+    _display = newDisplay;
 }

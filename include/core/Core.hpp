@@ -26,7 +26,7 @@ namespace Arcade {
             };
             class LibraryNotLoadedException: public std::exception {
                 public:
-                    LibraryNotLoadedException(const LibLoader &loader);
+                    LibraryNotLoadedException();
                     ~LibraryNotLoadedException() = default;
                     const char *what() const noexcept override;
                 private:
@@ -43,6 +43,17 @@ namespace Arcade {
             LibLoader &_libLoader;
             IDisplay *_display;
             IGame *_game;
+            bool _run, _isInMenu;
+            bool _isSelectingGame;
+            std::size_t _selectedIndex;
+
+            void handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
+            void exitGame();
+            bool isKeyPressed(Key key, const std::vector<Key> &pressedKeys) const ;
+            bool isKeyPressed(Key key, const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys) const;
+            void loadSelectedLibrary();
+            void loadGameLibrary(const std::string &name);
+            void loadGraphicLibrary(const std::string &name);
     };
 };
 
