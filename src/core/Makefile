@@ -8,24 +8,25 @@
 rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 INCLUDE_DIRS := $(shell find ../../ -name "*.hpp" -printf '%h\n' | sed 's/ /\\ /g' | sort | uniq | awk '{printf " -I%s", $$0}')
 
-SOURCEDIR_TEST = ./
-SOURCEDIR_SRC = ../../src/core/
+SOURCEDIR = ./
 
-TMP_SRC = $(call rwildc,$(SOURCEDIR_TEST),*.cpp) $(call rwildc,$(SOURCEDIR_SRC),*.cpp)
-SRC = $(filter-out $(call rwildc,$(SOURCEDIR_SRC),main.cpp),$(TMP_SRC))
+SRC = $(call rwildc,$(SOURCEDIR),*.cpp)
 
 CXX = g++
 
 OBJ = $(SRC:.cpp=.o)
 
-NAME = tests_core
+NAME = ../../arcade
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 --coverage -g3
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -fno-gnu-unique
 
-all: clean $(NAME)
+all: try-clean $(NAME)
 
 $(NAME):   $(OBJ)
 	g++ -o $(NAME) $(OBJ) $(CXXFLAGS)
+
+try-clean:
+	(ls *.gc* > /dev/null 2>&1 && rm -rf $(OBJ) *.gc*) || true
 
 clean:
 	rm -f $(OBJ)
