@@ -91,10 +91,10 @@ tests_run:
 
 clean:
 	rm -f $(ALL_OBJ)
-	find . -name "vgcore.*" -delete
-	find . -name "*~" -delete
-	find . -name "\#*" -delete
-	find . -name "*.gc*" -delete
+	(find . -name "vgcore.*" -delete \
+		&&	find . -name "*~" -delete \
+		&& find . -name "\#*" -delete \
+		&& find . -name "*.gc*" -delete) || true
 
 fclean:    clean
 	rm -f $(NAME) $(NIBBLER_NAME) $(CENTIPEDE_NAME) $(SFML_NAME) $(SDL_NAME) $(NCURSES_NAME)
