@@ -22,6 +22,7 @@ extern "C" void deleteDisplay(void *display)
 
 Arcade::NCurses::NCurses::NCurses():
     _win(Window::getStdWin()),
+    _lastWinSize({0, 0}),
     _fps(60),
     _lastFrame(0)
 {
@@ -40,59 +41,64 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
 {
     waitUntilNextFrame();
 
+    // Re-create menus if files/winSize differ
     Size winSize = _win.getSize();
-    Size menuSize = getMaxSize(getSizeForMenu("Graphical libraries", graphics), getSizeForMenu("Game libraries", games));
-    Pos graphicalPos = {
-        winSize.first / 2 - menuSize.first - 1,
-        (winSize.second - menuSize.second) / 2
-    };
-    Pos gamePos = {
-        winSize.first / 2 + 1,
-        graphicalPos.second
-    };
+    if (winSize != _lastWinSize) {
+        _lastWinSize = winSize;
+        createMenus(games, graphics, isSelectingGame, selectedIndex, winSize);
+    }
 
+    // Check if pointers are valid
     _win.clear();
-    if (graphicalPos.first < 0 || gamePos.first + menuSize.first >= winSize.first ||
-    graphicalPos.second < 0 || graphicalPos.second + menuSize.second >= winSize.second) {
+    if (!_graphicalMenu || !_gameMenu) {
         _win.drawBox();
         _win.drawText("Window is too small", {(winSize.first - 19) / 2, winSize.second / 2});
         return;
     }
 
-    Menu graphicalLibraries(&_win, "Graphical libraries", graphicalPos, graphics, isSelectingGame ? -1 : selectedIndex, menuSize);
-    Menu gameLibraries(&_win, "Game libraries", gamePos, games, isSelectingGame ? selectedIndex: - 1, menuSize);
+    // If selected has changed, update it
+    if (isSelectingGame) {
+        _gameMenu->setSelected(selectedIndex);
+        _graphicalMenu->setSelected(-1);
+    } else {
+        _graphicalMenu->setSelected(selectedIndex);
+        _gameMenu->setSelected(-1);
+    }
 
-    graphicalLibraries.render();
-    gameLibraries.render();
+    // Render menus
+    _gameMenu->render();
+    _graphicalMenu->render();
+}
+
+void Arcade::NCurses::NCurses::createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const Size &winSize)
+{
+    Size menuSize = getMaxSize(getSizeForMenu("Graphical libraries", graphics), getSizeForMenu("Game libraries", games));
+    Pos graphicalPos = {
+            winSize.first / 2 - menuSize.first - 1,
+            (winSize.second - menuSize.second) / 2
+    };
+    Pos gamePos = {
+            winSize.first / 2 + 1,
+            graphicalPos.second
+    };
+
+    if (graphicalPos.first < 0 || gamePos.first + menuSize.first >= winSize.first ||
+        graphicalPos.second < 0 || graphicalPos.second + menuSize.second >= winSize.second) {
+        _gameMenu = nullptr;
+        _graphicalMenu = nullptr;
+        return;
+    }
+    _gameMenu = std::make_unique<Menu>(&_win, "Game libraries", gamePos, games, isSelectingGame ? selectedIndex: - 1, menuSize);
+    _graphicalMenu = std::make_unique<Menu>(&_win, "Graphical libraries", graphicalPos, graphics, isSelectingGame ? -1 : selectedIndex, menuSize);
 }
 
 std::vector<Arcade::Key> Arcade::NCurses::NCurses::getPressedKeys()
 {
-    int ch;
+    Key k;
     std::vector<Key> keys;
 
-    while ((ch = getch()) != ERR) {
-        switch (ch) {
-            case 'z':
-                keys.push_back(Key::Up);
-                break;
-            case 's':
-                keys.push_back(Key::Down);
-                break;
-            case 'q':
-                keys.push_back(Key::Left);
-                break;
-            case 'd':
-                keys.push_back(Key::Right);
-                break;
-            case 10:
-                keys.push_back(Key::Enter);
-                break;
-            case 27:
-                keys.push_back(Key::Escape);
-                break;
-        }
-    }
+    while ((k = Arcade::NCurses::Window::getKey()) != Key::Unknown)
+        keys.push_back(k);
     return keys;
 }
 
@@ -100,16 +106,16 @@ Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const st
 {
     // Menu should be large enough to contain the biggest item + 8 characters, for padding and box.
     // Or, name.size + 6 characters, for padding and box.
-    int requiredWidth = 0;
+    std::size_t requiredWidth = 0;
     for (const auto &item : items) {
         if (item.size() > requiredWidth)
-            requiredWidth = static_cast<int>(item.size());
+            requiredWidth = item.size();
     }
     if (title.size() > requiredWidth)
-        requiredWidth = static_cast<int>(title.size() + 6);
+        requiredWidth = title.size() + 6;
     else
         requiredWidth += 8;
-    return {requiredWidth, static_cast<int>(items.size() + 5)};
+    return {static_cast<int>(requiredWidth), static_cast<int>(items.size() + 5)};
 }
 
 Size Arcade::NCurses::NCurses::getMaxSize(const Size &a, const Size &b)

@@ -35,6 +35,8 @@ public:
     std::vector<std::string> getItems() const;
     int getSelectedItem() const;
 
+    void setSelected(int selectedItem);
+
     void render();
 
 private:

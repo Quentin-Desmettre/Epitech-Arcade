@@ -59,3 +59,8 @@ int Arcade::NCurses::Menu::getSelectedItem() const
 {
     return _selectedItem;
 }
+
+void Arcade::NCurses::Menu::setSelected(int selectedItem)
+{
+    _selectedItem = selectedItem;
+}

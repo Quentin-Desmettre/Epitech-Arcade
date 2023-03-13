@@ -11,6 +11,8 @@
 #include <ncurses.h>
 #include <vector>
 #include "Window.hpp"
+#include <memory>
+#include "Menu.hpp"
 
 namespace Arcade {
     namespace NCurses {
@@ -32,10 +34,15 @@ protected:
 private:
     static Size getSizeForMenu(const std::string &title, const std::vector<std::string> &items);
     static Size getMaxSize(const Size &a, const Size &b);
+    void createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const Size &winSize);
 
     void waitUntilNextFrame();
 
+    using UniqueMenu = std::unique_ptr<Arcade::NCurses::Menu>;
+
     Window &_win;
+    UniqueMenu _graphicalMenu, _gameMenu;
+    Size _lastWinSize;
     int _fps;
     long _lastFrame;
 };

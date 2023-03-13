@@ -11,6 +11,7 @@
 #include <ncurses.h>
 #include <vector>
 #include <string>
+#include "GameInterfaces.hpp"
 
 namespace Arcade {
     namespace NCurses {
@@ -33,6 +34,8 @@ public:
     void drawBox();
     void drawText(const std::string &text, const Pos &pos);
     void clear();
+
+    static Arcade::Key getKey();
 private:
     Window();
 
@@ -40,6 +43,9 @@ private:
     std::pair<int, int> _size;
     std::vector<Window *> _children;
     WINDOW *_win;
+
+    static const std::map<int, Arcade::Key> _keyMap;
+    static bool _isInit;
 };
 
 #endif //EPITECH_ARCADE_WINDOW_HPP
