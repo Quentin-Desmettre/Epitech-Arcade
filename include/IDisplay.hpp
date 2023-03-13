@@ -16,6 +16,7 @@ namespace Arcade {
 
 class Arcade::IDisplay {
     public:
+        virtual ~IDisplay() = default;
         virtual std::vector<Key> getPressedKeys() = 0;
         virtual void render(const IGameData &gameData) = 0;
         virtual void renderMenu(const std::vector<std::string> &games,

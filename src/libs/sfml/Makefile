@@ -18,12 +18,12 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_sfml.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -fPIC
 
 all: try-clean $(NAME)
 
 $(NAME):   $(OBJ)
-	ld -fPIC -shared -o $(NAME) $(OBJ)
+	$(CXX) -shared -o $(NAME) $(OBJ) -rdynamic -lc
 
 try-clean:
 	(ls *.gc* > /dev/null 2>&1 && rm -rf $(OBJ) *.gc*) || true
