@@ -10,7 +10,7 @@
 
 Arcade::LibLoader::LibHandle::LibHandle(const std::string &path)
 {
-    _handle = dlopen(path.c_str(), RTLD_LAZY);
+    _handle = dlopen(path.c_str(), RTLD_NOW);
 }
 
 Arcade::LibLoader::LibHandle::~LibHandle()
