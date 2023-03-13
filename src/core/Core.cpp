@@ -156,9 +156,9 @@ bool Arcade::Core::isKeyPressed(Key key, const std::vector<Key> &oldKeys, const 
 void Arcade::Core::loadSelectedLibrary()
 {
     if (_isSelectingGame)
-        loadGameLibrary(_gameLibs[_selectedIndex]);
+        loadGameLibrary("./lib/" + _gameLibs[_selectedIndex]);
     else
-        loadGraphicLibrary(_graphicalLibs[_selectedIndex]);
+        loadGraphicLibrary("./lib/" + _graphicalLibs[_selectedIndex]);
 }
 
 void Arcade::Core::loadGameLibrary(const std::string &name)
