@@ -8,6 +8,7 @@
 #include "Core.hpp"
 #include "DirectoryLister.hpp"
 #include <iostream>
+#include <algorithm>
 
 Arcade::Core::LibraryNotLoadedException::LibraryNotLoadedException()
 {
@@ -128,7 +129,7 @@ void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::
         len = (_isSelectingGame ? _gameLibs.size() : _graphicalLibs.size());
         _selectedIndex += dir;
         if (_selectedIndex >= len)
-            _selectedIndex = 0;
+            _selectedIndex = len - 1;
     }
 }
 

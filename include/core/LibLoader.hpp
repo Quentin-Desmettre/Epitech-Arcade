@@ -69,7 +69,7 @@ namespace Arcade {
 
             class LibHandle {
                 public:
-                    LibHandle(const std::string &path);
+                    explicit LibHandle(const std::string &path);
                     ~LibHandle();
                     DELETE_COPY_MOVE(LibHandle);
 
