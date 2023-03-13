@@ -18,12 +18,14 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_ncurses.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lcurses
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lncurses -ltinfo -fPIC -shared
+
+LD_FLAGS = -lncurses -ltinfo -fPIC -shared
 
 all: try-clean $(NAME)
 
 $(NAME):   $(OBJ)
-	ld -fPIC -shared -o $(NAME) $(OBJ)
+	g++ -o $(NAME) $(OBJ) $(LD_FLAGS)
 
 try-clean:
 	(ls *.gc* > /dev/null 2>&1 && rm -rf $(OBJ) *.gc*) || true
