@@ -7,7 +7,7 @@
 
 #include <cstdio>
 #include <iostream>
-#include "SFML.hpp"
+#include "Sfml.hpp"
 
 extern "C"
 {
@@ -16,7 +16,7 @@ extern "C"
     }
 
     void deleteDisplay(void *display) {
-        delete static_cast<Arcade::SFML *>(display);
+        delete reinterpret_cast<Arcade::SFML *>(display);
     }
 }
 
@@ -82,6 +82,18 @@ void Arcade::SFML::calculateCellSize(int width, int height)
     _cellSize = cellSizeX < cellSizeY ? cellSizeX : cellSizeY;
 }
 
+void Arcade::SFML::centerTextOrigin()
+{
+    _text.setOrigin(_text.getLocalBounds().width / 2, _text.getLocalBounds().height / 2);
+}
+
+void Arcade::SFML::drawTextWithColor(sf::Color color)
+{
+    _text.setFillColor(color);
+    _window.draw(_text);
+    _text.setFillColor(sf::Color::White);
+}
+
 void Arcade::SFML::render(const Arcade::IGameData &gameData)
 {
     std::vector<IEntity> entities = gameData.getEntities();
@@ -89,11 +101,14 @@ void Arcade::SFML::render(const Arcade::IGameData &gameData)
     _window.clear();
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
     for (auto &entity : entities) {
-        if (_texture.loadFromFile(entity.getTexture()) == false) {
-            std::cerr << "Error: Cannot load texture: " << entity.getTexture() << std::endl;
-            continue;
+        if (_textureMap.find(entity.getTexture()) == _textureMap.end()) {
+            if (_texture.loadFromFile(entity.getTexture()) == false) {
+                std::cerr << "Error: Cannot load texture: " << entity.getTexture() << std::endl;
+                continue;
+            }
+            _textureMap[entity.getTexture()] = std::make_unique<sf::Texture>(_texture);
         }
-        _sprite.setTexture(_texture);
+        _sprite.setTexture(*_textureMap[entity.getTexture()].get());
         _sprite.scale(_sprite.getLocalBounds().width / _cellSize, _sprite.getLocalBounds().height / _cellSize);
         _sprite.scale(entity.getSize().first, entity.getSize().second);
         _sprite.setOrigin(_sprite.getGlobalBounds().width / 2, _sprite.getGlobalBounds().height / 2);
@@ -111,5 +126,25 @@ void Arcade::SFML::renderMenu(const std::vector<std::string> &games,
 const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex)
 {
     _window.clear();
+    _text.setString("Arcade");
+    _text.setCharacterSize(75);
+    _text.setPosition(500, 100);
+    centerTextOrigin();
+    drawTextWithColor(sf::Color::White);
+    _text.setCharacterSize(24);
+    for (size_t i = 0; i < games.size(); i++) {
+        _text.setString(games[i]);
+        _text.setPosition(350, 450 + i * 30);
+        centerTextOrigin();
+        drawTextWithColor(i == selectedIndex && isSelectingGame ?
+        sf::Color::Red : sf::Color::White);
+    }
+    for (size_t i = 0; i < graphics.size(); i++) {
+        _text.setString(graphics[i]);
+        _text.setPosition(650, 450 + i * 30);
+        centerTextOrigin();
+        drawTextWithColor(i == selectedIndex && !isSelectingGame ?
+        sf::Color::Red : sf::Color::White);
+    }
     _window.display();
 }

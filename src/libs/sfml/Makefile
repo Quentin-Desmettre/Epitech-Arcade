@@ -23,7 +23,7 @@ CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lsfml-graphics -lsfml-windo
 all: try-clean $(NAME)
 
 $(NAME):   $(OBJ)
-	$(CXX) -shared -o $(NAME) $(OBJ) -rdynamic -lc
+	$(CXX) -shared -o $(NAME) $(OBJ) -rdynamic -lc $(CXXFLAGS)
 
 try-clean:
 	(ls *.gc* > /dev/null 2>&1 && rm -rf $(OBJ) *.gc*) || true
