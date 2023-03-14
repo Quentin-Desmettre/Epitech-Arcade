@@ -20,12 +20,10 @@ NAME = ../../../lib/arcade_ncurses.so
 
 CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lncurses -fPIC -shared
 
-LD_FLAGS = -lncurses -fPIC -shared
-
 all: try-clean $(NAME)
 
 $(NAME):   $(OBJ)
-	g++ -o $(NAME) $(OBJ) $(LD_FLAGS)
+	g++ -o $(NAME) $(OBJ) $(CXXFLAGS)
 
 try-clean:
 	(ls *.gc* > /dev/null 2>&1 && rm -rf $(OBJ) *.gc*) || true
