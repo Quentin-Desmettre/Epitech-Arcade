@@ -96,6 +96,7 @@ const std::map<int, Arcade::Key> Arcade::NCurses::Window::_keyMap = {
 };
 
 bool Arcade::NCurses::Window::_isInit = false;
+bool Arcade::NCurses::Window::_hasColors = false;
 
 Arcade::NCurses::Window::Window()
 {
@@ -107,6 +108,12 @@ Arcade::NCurses::Window::Window()
     curs_set(0);
     keypad(stdscr, TRUE);
     _isInit = true;
+
+    if (has_colors() && can_change_color()) {
+        _hasColors = true;
+        start_color();
+    } else
+        _hasColors = false;
 }
 
 Arcade::NCurses::Window::Window(Window *parent, const std::pair<int, int> &pos,
@@ -153,9 +160,20 @@ void Arcade::NCurses::Window::drawBox()
     box(_win, 0, 0);
 }
 
-void Arcade::NCurses::Window::drawText(const std::string &text, const Pos &pos)
+void Arcade::NCurses::Window::draw(const std::string &text, const Pos &pos)
 {
     mvwprintw(_win, pos.second, pos.first, "%s", text.c_str());
+}
+
+void Arcade::NCurses::Window::draw(const Texture &text, const Pos &pos)
+{
+    auto colorPair = COLOR_PAIR(text.getColorPair());
+
+    if (_hasColors)
+        wattron(_win, colorPair);
+    mvwprintw(_win, pos.second, pos.first, "%s", text.getContent().c_str());
+    if (_hasColors)
+        wattroff(_win, colorPair);
 }
 
 void Arcade::NCurses::Window::clear()

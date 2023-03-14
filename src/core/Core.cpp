@@ -129,7 +129,7 @@ void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::
         len = (_isSelectingGame ? _gameLibs.size() : _graphicalLibs.size());
         _selectedIndex += dir;
         if (_selectedIndex >= len)
-            _selectedIndex = len - 1;
+            _selectedIndex = (dir > 0 ? 0 : len - 1);
     }
 }
 

@@ -9,6 +9,9 @@
 #include "Menu.hpp"
 #include <thread>
 #include <chrono>
+#include <cmath>
+
+#define foreach(item, container) for (auto &item: container)
 
 extern "C" void *createDisplay()
 {
@@ -28,13 +31,59 @@ Arcade::NCurses::NCurses::NCurses():
 {
 }
 
-Arcade::NCurses::NCurses::~NCurses()
-{
-    return;
-}
-
 void Arcade::NCurses::NCurses::render(const IGameData &gameData)
 {
+    waitUntilNextFrame();
+
+    /*
+     * Display scores at the top
+     * Display controls on the left
+     * put the game in the center, filling as much space as possible.
+     *
+     * The game is n by m cell, and the displayed game is x by y chars.
+     * So, each game cell measure x/n by y/m chars.
+     *
+     * Each texture is composed of a unique char, and an optional color.
+     *
+     * When displaying the texture, if it takes 1 cell, we display it as x/n by y/m chars.
+     * If it takes t x-cells, we display it as t*x/n by y/m chars.
+     * If it takes t y-cells, we display it as x/n by t*y/m chars.
+     */
+    Size winSize = _win.getSize();
+    Window scores(&_win, {winSize.first * 0.15, 0}, {winSize.first * 0.7, 3});
+//    Window controls(&_win, {0, 3}, {0, 0});
+
+    Size availableSize = {winSize.first, winSize.second - 3};
+    int cellSize = std::min(availableSize.first / gameData.getMapSize().first, availableSize.second / gameData.getMapSize().second);
+    Size gameSize = {cellSize * gameData.getMapSize().first, cellSize * gameData.getMapSize().second};
+    Window game(&_win, {winSize.first / 2- gameSize.first, 3}, gameSize);
+
+    // Display scores
+    scores.drawBox();
+    int xOffset = 1;
+    for (const auto &score: gameData.getScores()) {
+        scores.draw(score.first + ": " + std::to_string(score.second) + " | ", {xOffset, 1});
+        xOffset += static_cast<int>(score.first.size() + 2 + std::to_string(score.second).size() + 3);
+    }
+
+    // Display controls
+//    controls.drawBox();
+//    controls.draw("Controls", {1, 1});
+
+    // Display game
+    gameData.getEntities();
+    foreach (entity, gameData.getEntities()) {
+        Size entitySize = {
+                std::round(cellSize * entity.getSize().first),
+                std::round(cellSize * entity.getSize().second)
+        };
+        Pos entityPos = {
+                std::round(cellSize * entity.getPosition().first - entitySize.first / 2),
+                std::round(cellSize * entity.getPosition().second - entitySize.second / 2)
+        };
+        Texture tex(entity.getTexture(), entitySize.first, entitySize.second);
+        game.draw(tex, entityPos);
+    }
 }
 
 void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex)
@@ -52,7 +101,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     _win.clear();
     if (!_graphicalMenu || !_gameMenu) {
         _win.drawBox();
-        _win.drawText("Window is too small", {(winSize.first - 19) / 2, winSize.second / 2});
+        _win.draw("Window is too small", {(winSize.first - 19) / 2, winSize.second / 2});
         return;
     }
 

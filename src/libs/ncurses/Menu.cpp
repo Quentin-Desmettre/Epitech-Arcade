@@ -29,15 +29,15 @@ void Arcade::NCurses::Menu::render()
     auto size = _titleWin->getSize();
     _titleWin->clear();
     _titleWin->drawBox();
-    _titleWin->drawText(_name, {(size.first - _name.size()) / 2, 1});
+    _titleWin->draw(_name, {(size.first - _name.size()) / 2, 1});
 
     // Draw items
     _itemsWin->clear();
     _itemsWin->drawBox();
     for (std::size_t i = 0; i < _items.size(); i++)
-        _itemsWin->drawText(_items[i], {5, i + 1});
+        _itemsWin->draw(_items[i], {5, i + 1});
     if (_selectedItem >= 0)
-        _itemsWin->drawText("->", {2, _selectedItem + 1});
+        _itemsWin->draw("->", {2, _selectedItem + 1});
 }
 
 std::string Arcade::NCurses::Menu::getName() const
