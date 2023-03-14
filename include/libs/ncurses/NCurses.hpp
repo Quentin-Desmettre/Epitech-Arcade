@@ -23,7 +23,7 @@ namespace Arcade {
 class Arcade::NCurses::NCurses: public Arcade::IDisplay {
 public:
     NCurses();
-    ~NCurses() override;
+    ~NCurses() override = default;
 
     std::vector<Key> getPressedKeys() override;
     void render(const IGameData &gameData) override;

@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include "GameInterfaces.hpp"
+#include "libs/ncurses/Texture.hpp"
 
 namespace Arcade {
     namespace NCurses {
@@ -32,10 +33,12 @@ public:
     Size getSize();
 
     void drawBox();
-    void drawText(const std::string &text, const Pos &pos);
+    void draw(const std::string &text, const Pos &pos);
+    void draw(const Texture &texture, const Pos &pos);
     void clear();
 
     static Arcade::Key getKey();
+
 private:
     Window();
 
@@ -45,7 +48,7 @@ private:
     WINDOW *_win;
 
     static const std::map<int, Arcade::Key> _keyMap;
-    static bool _isInit;
+    static bool _isInit, _hasColors;
 };
 
 #endif //EPITECH_ARCADE_WINDOW_HPP
