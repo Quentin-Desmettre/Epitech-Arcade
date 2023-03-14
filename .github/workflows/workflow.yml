@@ -13,7 +13,7 @@ on: push
 jobs:
   test:
     name: Run tests before pushing to remote
-    runs-on: self-hosted
+    runs-on: "ubuntu-latest"
 
     steps:
       - name: Extract branch name
@@ -27,7 +27,17 @@ jobs:
           ref: ${{ steps.extract_branch.outputs.branch }}
           fetch-depth: 0
 
+      - name: Run push hooks
+        run: "pip install websocket-client && python './.github/cpp_checker.py' --hard"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsfml-dev libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev libncurses-dev
+
       - name: Check if it compiles
+        shell: bash
         run: |
           make
           make clean
