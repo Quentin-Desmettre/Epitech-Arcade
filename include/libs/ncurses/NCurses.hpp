@@ -40,7 +40,7 @@ private:
 
     using UniqueMenu = std::unique_ptr<Arcade::NCurses::Menu>;
 
-    Window &_win;
+    Window _win;
     UniqueMenu _graphicalMenu, _gameMenu;
     Size _lastWinSize;
     int _fps;
