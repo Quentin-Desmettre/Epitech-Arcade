@@ -46,6 +46,7 @@ namespace Arcade {
             bool _run, _isInMenu;
             bool _isSelectingGame;
             std::size_t _selectedIndex;
+            ControlMap _controls;
 
             void handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
             void exitGame();

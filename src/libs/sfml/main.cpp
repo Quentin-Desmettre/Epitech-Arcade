@@ -123,7 +123,7 @@ void Arcade::SFML::render(const Arcade::IGameData &gameData)
 }
 
 void Arcade::SFML::renderMenu(const std::vector<std::string> &games,
-const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex)
+const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &map)
 {
     _window.clear();
     _text.setString("Arcade");

@@ -73,6 +73,12 @@ Arcade::Core::Core(int ac, char **av):
     if (_gameLibs.empty())
         throw NoLibraryException(LibLoader::GAME);
     loadGraphicLibrary(av[1]);
+    _controls = {
+            {"Quit", "ESC"},
+            {"Load lib", "ENTER"},
+            {"Select game", "LEFT/RIGHT"},
+            {"Select graph", "LEFT/RIGHT"},
+    };
 }
 
 Arcade::Core::~Core()
@@ -94,7 +100,7 @@ int Arcade::Core::run()
         if (!_isInMenu && _game->exit())
             exitGame();
         if (_isInMenu) {
-            _display->renderMenu(_gameLibs, _graphicalLibs, _isSelectingGame, _selectedIndex);
+            _display->renderMenu(_gameLibs, _graphicalLibs, _isSelectingGame, _selectedIndex, _controls);
             handleMenuEvents(oldKeys, pressedKeys);
         } else {
             _display->render(_game->getGameData());
@@ -176,11 +182,11 @@ void Arcade::Core::loadGameLibrary(const std::string &name)
 
 void Arcade::Core::loadGraphicLibrary(const std::string &name)
 {
-    IDisplay *newDisplay = _libLoader.loadGraphicalLib(name);
-
-    if (!newDisplay)
-        throw LibraryNotLoadedException();
     if (_display)
         _libLoader.unloadGraphicalLib(_display);
+
+    IDisplay *newDisplay = _libLoader.loadGraphicalLib(name);
+    if (!newDisplay)
+        throw LibraryNotLoadedException();
     _display = newDisplay;
 }

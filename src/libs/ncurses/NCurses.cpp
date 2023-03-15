@@ -86,7 +86,7 @@ void Arcade::NCurses::NCurses::render(const IGameData &gameData)
     }
 }
 
-void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex)
+void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &map)
 {
     waitUntilNextFrame();
 
