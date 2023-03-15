@@ -1,0 +1,140 @@
+/*
+** EPITECH PROJECT, 2023
+** Epitech_Arcade
+** File description:
+** Texture
+*/
+
+#include "Texture.hpp"
+#include <sstream>
+#include <fstream>
+#include <regex>
+
+/*
+ *
+ *
+ * Format of a texture:
+ *
+ * text: <single char>
+ * bg-color: <color>
+ * text-color: <color>
+ *
+ * Color must be among the following:
+ *  - black
+ *  - red
+ *  - green
+ *  - yellow
+ *  - blue
+ *  - magenta
+ *  - cyan
+ *  - white
+ *  - none
+ */
+
+const std::map<std::string, Arcade::NCurses::Color> Arcade::NCurses::Texture::_colorMap = {
+    {"black", BLACK},
+    {"red", RED},
+    {"green", GREEN},
+    {"yellow", YELLOW},
+    {"blue", BLUE},
+    {"magenta", MAGENTA},
+    {"cyan", CYAN},
+    {"white", WHITE}
+};
+
+const char Arcade::NCurses::Texture::_defaultContent = '#';
+const Arcade::NCurses::Color Arcade::NCurses::Texture::_defaultBgColor = BLACK;
+const Arcade::NCurses::Color Arcade::NCurses::Texture::_defaultTextColor = WHITE;
+const std::string Arcade::NCurses::Texture::_textRegex = "/^text: .$/gm";
+const std::string Arcade::NCurses::Texture::_bgColorRegex = "/^bg-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$/gm";
+const std::string Arcade::NCurses::Texture::_textColorRegex = "/^text-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$/gm";
+std::vector<short> Arcade::NCurses::Texture::_availableColorPairs;
+std::map<std::pair<Arcade::NCurses::Color, Arcade::NCurses::Color>, short>Arcade::NCurses::Texture:: _colorPairs = {};
+
+Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height):
+    _bgColor(_defaultBgColor), _textColor(_defaultTextColor)
+{
+    if (_availableColorPairs.empty() && _colorPairs.empty())
+        for (int i = 1; i < COLOR_PAIRS; i++)
+            _availableColorPairs.push_back(static_cast<short>(i));
+
+    std::ifstream reader(path);
+    std::string line;
+    char c = _defaultContent;
+
+    if (!reader) {
+        fillContent(_defaultContent, width, height);
+        _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
+        return;
+    }
+    while (std::getline(reader, line)) {
+        if (std::regex_match(line, std::regex(_textRegex)))
+            c = line.substr(6)[0];
+        else if (std::regex_match(line, std::regex(_bgColorRegex)))
+            _bgColor = _colorMap.at(line.substr(10));
+        else if (std::regex_match(line, std::regex(_textColorRegex)))
+            _textColor = _colorMap.at(line.substr(12));
+    }
+    fillContent(c, width, height);
+    _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
+}
+
+Arcade::NCurses::Texture::~Texture()
+{
+    if (_hasUsedColorPair)
+        Texture::removeColorPair(_textColor, _bgColor);
+}
+
+void Arcade::NCurses::Texture::fillContent(char c, int width, int height)
+{
+    std::ostringstream oss;
+
+    for (int i = 0; i < height; i++) {
+        oss << std::string(width, c);
+        if (i != height - 1)
+            oss << std::endl;
+    }
+    _text = oss.str();
+}
+
+std::string Arcade::NCurses::Texture::getContent() const
+{
+    return _text;
+}
+
+Arcade::NCurses::Color Arcade::NCurses::Texture::getTextColor() const
+{
+    return _textColor;
+}
+
+Arcade::NCurses::Color Arcade::NCurses::Texture::getBackgroundColor() const
+{
+    return _bgColor;
+}
+
+bool Arcade::NCurses::Texture::createColorPair(Color fg, Color bg)
+{
+    if (_colorPairs.find({fg, bg}) != _colorPairs.end())
+        return false;
+
+    short pair = _availableColorPairs.back();
+    init_pair(pair, fg, bg);
+    _colorPairs[{fg, bg}] = pair;
+    _availableColorPairs.pop_back();
+    return true;
+}
+
+void Arcade::NCurses::Texture::removeColorPair(Color fg, Color bg)
+{
+    if (_colorPairs.find({fg, bg}) == _colorPairs.end())
+        return;
+    _availableColorPairs.push_back(_colorPairs[{fg, bg}]);
+    _colorPairs.erase({fg, bg});
+}
+
+short Arcade::NCurses::Texture::getColorPair() const
+{
+    if (_colorPairs.find({_textColor, _bgColor}) == _colorPairs.end())
+        return -1;
+    return _colorPairs[{_textColor, _bgColor}];
+}

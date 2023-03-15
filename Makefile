@@ -5,35 +5,33 @@
 ## Makefile
 ##
 
-rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
+all: core games graphicals
 
-SOURCEDIR = src
+core:
+	@make -C src/core/
 
-SRC = $(call rwildc,$(SOURCEDIR),*.cpp)
+games:
+	@make -C src/games/nibbler/
+	@make -C src/games/centipede/
 
-CXX = g++
-
-OBJ = $(SRC:.cpp=.o)
-
-NAME = arcade
-
-CXXFLAGS = -Wall -Wextra -I ./include -std=c++20
-
-all: $(NAME)
-
-$(NAME):   $(OBJ)
-	g++ -o $(NAME) $(OBJ) $(CXXFLAGS)
+graphicals:
+	@make -C src/libs/sfml/
+	@make -C src/libs/sdl/
+	@make -C src/libs/ncurses/
 
 tests_run:
-	cd tests && make && ./tests
+	cd tests && make
 
-clean:
-	rm -f $(OBJ)
-	find . -name "vgcore.*" -delete
-	find . -name "*~" -delete
-	find . -name "\#*" -delete
+apply-rule-%:
+	@make -C src/core/ $*
+	@make -C src/games/nibbler/ $*
+	@make -C src/games/centipede/ $*
+	@make -C src/libs/sfml/ $*
+	@make -C src/libs/sdl/ $*
+	@make -C src/libs/ncurses/ $*
 
-fclean:    clean
-	rm -f $(NAME)
+clean: apply-rule-clean
 
-re:        fclean all
+fclean: apply-rule-fclean
+
+re: fclean all

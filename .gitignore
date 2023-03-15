@@ -7,6 +7,14 @@ tokens.txt
 logs.log
 __pycache__
 websockets
+*.gcda
+*.gcno
+tests_*
+CMakeLists.txt
+cmake-build-debug
+err
+out
+
 
 # Compiled Object files
 *.slo
