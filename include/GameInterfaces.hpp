@@ -119,6 +119,7 @@ namespace Arcade {
         KeyCount,     ///< Keep last -- the total number of keyboard keys
     };
 
+    typedef std::map<std::string, std::string> ControlMap;
     class IEntity {
         public:
             /**
@@ -142,6 +143,7 @@ namespace Arcade {
             virtual std::string getGameName() const = 0;
             virtual std::vector<IEntity> getEntities() const = 0;
             virtual std::pair<int, int> getMapSize() const = 0;
+            virtual const ControlMap &getControls() const = 0;
     };
 
     class IGame {
