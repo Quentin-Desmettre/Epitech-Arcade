@@ -84,9 +84,9 @@ const std::map<SDL_Scancode, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
 
 Arcade::Sdl::Sdl::Sdl():
         _window(1280, 832),
-        _globalFont("assets/sdl/arial.ttf", 20),
-        _boldGlobalFont("assets/sdl/arial.ttf", 25, true),
-        _menuBackgroundTexture("assets/sdl/menubg.png", _window.getRenderer()),
+        _globalFont("assets/arial.ttf", 20),
+        _boldGlobalFont("assets/arial.ttf", 25, true),
+        _menuBackgroundTexture("assets/menubg.png", _window.getRenderer()),
         _menuBackground()
 {
     _menuBackground.setTexture(_menuBackgroundTexture);

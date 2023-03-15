@@ -25,7 +25,7 @@ class Arcade::SFML : public Arcade::IDisplay {
         std::vector<Key> getPressedKeys() override;
         void render(const IGameData &gameData) override;
         void renderMenu(const std::vector<std::string> &games,
-        const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex) override;
+        const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &map) override;
     private:
         std::map<std::string, std::unique_ptr<sf::Texture>> _textureMap;
         void calculateCellSize(int width, int height);
