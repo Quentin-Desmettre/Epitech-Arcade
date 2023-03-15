@@ -49,6 +49,7 @@ const std::string Arcade::NCurses::Texture::_textRegex = "/^text: .$/gm";
 const std::string Arcade::NCurses::Texture::_bgColorRegex = "/^bg-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$/gm";
 const std::string Arcade::NCurses::Texture::_textColorRegex = "/^text-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$/gm";
 std::vector<short> Arcade::NCurses::Texture::_availableColorPairs;
+std::map<std::pair<Arcade::NCurses::Color, Arcade::NCurses::Color>, short>Arcade::NCurses::Texture:: _colorPairs = {};
 
 Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height):
     _bgColor(_defaultBgColor), _textColor(_defaultTextColor)
@@ -63,7 +64,7 @@ Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height
 
     if (!reader) {
         fillContent(_defaultContent, width, height);
-        Texture::createColorPair(_textColor, _bgColor);
+        _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
         return;
     }
     while (std::getline(reader, line)) {
@@ -75,12 +76,13 @@ Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height
             _textColor = _colorMap.at(line.substr(12));
     }
     fillContent(c, width, height);
-    Texture::createColorPair(_textColor, _bgColor);
+    _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
 }
 
 Arcade::NCurses::Texture::~Texture()
 {
-    Texture::removeColorPair(_textColor, _bgColor);
+    if (_hasUsedColorPair)
+        Texture::removeColorPair(_textColor, _bgColor);
 }
 
 void Arcade::NCurses::Texture::fillContent(char c, int width, int height)
@@ -110,15 +112,16 @@ Arcade::NCurses::Color Arcade::NCurses::Texture::getBackgroundColor() const
     return _bgColor;
 }
 
-void Arcade::NCurses::Texture::createColorPair(Color fg, Color bg)
+bool Arcade::NCurses::Texture::createColorPair(Color fg, Color bg)
 {
     if (_colorPairs.find({fg, bg}) != _colorPairs.end())
-        return;
+        return false;
 
     short pair = _availableColorPairs.back();
     init_pair(pair, fg, bg);
     _colorPairs[{fg, bg}] = pair;
     _availableColorPairs.pop_back();
+    return true;
 }
 
 void Arcade::NCurses::Texture::removeColorPair(Color fg, Color bg)

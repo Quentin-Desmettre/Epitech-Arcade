@@ -24,7 +24,7 @@ extern "C" void deleteDisplay(void *display)
 }
 
 Arcade::NCurses::NCurses::NCurses():
-    _win(Window::getStdWin()),
+    _win(),
     _lastWinSize({0, 0}),
     _fps(60),
     _lastFrame(0)

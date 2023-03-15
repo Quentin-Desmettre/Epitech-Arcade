@@ -39,7 +39,7 @@ public:
     Color getTextColor() const;
     Color getBackgroundColor() const;
 
-    static void createColorPair(Color fg, Color bg);
+    static bool createColorPair(Color fg, Color bg);
     static void removeColorPair(Color fg, Color bg);
     short getColorPair() const;
 private:
@@ -47,6 +47,7 @@ private:
 
     std::string _text;
     Color _bgColor, _textColor;
+    bool _hasUsedColorPair;
 
     static const std::map<std::string, Color> _colorMap;
     static std::map<std::pair<Color, Color>, short> _colorPairs;

@@ -25,6 +25,7 @@ typedef std::pair<int, int> Size;
 
 class Arcade::NCurses::Window {
 public:
+    Window();
     Window(Window *parent, const Pos &pos, const Size &size);
     static Window &getStdWin();
     ~Window();
@@ -40,7 +41,6 @@ public:
     static Arcade::Key getKey();
 
 private:
-    Window();
 
     std::pair<int, int> _pos;
     std::pair<int, int> _size;
