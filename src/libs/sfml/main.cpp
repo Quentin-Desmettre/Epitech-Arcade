@@ -94,9 +94,9 @@ void Arcade::SFML::drawTextWithColor(sf::Color color)
     _text.setFillColor(sf::Color::White);
 }
 
-void Arcade::SFML::render(const Arcade::IGameData &gameData)
+void Arcade::SFML::render(Arcade::IGameData &gameData)
 {
-    std::vector<IEntity> entities = gameData.getEntities();
+    std::vector<IEntity> &entities = gameData.getEntities();
 
     _window.clear();
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);

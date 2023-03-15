@@ -140,13 +140,13 @@ namespace Arcade {
         public:
             virtual std::map<std::string, int> getScores() const = 0;
             virtual std::string getGameName() const = 0;
-            virtual std::vector<IEntity> getEntities() const = 0;
+            virtual std::vector<IEntity> &getEntities() = 0;
             virtual std::pair<int, int> getMapSize() const = 0;
     };
 
     class IGame {
         public:
-            virtual ~IGame() = 0;
+            virtual ~IGame() = default;
             virtual void handleKeys(const std::vector<Key> &pressedKeys) = 0;
             virtual void update() = 0;
             virtual IGameData &getGameData() const = 0;

@@ -31,7 +31,7 @@ Arcade::NCurses::NCurses::NCurses():
 {
 }
 
-void Arcade::NCurses::NCurses::render(const IGameData &gameData)
+void Arcade::NCurses::NCurses::render(IGameData &gameData)
 {
     waitUntilNextFrame();
 
