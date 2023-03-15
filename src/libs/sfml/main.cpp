@@ -102,7 +102,7 @@ void Arcade::SFML::render(const Arcade::IGameData &gameData)
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
     for (auto &entity : entities) {
         if (_textureMap.find(entity.getTexture()) == _textureMap.end()) {
-            if (_texture.loadFromFile(entity.getTexture()) == false) {
+            if (_texture.loadFromFile("assets/" + gameData.getGameName() + "/sfml/" + entity.getTexture()) == false) {
                 std::cerr << "Error: Cannot load texture: " << entity.getTexture() << std::endl;
                 continue;
             }
