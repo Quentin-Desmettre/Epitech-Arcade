@@ -131,6 +131,19 @@ void Arcade::Nibbler::Game::folowSnake(std::pair<int, int> pos)
     _head.second += pos.second;
 }
 
+void Arcade::Nibbler::Game::growUpSnake()
+{
+    if (_is_child) {
+        _body.push_back(_child);
+        _is_child = false;
+    }
+    if (getAtPos(_head.first, _head.second) == 'o') {
+        _map[_head.first][_head.second] = ' ';
+        _is_child = true;
+        _child = _body.back();
+    }
+}
+
 std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
 {
     std::vector<std::pair<int, int>> dir = {
@@ -165,6 +178,17 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
     return {0, 0};
 }
 
+int Arcade::Nibbler::Game::isSnakeDead()
+{
+    for (size_t i = 0; i < _body.size(); i++) {
+        if (_head.first == _body[i].first && _head.second == _body[i].second) {
+            restart();
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void Arcade::Nibbler::Game::update()
 {
     float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
@@ -184,15 +208,9 @@ void Arcade::Nibbler::Game::update()
             _is_stuck = true;
         else {
             _is_stuck = false;
-            if (_is_child) {
-                _body.push_back(_child);
-                _is_child = false;
-            }
-            if (getAtPos(_head.first, _head.second) == 'o') {
-                _map[_head.first][_head.second] = ' ';
-                _is_child = true;
-                _child = _body.back();
-            }
+            growUpSnake();
+            if (isSnakeDead())
+                return;
         }
         _direction = dir;
         _time_dif -= 0.5;
@@ -207,7 +225,7 @@ void Arcade::Nibbler::Game::update()
 
 void Arcade::Nibbler::Game::convertToGameData()
 {
-    _gameData->getEntities().clear();
+    _gameData->removeEntities();
     for (int i = 0; i < 19; i++) {
         for (int j = 0; j < 19; j++) {
             if (_map[i][j] == 'X')

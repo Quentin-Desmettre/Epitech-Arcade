@@ -23,6 +23,7 @@ namespace Arcade {
                 std::pair<int, int> getMapSize() const;   
                 void addScore(std::string name, int score);             
                 void addEntity(IEntity *entity);
+                void removeEntities();
             private:
                 std::map<std::string, int> _scores;
                 std::vector<IEntity *> _entities;

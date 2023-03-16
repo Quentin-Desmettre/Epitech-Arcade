@@ -32,6 +32,8 @@ namespace Arcade {
                 void initMap();
                 void convertToGameData();
                 void folowSnake(std::pair<int, int> pos);
+                void growUpSnake();
+                int isSnakeDead();
 
                 std::shared_ptr<GameData> _gameData;
                 char _map[19][19];

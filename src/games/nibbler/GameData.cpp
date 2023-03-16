@@ -50,3 +50,8 @@ void Arcade::Nibbler::GameData::addEntity(Arcade::IEntity *entity)
     // std::cout << entity.getTexture() << std::endl;
     _entities.push_back(entity);
 }
+
+void Arcade::Nibbler::GameData::removeEntities()
+{
+    _entities.clear();
+}
