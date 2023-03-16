@@ -39,7 +39,7 @@ void Arcade::Nibbler::Game::initMap()
     {
         for (int j = 0; j < 19; j++)
         {
-            if (mapString[i * 19 + j] == ' ' && rand() % 10 == 0)
+            if (mapString[i * 19 + j] == ' ' && rand() % 5 == 0)
                 _map[i][j] = 'o';
             else
                 _map[i][j] = mapString[i * 19 + j];

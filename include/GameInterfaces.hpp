@@ -150,7 +150,6 @@ namespace Arcade {
             virtual void handleKeys(const std::vector<Key> &pressedKeys) = 0;
             virtual void update() = 0;
             virtual IGameData &getGameData() const = 0;
-            virtual bool exit() const = 0;
     };
 };
 
