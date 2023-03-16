@@ -11,12 +11,20 @@
 
 extern "C" void *createDisplay()
 {
+    std::cerr << "Info: SDL2: Init SDL." << std::endl;
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+        throw std::runtime_error("Error: SDL2: Failed to init SDL.");
+    if (TTF_Init() < 0)
+        throw std::runtime_error("Error: SDL2: Failed to init SDL_ttf.");
     return new Arcade::Sdl::Sdl();
 }
 
 extern "C" void deleteDisplay(void *display)
 {
+    std::cerr << "Info: SDL2: Quit SDL." << std::endl;
     delete reinterpret_cast<Arcade::Sdl::Sdl *>(display);
+    TTF_Quit();
+    SDL_Quit();
 }
 
 std::map<std::string, std::unique_ptr<Arcade::Sdl::Texture>> Arcade::Sdl::Sdl::_textures = {};
@@ -84,7 +92,7 @@ const std::map<SDL_Scancode, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
 };
 
 Arcade::Sdl::Sdl::Sdl():
-        _window(1280, 832),
+        _window{1280, 832},
         _globalFont("assets/arial.ttf", 20),
         _boldGlobalFont("assets/arial.ttf", 25, true),
         _menuBackgroundTexture("assets/menubg.png", _window.getRenderer()),

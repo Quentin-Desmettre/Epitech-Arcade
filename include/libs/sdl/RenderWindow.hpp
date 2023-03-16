@@ -36,9 +36,6 @@ class Arcade::Sdl::RenderWindow {
     private:
         void waitForNextFrame();
 
-        static void initSdl();
-        static int _nbInstances;
-
         SDL_Window *_window;
         SDL_Renderer *_renderer;
         long _lastFrame;
