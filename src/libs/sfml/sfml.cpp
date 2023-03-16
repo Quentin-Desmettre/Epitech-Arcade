@@ -182,16 +182,14 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
         _text.setString(graphics[i]);
         _text.setPosition(640, 380 + i * 45);
         centerTextOrigin();
-        drawTextWithColor(i == selectedIndex && !isSelectingGame ?
-        sf::Color::Red : sf::Color::White);
+        drawTextWithColor(i == selectedGraph ? sf::Color::Red : sf::Color::White);
     }
 
     for (size_t i = 0; i < games.size(); i++) {
         _text.setString(games[i]);
         _text.setPosition(1010, 380 + i * 45);
         centerTextOrigin();
-        drawTextWithColor(i == selectedIndex && isSelectingGame ?
-        sf::Color::Red : sf::Color::White);
+        drawTextWithColor(i == selectedGame ? sf::Color::Red : sf::Color::White);
     }
 
     for (auto &key : map)
