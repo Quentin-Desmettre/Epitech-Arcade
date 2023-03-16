@@ -123,28 +123,28 @@ void Arcade::SFML::render(const Arcade::IGameData &gameData)
 }
 
 void Arcade::SFML::renderMenu(const std::vector<std::string> &games,
-const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &map)
+const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map)
 {
-    _window.clear();
-    _text.setString("Arcade");
-    _text.setCharacterSize(75);
-    _text.setPosition(500, 100);
-    centerTextOrigin();
-    drawTextWithColor(sf::Color::White);
-    _text.setCharacterSize(24);
-    for (size_t i = 0; i < games.size(); i++) {
-        _text.setString(games[i]);
-        _text.setPosition(350, 450 + i * 30);
-        centerTextOrigin();
-        drawTextWithColor(i == selectedIndex && isSelectingGame ?
-        sf::Color::Red : sf::Color::White);
-    }
-    for (size_t i = 0; i < graphics.size(); i++) {
-        _text.setString(graphics[i]);
-        _text.setPosition(650, 450 + i * 30);
-        centerTextOrigin();
-        drawTextWithColor(i == selectedIndex && !isSelectingGame ?
-        sf::Color::Red : sf::Color::White);
-    }
-    _window.display();
+//    _window.clear();
+//    _text.setString("Arcade");
+//    _text.setCharacterSize(75);
+//    _text.setPosition(500, 100);
+//    centerTextOrigin();
+//    drawTextWithColor(sf::Color::White);
+//    _text.setCharacterSize(24);
+//    for (size_t i = 0; i < games.size(); i++) {
+//        _text.setString(games[i]);
+//        _text.setPosition(350, 450 + i * 30);
+//        centerTextOrigin();
+//        drawTextWithColor(i == selectedIndex && isSelectingGame ?
+//        sf::Color::Red : sf::Color::White);
+//    }
+//    for (size_t i = 0; i < graphics.size(); i++) {
+//        _text.setString(graphics[i]);
+//        _text.setPosition(650, 450 + i * 30);
+//        centerTextOrigin();
+//        drawTextWithColor(i == selectedIndex && !isSelectingGame ?
+//        sf::Color::Red : sf::Color::White);
+//    }
+//    _window.display();
 }

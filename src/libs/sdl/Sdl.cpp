@@ -27,6 +27,7 @@ const std::map<SDL_Scancode, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
         {SDL_SCANCODE_RIGHT, Arcade::Key::Right},
         {SDL_SCANCODE_RETURN, Arcade::Key::Enter},
         {SDL_SCANCODE_KP_ENTER, Arcade::Key::Enter},
+        {SDL_SCANCODE_SPACE, Arcade::Key::Space},
         {SDL_SCANCODE_A, Arcade::Key::A},
         {SDL_SCANCODE_B, Arcade::Key::B},
         {SDL_SCANCODE_C, Arcade::Key::C},
@@ -111,9 +112,8 @@ Arcade::Sdl::Sdl::Sdl():
 
 Arcade::Sdl::Sdl::~Sdl() = default;
 
-void Arcade::Sdl::Sdl::renderMenu(const std::vector<std::string> &games,
-                                  const std::vector<std::string> &graphics, bool isSelectingGame,
-                                  int selectedIndex, const ControlMap &controls)
+void Arcade::Sdl::Sdl::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                                  int selectedGame, int selectedGraph, const ControlMap &controls)
 {
     if (graphics != _graphNames || games != _gameNames || controls != _controls)
         createMenus(games, graphics, controls);
@@ -122,7 +122,7 @@ void Arcade::Sdl::Sdl::renderMenu(const std::vector<std::string> &games,
 
     _window.draw(_menuBackground);
     drawMenuTitlesAndBg();
-    drawMenuItems(isSelectingGame, selectedIndex);
+    drawMenuItems(selectedGame, selectedGraph);
 
     _window.display();
 }
@@ -161,11 +161,11 @@ void Arcade::Sdl::Sdl::createMenus(const std::vector<std::string> &games, const 
     _controls = controls;
 }
 
-void Arcade::Sdl::Sdl::drawMenuItems(bool isSelectingGame, int selectedIndex)
+void Arcade::Sdl::Sdl::drawMenuItems(int selectedGame, int selectedGraph)
 {
     // Set color of selected item if not in game
     for (std::size_t i = 0; i < _graphItems.size(); i++) {
-        if (i == static_cast<std::size_t>(selectedIndex) && !isSelectingGame)
+        if (i == static_cast<std::size_t>(selectedGraph))
             _graphItems[i]->setColor({255, 0, 0, 255}); // Red
         else
             _graphItems[i]->setColor({255, 255, 255, 255}); // White
@@ -173,7 +173,7 @@ void Arcade::Sdl::Sdl::drawMenuItems(bool isSelectingGame, int selectedIndex)
     }
     // Set color of selected item if in game
     for (std::size_t i = 0; i < _gameItems.size(); i++) {
-        if (i == static_cast<std::size_t>(selectedIndex) && isSelectingGame)
+        if (i == static_cast<std::size_t>(selectedGame))
             _gameItems[i]->setColor({255, 0, 0, 255}); // Red
         else
             _gameItems[i]->setColor({255, 255, 255, 255}); // White

@@ -27,7 +27,8 @@ public:
 
     std::vector<Key> getPressedKeys() override;
     void render(const IGameData &gameData) override;
-    void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &controls) override;
+    void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                    int selectedGame, int selectedGraph, const ControlMap &controls) override;
 
 private:
     // Globals
@@ -50,7 +51,7 @@ private:
     const static std::map<SDL_Scancode, Key> _keyMap;
     void createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, const ControlMap &controls);
     void drawMenuTitlesAndBg();
-    void drawMenuItems(bool isSelectingGame, int selectedIndex);
+    void drawMenuItems(int selectedGame, int selectedGraph);
     static std::string simplifyName(const std::string &name);
     static double calculateCellSize(int width, int height);
     static std::string texturePath(const IEntity &entity, const std::string &gameName);

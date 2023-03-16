@@ -85,7 +85,8 @@ void Arcade::NCurses::NCurses::render(const IGameData &gameData)
     }
 }
 
-void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &map)
+void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                                          int selectedGame, int selectedGraph, const ControlMap &map)
 {
     waitUntilNextFrame();
 
@@ -96,7 +97,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
         _gameNames = games;
         _graphicalNames = graphics;
         _controls = map;
-        createMenus(isSelectingGame, selectedIndex);
+        createMenus(selectedGame, selectedGraph);
     }
 
     // Check if pointers are valid
@@ -108,13 +109,8 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     }
 
     // If selected has changed, update it
-    if (isSelectingGame) {
-        _gameMenu->setSelected(selectedIndex);
-        _graphicalMenu->setSelected(-1);
-    } else {
-        _graphicalMenu->setSelected(selectedIndex);
-        _gameMenu->setSelected(-1);
-    }
+    _gameMenu->setSelected(selectedGame);
+    _graphicalMenu->setSelected(selectedGraph);
 
     // Render menus
     _gameMenu->render();

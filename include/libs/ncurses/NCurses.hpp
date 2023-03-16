@@ -29,7 +29,8 @@ public:
 
     std::vector<Key> getPressedKeys() override;
     void render(const IGameData &gameData) override;
-    void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &map) override;
+    void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                    int selectedGame, int selectedGraph, const ControlMap &map) override;
     void setFramerateLimit(int fps);
 
 protected:
