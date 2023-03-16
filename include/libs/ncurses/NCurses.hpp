@@ -20,6 +20,8 @@ namespace Arcade {
     }
 }
 
+typedef std::vector<std::string> StringVector;
+
 class Arcade::NCurses::NCurses: public Arcade::IDisplay {
 public:
     NCurses();
@@ -27,21 +29,30 @@ public:
 
     std::vector<Key> getPressedKeys() override;
     void render(const IGameData &gameData) override;
-    void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const ControlMap &map) override;
+    void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                    int selectedGame, int selectedGraph, const ControlMap &map) override;
     void setFramerateLimit(int fps);
 
 protected:
 private:
     static Size getSizeForMenu(const std::string &title, const std::vector<std::string> &items);
-    static Size getMaxSize(const Size &a, const Size &b);
-    void createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const Size &winSize);
+    static Size getSizeForMenu(const std::string &title, const ControlMap &items);
+    static std::vector<std::string> getNames(const ControlMap &items);
+    static Size getMaxSize(const Size &a, const Size &b, const Size &c);
+    static bool isPositionOk(const Pos &pos, const Size &size, const Size &winSize);
+    void createMenus(bool isSelectingGame, int selectedIndex);
 
     void waitUntilNextFrame();
 
     using UniqueMenu = std::unique_ptr<Arcade::NCurses::Menu>;
 
     Window _win;
-    UniqueMenu _graphicalMenu, _gameMenu;
+    UniqueMenu _graphicalMenu, _gameMenu, _controlMenu;
+
+    // Cache data
+    StringVector _graphicalNames, _gameNames;
+    ControlMap _controls;
+
     Size _lastWinSize;
     int _fps;
     long _lastFrame;
