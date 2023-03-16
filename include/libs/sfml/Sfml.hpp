@@ -23,7 +23,7 @@ class Arcade::SFML : public Arcade::IDisplay {
         SFML();
         ~SFML();
         std::vector<Key> getPressedKeys() override;
-        void render(const IGameData &gameData) override;
+        void render(IGameData &gameData) override;
         void renderMenu(const std::vector<std::string> &games,
         const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map) override;
     private:

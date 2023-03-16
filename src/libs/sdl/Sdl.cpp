@@ -203,7 +203,7 @@ void Arcade::Sdl::Sdl::drawMenuTitlesAndBg()
     _window.drawLine({161 + 40 - 35, 350}, {161 - 40 + 219 - 35, 350}, White);
 }
 
-void Arcade::Sdl::Sdl::render(const IGameData &gameData)
+void Arcade::Sdl::Sdl::render(IGameData &gameData)
 {
     double cellSize = calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
     Texture *t;
@@ -214,15 +214,15 @@ void Arcade::Sdl::Sdl::render(const IGameData &gameData)
     _window.clear();
     for (auto &entity: gameData.getEntities()) {
         // Get texture
-        texturePath = Sdl::texturePath(entity, gameData.getGameName());
+        texturePath = Sdl::texturePath(*entity, gameData.getGameName());
         if (_textures.find(texturePath) == _textures.end() || _textures[texturePath].get() == nullptr)
             _textures[texturePath] = std::make_unique<Texture>(texturePath, _window.getRenderer());
         t = _textures[texturePath].get();
 
         // Position sprite
         s.setTexture(*t);
-        pos = entity.getPosition();
-        size = entity.getSize();
+        pos = entity->getPosition();
+        size = entity->getSize();
         s.setPosition({pos.first * cellSize, pos.second * cellSize});
         s.setSize({size.first * cellSize, size.second * cellSize});
 

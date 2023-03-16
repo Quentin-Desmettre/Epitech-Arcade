@@ -1,12 +1,13 @@
 #include <cstdio>
+#include "games/nibbler/Nibbler.hpp"
 
 extern "C"
 {
     void *createGame() {
-        return new int;
+        return new Arcade::Nibbler::Game();
     }
 
     void deleteGame(void *game) {
-        delete static_cast<int *>(game);
+        delete static_cast<Arcade::Nibbler::Game *>(game);
     }
 }
