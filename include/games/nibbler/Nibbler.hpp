@@ -38,6 +38,8 @@ namespace Arcade {
                 std::pair<int, int> _head;
                 std::vector<std::pair<int, int>> _body;
                 std::pair<float, float> _direction;
+                std::pair<int, int> _child;
+                bool _is_child;
                 long _clock;
                 bool _exit;
                 float _time;

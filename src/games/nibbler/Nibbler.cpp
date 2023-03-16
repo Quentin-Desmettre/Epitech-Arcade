@@ -63,6 +63,7 @@ void Arcade::Nibbler::Game::restart()
         _body.push_back({19 / 2 + 1 - i, 17});
     _time_dif = 0;
     _is_stuck = false;
+    _is_child = false;
 }
 
 Arcade::Nibbler::Game::Game()
@@ -181,10 +182,21 @@ void Arcade::Nibbler::Game::update()
         std::pair<float, float> dir = changeDirection();
         if (dir.first == 0 && dir.second == 0)
             _is_stuck = true;
-        else
+        else {
             _is_stuck = false;
+            if (_is_child) {
+                _body.push_back(_child);
+                _is_child = false;
+            }
+            if (getAtPos(_head.first, _head.second) == 'o') {
+                _map[_head.first][_head.second] = ' ';
+                _is_child = true;
+                _child = _body.back();
+            }
+        }
         _direction = dir;
         _time_dif -= 0.5;
+
     }
     if (_is_stuck == false)
         _offset = _time_dif;
@@ -204,6 +216,8 @@ void Arcade::Nibbler::Game::convertToGameData()
                 _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "fruit", 0));
         }
     }
+    if (_is_child)
+        _gameData->addEntity(new Arcade::Nibbler::Entity({_child.first, _child.second}, {1, 1}, "fruit", 0));
     std::pair<float, float> pos = {(_head.first - _body[0].first) * _offset * 2, (_head.second - _body[0].second) * _offset * 2};
     _gameData->addEntity(new Arcade::Nibbler::Entity({_body[0].first + pos.first, _body[0].second + pos.second}, {1, 1}, "fruit", 0));
     for (size_t i = 1; i < _body.size(); i++) {
