@@ -10,7 +10,6 @@
 
 #include "games/nibbler/Entity.hpp"
 #include "GameInterfaces.hpp"
-#include "games/nibbler/Snake.hpp"
 #include "games/nibbler/GameData.hpp"
 #include <memory>
 
@@ -24,7 +23,6 @@ namespace Arcade {
                 void handleKeys(const std::vector<Key> &pressedKeys);
                 void update();
                 IGameData &getGameData() const;
-                bool exit() const;
             protected:
             private:
                 std::pair<float, float> changeDirection();
@@ -33,14 +31,19 @@ namespace Arcade {
                 void restart();
                 void initMap();
                 void convertToGameData();
+                void folowSnake(std::pair<int, int> pos);
 
                 std::shared_ptr<GameData> _gameData;
                 char _map[19][19];
-                Snake _snake;
+                std::pair<int, int> _head;
+                std::vector<std::pair<int, int>> _body;
                 std::pair<float, float> _direction;
-                clock_t _clock;
+                long _clock;
                 bool _exit;
                 float _time;
+                float _time_dif;
+                float _offset;
+                bool _is_stuck;
         };
     }
 }

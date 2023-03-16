@@ -91,8 +91,8 @@ int Arcade::Core::run()
     _selectedIndex = 0;
     while (_run) {
         pressedKeys = _display->getPressedKeys();
-        if (!_isInMenu && _game->exit())
-            exitGame();
+        // if (!_isInMenu && _game->exit())
+        //     exitGame();
         if (_isInMenu) {
             _display->renderMenu(_gameLibs, _graphicalLibs, _isSelectingGame, _selectedIndex);
             handleMenuEvents(oldKeys, pressedKeys);

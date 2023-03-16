@@ -15,6 +15,7 @@ namespace Arcade {
             public:
                 Entity();
                 Entity(std::pair<float, float> pos, std::pair<float, float> size, std::string texture, float rotation);
+                Entity(const Entity &entity);
                 ~Entity();
                 void setPosition(std::pair<float, float> pos);
                 std::pair<float, float> getPosition() const;

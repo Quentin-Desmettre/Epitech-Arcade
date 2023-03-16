@@ -23,6 +23,14 @@ Arcade::Nibbler::Entity::Entity(std::pair<float, float> pos, std::pair<float, fl
     _rotation = rotation;
 }
 
+Arcade::Nibbler::Entity::Entity(const Arcade::Nibbler::Entity &entity)
+{
+    _pos = entity.getPosition();
+    _size = entity.getSize();
+    _texture = entity.getTexture();
+    _rotation = entity.getRotation();
+}
+
 Arcade::Nibbler::Entity::~Entity()
 {
 }
