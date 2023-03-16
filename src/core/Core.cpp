@@ -67,7 +67,6 @@ Arcade::Core::Core(int ac, char **av):
         else if (libType == LibLoader::GAME)
             _gameLibs.push_back(tmpFile);
     }
-
     if (_graphicalLibs.empty())
         throw NoLibraryException(LibLoader::GRAPHICAL);
     if (_gameLibs.empty())
@@ -84,8 +83,10 @@ Arcade::Core::Core(int ac, char **av):
 
 Arcade::Core::~Core()
 {
-    _libLoader.unloadGraphicalLib(_display);
-    _libLoader.unloadGameLib(_game);
+    if (_display)
+        _libLoader.unloadGraphicalLib(_display);
+    if (_game)
+        _libLoader.unloadGameLib(_game);
 }
 
 int Arcade::Core::run()
@@ -115,10 +116,12 @@ int Arcade::Core::run()
 
 void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys)
 {
-    if (isKeyPressed(Key::Enter, oldKeys, newKeys))
+    if (isKeyPressed(Key::Enter, oldKeys, newKeys)) {
         return loadSelectedLibrary();
-    if (isKeyPressed(Key::Space, oldKeys, newKeys))
+    }
+    if (isKeyPressed(Key::Space, oldKeys, newKeys)) {
         return loadGraphicLibrary("./lib/" + _graphicalLibs[_selectedGraph]);
+    }
     if (isKeyPressed(Key::Escape, oldKeys, newKeys)) {
         _run = false;
         return;
@@ -173,8 +176,10 @@ void Arcade::Core::loadSelectedLibrary()
 
 void Arcade::Core::loadGameLibrary(const std::string &name)
 {
-    if (_game)
+    if (_game) {
         _libLoader.unloadGameLib(_game);
+        _game = nullptr;
+    }
 
     IGame *newGame = _libLoader.loadGameLib(name);
     if (!newGame)
@@ -185,8 +190,10 @@ void Arcade::Core::loadGameLibrary(const std::string &name)
 
 void Arcade::Core::loadGraphicLibrary(const std::string &name)
 {
-    if (_display)
+    if (_display) {
         _libLoader.unloadGraphicalLib(_display);
+        _display = nullptr;
+    }
 
     IDisplay *newDisplay = _libLoader.loadGraphicalLib(name);
     if (!newDisplay)

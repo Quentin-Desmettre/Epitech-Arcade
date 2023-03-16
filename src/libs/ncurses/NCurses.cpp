@@ -11,15 +11,24 @@
 #include <chrono>
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 extern "C" void *createDisplay()
 {
+    std::cerr << "NCurses" << std::endl;
+    initscr();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+    if (has_colors() && can_change_color())
+        start_color();
     return new Arcade::NCurses::NCurses();
 }
 
 extern "C" void deleteDisplay(void *display)
 {
     delete reinterpret_cast<Arcade::NCurses::NCurses *>(display);
+    endwin();
 }
 
 Arcade::NCurses::NCurses::NCurses():
@@ -83,6 +92,7 @@ void Arcade::NCurses::NCurses::render(IGameData &gameData)
         Texture tex(entity->getTexture(), entitySize.first, entitySize.second);
         game.draw(tex, entityPos);
     }
+    refresh();
 }
 
 void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,

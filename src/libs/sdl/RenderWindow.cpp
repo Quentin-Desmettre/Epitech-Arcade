@@ -10,25 +10,10 @@
 #include <stdexcept>
 #include <chrono>
 #include <thread>
-#include <iostream>
-
-int Arcade::Sdl::RenderWindow::_nbInstances = 0;
-
-void Arcade::Sdl::RenderWindow::initSdl()
-{
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-        throw std::runtime_error("Error: SDL2: Failed to init SDL.");
-    if (TTF_Init() < 0)
-        throw std::runtime_error("Error: SDL2: Failed to init SDL_ttf.");
-    std::cerr << "Info: SDL2: Init SDL." << std::endl;
-}
 
 Arcade::Sdl::RenderWindow::RenderWindow(int width, int height)
 {
     _lastFrame = 0;
-    _nbInstances++;
-    if (!SDL_WasInit(SDL_INIT_EVERYTHING))
-        initSdl();
     _window = SDL_CreateWindow("Arcade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
     _renderer = _window ? SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED) : nullptr;
 
@@ -38,11 +23,8 @@ Arcade::Sdl::RenderWindow::RenderWindow(int width, int height)
 
 Arcade::Sdl::RenderWindow::~RenderWindow()
 {
-    _nbInstances--;
     SDL_DestroyRenderer(_renderer);
     SDL_DestroyWindow(_window);
-    if (!_nbInstances)
-        SDL_Quit();
 }
 
 void Arcade::Sdl::RenderWindow::draw(const Sprite &sprite)

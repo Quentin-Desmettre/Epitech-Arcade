@@ -18,7 +18,7 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../arcade
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -fno-gnu-unique
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -fno-gnu-unique -g
 
 all: try-clean $(NAME)
 

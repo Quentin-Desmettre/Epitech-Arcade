@@ -11,12 +11,18 @@
 
 extern "C" void *createDisplay()
 {
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+        throw std::runtime_error("Error: SDL2: Failed to init SDL.");
+    if (TTF_Init() < 0)
+        throw std::runtime_error("Error: SDL2: Failed to init SDL_ttf.");
     return new Arcade::Sdl::Sdl();
 }
 
 extern "C" void deleteDisplay(void *display)
 {
     delete reinterpret_cast<Arcade::Sdl::Sdl *>(display);
+    TTF_Quit();
+    SDL_Quit();
 }
 
 std::map<std::string, std::unique_ptr<Arcade::Sdl::Texture>> Arcade::Sdl::Sdl::_textures = {};
@@ -84,7 +90,7 @@ const std::map<SDL_Scancode, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
 };
 
 Arcade::Sdl::Sdl::Sdl():
-        _window(1280, 832),
+        _window{1280, 832},
         _globalFont("assets/arial.ttf", 20),
         _boldGlobalFont("assets/arial.ttf", 25, true),
         _menuBackgroundTexture("assets/menubg.png", _window.getRenderer()),
@@ -252,8 +258,10 @@ std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()
     SDL_Scancode key;
 
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT)
-            return {Key::Escape};
+        if (event.type == SDL_QUIT) {
+            keys.push_back(Key::Escape);
+            continue;
+        }
         if ((event.type != SDL_KEYDOWN && event.type != SDL_KEYUP) || // If it's not a key event
             _keyMap.find(event.key.keysym.scancode) == _keyMap.end()) // If the key is not mapped
             continue;
