@@ -11,7 +11,6 @@
 
 extern "C" void *createDisplay()
 {
-    std::cerr << "Info: SDL2: Init SDL." << std::endl;
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
         throw std::runtime_error("Error: SDL2: Failed to init SDL.");
     if (TTF_Init() < 0)
@@ -21,7 +20,6 @@ extern "C" void *createDisplay()
 
 extern "C" void deleteDisplay(void *display)
 {
-    std::cerr << "Info: SDL2: Quit SDL." << std::endl;
     delete reinterpret_cast<Arcade::Sdl::Sdl *>(display);
     TTF_Quit();
     SDL_Quit();
@@ -260,8 +258,10 @@ std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()
     SDL_Scancode key;
 
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT)
-            return {Key::Escape};
+        if (event.type == SDL_QUIT) {
+            keys.push_back(Key::Escape);
+            continue;
+        }
         if ((event.type != SDL_KEYDOWN && event.type != SDL_KEYUP) || // If it's not a key event
             _keyMap.find(event.key.keysym.scancode) == _keyMap.end()) // If the key is not mapped
             continue;

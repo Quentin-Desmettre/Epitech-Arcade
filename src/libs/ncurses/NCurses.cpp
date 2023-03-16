@@ -27,7 +27,6 @@ extern "C" void *createDisplay()
 
 extern "C" void deleteDisplay(void *display)
 {
-    std::cerr << "End NCurses" << std::endl;
     delete reinterpret_cast<Arcade::NCurses::NCurses *>(display);
     endwin();
 }
@@ -93,6 +92,7 @@ void Arcade::NCurses::NCurses::render(const IGameData &gameData)
         Texture tex(entity.getTexture(), entitySize.first, entitySize.second);
         game.draw(tex, entityPos);
     }
+    refresh();
 }
 
 void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,

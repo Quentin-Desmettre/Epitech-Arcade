@@ -181,8 +181,6 @@ void Arcade::NCurses::Window::clear()
 
 Arcade::Key Arcade::NCurses::Window::getKey()
 {
-    if (!_isInit)
-        throw std::runtime_error("Window is not initialized");
     int ch = getch();
     if (_keyMap.find(ch) == _keyMap.end())
         return Arcade::Key::Unknown;
