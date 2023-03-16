@@ -21,6 +21,7 @@ void Arcade::Sdl::Sprite::setTexture(const Texture &texture)
 {
     _texture = &texture;
     setTextureRect({0, 0, _texture->getSize().first, _texture->getSize().second});
+    setSize({_texture->getSize().first, _texture->getSize().second});
 }
 
 void Arcade::Sdl::Sprite::setSize(const SpriteSize &size)
@@ -31,7 +32,6 @@ void Arcade::Sdl::Sprite::setSize(const SpriteSize &size)
 void Arcade::Sdl::Sprite::setTextureRect(const TextureRect &rect)
 {
     _textureRect = rect;
-    _size = {rect.width, rect.height};
 }
 
 void Arcade::Sdl::Sprite::setPosition(const SpriteSize &position)

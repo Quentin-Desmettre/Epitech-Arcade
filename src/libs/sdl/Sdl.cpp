@@ -19,7 +19,7 @@ extern "C" void deleteDisplay(void *display)
     delete reinterpret_cast<Arcade::Sdl::Sdl *>(display);
 }
 
-std::map<std::string, std::unique_ptr<Arcade::Sdl::Texture>> Arcade::Sdl::Sdl::_spriteMap = {};
+std::map<std::string, std::unique_ptr<Arcade::Sdl::Texture>> Arcade::Sdl::Sdl::_textures = {};
 const std::map<SDL_Scancode, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
         {SDL_SCANCODE_UP, Arcade::Key::Up},
         {SDL_SCANCODE_DOWN, Arcade::Key::Down},
@@ -205,6 +205,44 @@ void Arcade::Sdl::Sdl::drawMenuTitlesAndBg()
 
 void Arcade::Sdl::Sdl::render(const IGameData &gameData)
 {
+    double cellSize = calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
+    Texture *t;
+    std::string texturePath;
+    Sprite s;
+    SpriteSize pos, size;
+
+    _window.clear();
+    for (auto &entity: gameData.getEntities()) {
+        // Get texture
+        texturePath = Sdl::texturePath(entity, gameData.getGameName());
+        if (_textures.find(texturePath) == _textures.end() || _textures[texturePath].get() == nullptr)
+            _textures[texturePath] = std::make_unique<Texture>(texturePath, _window.getRenderer());
+        t = _textures[texturePath].get();
+
+        // Position sprite
+        s.setTexture(*t);
+        pos = entity.getPosition();
+        size = entity.getSize();
+        s.setPosition({pos.first * cellSize, pos.second * cellSize});
+        s.setSize({size.first * cellSize, size.second * cellSize});
+
+        // Draw it
+        _window.draw(s);
+    }
+    _window.display();
+}
+
+double Arcade::Sdl::Sdl::calculateCellSize(int width, int height)
+{
+    double cellSizeX = 1280.0 / width;
+    double cellSizeY = 832.0 / height;
+
+    return std::min(cellSizeX, cellSizeY);
+}
+
+std::string Arcade::Sdl::Sdl::texturePath(const IEntity &entity, const std::string &gameName)
+{
+    return "assets/" + gameName + "/sdl/" + entity.getTexture();
 }
 
 std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()

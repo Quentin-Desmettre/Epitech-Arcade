@@ -40,17 +40,20 @@ private:
     std::vector<UniqueText> _graphItems, _gameItems, _controlsItems;
     std::vector<std::string> _graphNames, _gameNames;
     ControlMap _controls;
-
     Texture _menuBackgroundTexture;
     Sprite _menuBackground;
 
-    static std::map<std::string, std::unique_ptr<Texture>> _spriteMap;
-    const static std::map<SDL_Scancode, Key> _keyMap;
+    // Game
+    static std::map<std::string, std::unique_ptr<Texture>> _textures;
 
+    // Utility
+    const static std::map<SDL_Scancode, Key> _keyMap;
     void createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, const ControlMap &controls);
     void drawMenuTitlesAndBg();
     void drawMenuItems(bool isSelectingGame, int selectedIndex);
     static std::string simplifyName(const std::string &name);
+    static double calculateCellSize(int width, int height);
+    static std::string texturePath(const IEntity &entity, const std::string &gameName);
 };
 
 #endif //EPITECH_ARCADE_SDL_HPP
