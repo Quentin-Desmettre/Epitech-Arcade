@@ -23,14 +23,17 @@ class Arcade::SFML : public Arcade::IDisplay {
         SFML();
         ~SFML();
         std::vector<Key> getPressedKeys() override;
-        void render(IGameData &gameData) override;
+        void render(const IGameData &gameData) override;
         void renderMenu(const std::vector<std::string> &games,
-        const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex) override;
+        const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map) override;
     private:
         std::map<std::string, std::unique_ptr<sf::Texture>> _textureMap;
+        bool loadTexture(std::string texturePath);
         void calculateCellSize(int width, int height);
         void centerTextOrigin();
         void drawTextWithColor(sf::Color color);
+        void drawRect(sf::Vector2f size, sf::Vector2f position);
+        void drawLine(sf::Vector2f start, sf::Vector2f end);
         sf::RenderWindow _window;
         sf::Event _event;
         sf::Font _font;
@@ -38,5 +41,6 @@ class Arcade::SFML : public Arcade::IDisplay {
         sf::Texture _texture;
         sf::Sprite _sprite;
         sf::Music _music;
+        sf::RectangleShape _rectangle;
         float _cellSize;
 };
