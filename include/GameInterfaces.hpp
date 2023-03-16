@@ -140,7 +140,7 @@ namespace Arcade {
         public:
             virtual std::map<std::string, int> getScores() const = 0;
             virtual std::string getGameName() const = 0;
-            virtual std::vector<IEntity> &getEntities() = 0;
+            virtual std::vector<IEntity *> &getEntities() = 0;
             virtual std::pair<int, int> getMapSize() const = 0;
     };
 

@@ -96,24 +96,26 @@ void Arcade::SFML::drawTextWithColor(sf::Color color)
 
 void Arcade::SFML::render(Arcade::IGameData &gameData)
 {
-    std::vector<IEntity> &entities = gameData.getEntities();
+    std::vector<IEntity *> entities = gameData.getEntities();
 
     _window.clear();
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
+
     for (auto &entity : entities) {
-        if (_textureMap.find(entity.getTexture()) == _textureMap.end()) {
-            if (_texture.loadFromFile(entity.getTexture()) == false) {
-                std::cerr << "Error: Cannot load texture: " << entity.getTexture() << std::endl;
+        // std::cout << "test:" << entity.getTexture() << std::endl;
+        if (_textureMap.find(entity->getTexture()) == _textureMap.end()) {
+            if (_texture.loadFromFile(entity->getTexture()) == false) {
+                std::cerr << "Error: Cannot load texture: " << entity->getTexture() << std::endl;
                 continue;
             }
-            _textureMap[entity.getTexture()] = std::make_unique<sf::Texture>(_texture);
+            _textureMap[entity->getTexture()] = std::make_unique<sf::Texture>(_texture);
         }
-        _sprite.setTexture(*_textureMap[entity.getTexture()].get());
+        _sprite.setTexture(*_textureMap[entity->getTexture()].get());
         _sprite.scale(_sprite.getLocalBounds().width / _cellSize, _sprite.getLocalBounds().height / _cellSize);
-        _sprite.scale(entity.getSize().first, entity.getSize().second);
+        _sprite.scale(entity->getSize().first, entity->getSize().second);
         _sprite.setOrigin(_sprite.getGlobalBounds().width / 2, _sprite.getGlobalBounds().height / 2);
-        _sprite.setPosition(entity.getPosition().first * _cellSize, entity.getPosition().second * _cellSize);
-        _sprite.setRotation(entity.getRotation());
+        _sprite.setPosition(entity->getPosition().first * _cellSize, entity->getPosition().second * _cellSize);
+        _sprite.setRotation(entity->getRotation());
         _window.draw(_sprite);
     }
     _text.setString(gameData.getGameName());

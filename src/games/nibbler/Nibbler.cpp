@@ -124,7 +124,7 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
         if (getAtPos(pos, dir[i].first, dir[i].second) == 'X')
             dir.erase(dir.begin() + i);
     }
-    _snake.deleleteImpossibleDir(dir);
+    _snake.deleteImpossibleDir(dir);
     if (dir.size() == 0)
         std::cout << "ERROR stuck" << std::endl;
     if (dir.size() == 1)
@@ -150,32 +150,34 @@ void Arcade::Nibbler::Game::update()
     dir.first *= dif * 10;
     dir.second *= dif * 10;
     _snake.move(dif, dir);
-    if (_snake.isDead())
-        restart();
+    // if (_snake.isDead())
+    //     restart();
     convertToGameData();
 }
 
 void Arcade::Nibbler::Game::convertToGameData()
 {
     _gameData->getEntities().clear();
-    Arcade::Nibbler::Entity entity({0, 0}, {1, 1}, "", 0);
     for (int i = 0; i < 19; i++) {
         for (int j = 0; j < 19; j++) {
             if (_map[i][j] == 'X') {
-                entity.setPosition({i, j});
-                entity.setTexture("wall");
-                _gameData->addEntity(entity);
+                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "fruit", 0));
+                // std::cout << _gameData->getEntities().size() << std::endl;
             }
             if (_map[i][j] == 'o') {
-                entity.setPosition({i, j});
-                entity.setTexture("fruit");
-                _gameData->addEntity(entity);
+                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "fruit", 0));
+                // std::cout << _gameData->getEntities().size() << std::endl;
             }
         }
     }
-    for (auto &entity : _snake.getSnake()) {
-        _gameData->addEntity(entity);
-    }
+
+    // for (auto &entity : _snake.getSnake()) {
+    //     _gameData->addEntity(entity);
+    // }
+    // std::cout << _gameData->getEntities().size() << std::endl;
+    // for (auto &entity : _gameData->getEntities()) {
+    //     std::cout << entity.getTexture() << std::endl;
+    // }
     _gameData->addScore("Score", 0);
     _gameData->addScore("Time", _time);
 }
@@ -187,5 +189,5 @@ Arcade::IGameData &Arcade::Nibbler::Game::getGameData() const
 
 bool Arcade::Nibbler::Game::exit() const
 {
-    return _time == 0;
+    return _exit;
 }

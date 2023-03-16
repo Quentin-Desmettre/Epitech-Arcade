@@ -56,7 +56,7 @@ bool Arcade::Nibbler::Snake::isDead()
     return false;
 }
 
-void Arcade::Nibbler::Snake::deleleteImpossibleDir(std::vector<std::pair<int, int>> &dir) const
+void Arcade::Nibbler::Snake::deleteImpossibleDir(std::vector<std::pair<int, int>> &dir) const
 {
     std::pair<float, float> head = _snake[0].getPosition();
     std::pair<float, float> body = _snake[1].getPosition();

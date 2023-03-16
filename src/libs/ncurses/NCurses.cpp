@@ -74,14 +74,14 @@ void Arcade::NCurses::NCurses::render(IGameData &gameData)
     gameData.getEntities();
     foreach (entity, gameData.getEntities()) {
         Size entitySize = {
-                std::round(cellSize * entity.getSize().first),
-                std::round(cellSize * entity.getSize().second)
+                std::round(cellSize * entity->getSize().first),
+                std::round(cellSize * entity->getSize().second)
         };
         Pos entityPos = {
-                std::round(cellSize * entity.getPosition().first - entitySize.first / 2),
-                std::round(cellSize * entity.getPosition().second - entitySize.second / 2)
+                std::round(cellSize * entity->getPosition().first - entitySize.first / 2),
+                std::round(cellSize * entity->getPosition().second - entitySize.second / 2)
         };
-        Texture tex(entity.getTexture(), entitySize.first, entitySize.second);
+        Texture tex(entity->getTexture(), entitySize.first, entitySize.second);
         game.draw(tex, entityPos);
     }
 }

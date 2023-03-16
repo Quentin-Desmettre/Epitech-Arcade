@@ -19,13 +19,13 @@ namespace Arcade {
                 ~GameData();
                 std::map<std::string, int> getScores() const;
                 std::string getGameName() const;
-                std::vector<IEntity> &getEntities();
+                std::vector<IEntity *> &getEntities();
                 std::pair<int, int> getMapSize() const;   
                 void addScore(std::string name, int score);             
-                void addEntity(Entity entity);
+                void addEntity(IEntity *entity);
             private:
                 std::map<std::string, int> _scores;
-                std::vector<Entity> _entities;
+                std::vector<IEntity *> _entities;
         };
     }
 }

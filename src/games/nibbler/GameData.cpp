@@ -7,7 +7,7 @@
 
 #include "games/nibbler/GameData.hpp"
 #include "games/nibbler/Nibbler.hpp"
-
+#include <iostream>
 Arcade::Nibbler::GameData::GameData()
 {
     _scores = {};
@@ -30,9 +30,9 @@ std::string Arcade::Nibbler::GameData::getGameName() const
     return "Nibbler";
 }
 
-std::vector<Arcade::IEntity> &Arcade::Nibbler::GameData::getEntities()
+std::vector<Arcade::IEntity *> &Arcade::Nibbler::GameData::getEntities()
 {
-    return (std::vector<Arcade::IEntity> &)_entities;
+    return _entities;
 }
 
 std::pair<int, int> Arcade::Nibbler::GameData::getMapSize() const
@@ -45,7 +45,8 @@ void Arcade::Nibbler::GameData::addScore(std::string name, int score)
     _scores[name] = score;
 }
 
-void Arcade::Nibbler::GameData::addEntity(Arcade::Nibbler::Entity entity)
+void Arcade::Nibbler::GameData::addEntity(Arcade::IEntity *entity)
 {
+    // std::cout << entity.getTexture() << std::endl;
     _entities.push_back(entity);
 }

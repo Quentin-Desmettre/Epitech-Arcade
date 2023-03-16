@@ -22,7 +22,7 @@ namespace Arcade {
                 void born();
                 bool isDead();
                 std::vector<Entity> &getSnake();
-                void deleleteImpossibleDir(std::vector<std::pair<int, int>> &dir) const;
+                void deleteImpossibleDir(std::vector<std::pair<int, int>> &dir) const;
                 std::pair<float, float> getFuturHead(std::pair<float, float> direction) const;
 
 
