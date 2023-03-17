@@ -123,7 +123,7 @@ bool Arcade::SFML::loadTexture(std::string texturePath)
     return true;
 }
 
-void Arcade::SFML::render(const Arcade::IGameData &gameData)
+void Arcade::SFML::render(Arcade::IGameData &gameData)
 {
     std::vector<IEntity *> entities = gameData.getEntities();
 
@@ -131,19 +131,19 @@ void Arcade::SFML::render(const Arcade::IGameData &gameData)
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
 
     for (auto &entity : entities) {
-        if (loadTexture("assets/" + gameData.getGameName() + "/sfml/" + entity.getTexture()) == false)
+        if (loadTexture("assets/" + gameData.getGameName() + "/sfml/" + entity->getTexture()) == false)
             continue;
-        _sprite.setTexture(*_textureMap["assets/" + gameData.getGameName() + "/sfml/" + entity.getTexture()].get());
-        _sprite.scale(_sprite.getLocalBounds().width / _cellSize, _sprite.getLocalBounds().height / _cellSize);
+        _sprite.setTexture(*_textureMap["assets/" + gameData.getGameName() + "/sfml/" + entity->getTexture()].get());
+        _sprite.scale(_cellSize / _sprite.getGlobalBounds().width, _cellSize / _sprite.getGlobalBounds().height);
         _sprite.scale(entity->getSize().first, entity->getSize().second);
         _sprite.setOrigin(_sprite.getGlobalBounds().width / 2, _sprite.getGlobalBounds().height / 2);
         _sprite.setPosition(entity->getPosition().first * _cellSize, entity->getPosition().second * _cellSize);
         _sprite.setRotation(entity->getRotation());
         _window.draw(_sprite);
     }
-    _text.setString(gameData.getGameName());
-    _text.setPosition(0, 0);
-    _window.draw(_text);
+    // _text.setString(gameData.getGameName());
+    // _text.setPosition(0, 0);
+    // _window.draw(_text);
     _window.display();
 }
 

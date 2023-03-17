@@ -8,6 +8,7 @@
 #include "games/nibbler/GameData.hpp"
 #include "games/nibbler/Nibbler.hpp"
 #include <iostream>
+
 Arcade::Nibbler::GameData::GameData()
 {
     _scores = {};

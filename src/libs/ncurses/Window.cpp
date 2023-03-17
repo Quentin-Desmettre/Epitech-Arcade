@@ -101,18 +101,13 @@ bool Arcade::NCurses::Window::_hasColors = false;
 
 Arcade::NCurses::Window::Window()
 {
-    _win = initscr();
+    _win = stdscr;
     _pos = {0, 0};
     timeout(0);
-    noecho();
-    getSize();
-    curs_set(0);
-    keypad(stdscr, TRUE);
     _isInit = true;
 
     if (has_colors() && can_change_color()) {
         _hasColors = true;
-        start_color();
     } else
         _hasColors = false;
 }
@@ -136,9 +131,7 @@ Arcade::NCurses::Window &Arcade::NCurses::Window::getStdWin()
 
 Arcade::NCurses::Window::~Window()
 {
-    if (_win == stdscr)
-        endwin();
-    else
+    if (_win != stdscr)
         delwin(_win);
 }
 
@@ -188,8 +181,6 @@ void Arcade::NCurses::Window::clear()
 
 Arcade::Key Arcade::NCurses::Window::getKey()
 {
-    if (!_isInit)
-        throw std::runtime_error("Window is not initialized");
     int ch = getch();
     if (_keyMap.find(ch) == _keyMap.end())
         return Arcade::Key::Unknown;
