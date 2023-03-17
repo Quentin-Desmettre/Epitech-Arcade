@@ -182,6 +182,10 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
 int Arcade::Nibbler::Game::isSnakeDead()
 {
     for (size_t i = 1; i < _body.size(); i++) {
+        if (_is_stuck && _head.first == _body[i].first && _head.second == _body[i].second) {
+            _exit = true;
+            return 1;
+        }
         if (_body[0].first == _body[i].first && _body[0].second == _body[i].second) {
             _exit = true;
             return 1;
@@ -212,9 +216,9 @@ void Arcade::Nibbler::Game::update()
         else {
             _is_stuck = false;
             growUpSnake();
-            if (isSnakeDead())
-                return;
         }
+        if (isSnakeDead())
+            return;
         _direction = dir;
         _time_dif -= 0.4;
         if (_is_stuck == true)
