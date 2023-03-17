@@ -38,7 +38,7 @@ private:
 
     // Menu
     using UniqueText = std::unique_ptr<Text>;
-    UniqueText _graphTitle, _gameTitle, _controlsTitle;
+    UniqueText _graphTitle, _gameTitle, _controlsTitle, _infoPanelTitle, _scoreText;
     std::vector<UniqueText> _graphItems, _gameItems, _controlsItems;
     std::vector<std::string> _graphNames, _gameNames;
     ControlMap _controls;
@@ -56,6 +56,7 @@ private:
     static std::string simplifyName(const std::string &name);
     static double calculateCellSize(int width, int height);
     static std::string texturePath(const IEntity &entity, const std::string &gameName);
+    void drawInfoPanel(Arcade::IGameData &gameData);
 };
 
 #endif //EPITECH_ARCADE_SDL_HPP
