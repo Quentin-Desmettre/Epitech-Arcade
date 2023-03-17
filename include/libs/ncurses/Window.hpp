@@ -35,7 +35,7 @@ public:
 
     void drawBox();
     void draw(const std::string &text, const Pos &pos);
-    void draw(const Texture &texture, const Pos &pos);
+    void draw(const Texture &texture, Pos pos);
     void clear();
 
     static Arcade::Key getKey();

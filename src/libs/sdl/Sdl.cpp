@@ -254,26 +254,13 @@ std::string Arcade::Sdl::Sdl::texturePath(const IEntity &entity, const std::stri
 std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()
 {
     SDL_Event event;
-    static std::vector<Key> keys;
-    SDL_Scancode key;
+    std::vector<Key> keys;
 
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
+        if (event.type == SDL_QUIT)
             keys.push_back(Key::Escape);
-            continue;
-        }
-        if ((event.type != SDL_KEYDOWN && event.type != SDL_KEYUP) || // If it's not a key event
-            _keyMap.find(event.key.keysym.scancode) == _keyMap.end()) // If the key is not mapped
-            continue;
-
-        // If key is in vector -> remove it
-        // Else -> add it
-        key = event.key.keysym.scancode;
-        auto pos = std::find(keys.begin(), keys.end(), _keyMap.at(key));
-        if (pos != keys.end())
-            keys.erase(pos);
-        else
-            keys.push_back(_keyMap.at(key));
+        else if (event.type == SDL_KEYDOWN && _keyMap.find(event.key.keysym.scancode) != _keyMap.end())
+            keys.push_back(_keyMap.at(event.key.keysym.scancode));
     }
     return keys;
 }

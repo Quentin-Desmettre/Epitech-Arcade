@@ -41,6 +41,8 @@ private:
     static Size getMaxSize(const Size &a, const Size &b, const Size &c);
     static bool isPositionOk(const Pos &pos, const Size &size, const Size &winSize);
     void createMenus(bool isSelectingGame, int selectedIndex);
+    void renderScores(IGameData &gameData);
+    void renderEntities(IGameData &gameData);
 
     void waitUntilNextFrame();
 
