@@ -14,7 +14,6 @@
 
 extern "C" void *createDisplay()
 {
-    std::cerr << "NCurses" << std::endl;
     initscr();
     noecho();
     curs_set(0);
@@ -104,6 +103,7 @@ void Arcade::NCurses::NCurses::renderEntities(IGameData &gameData)
             textures[path]->setSize(entitySize.first, entitySize.second);
         game.draw(*textures[path].get(), entityPos);
     }
+    textures.clear();
 }
 
 void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,

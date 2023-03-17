@@ -84,16 +84,16 @@ void Arcade::Nibbler::Game::handleKeys(const std::vector<Arcade::Key> &pressedKe
     for (auto &key : pressedKeys)
     {
         switch (key) {
-        case Arcade::Key::Up:
+        case Arcade::Key::Z:
             _direction = {0, -1};
             break;
-        case Arcade::Key::Down:
+        case Arcade::Key::S:
             _direction = {0, 1};
             break;
-        case Arcade::Key::Left:
+        case Arcade::Key::Q:
             _direction = {-1, 0};
             break;
-        case Arcade::Key::Right:
+        case Arcade::Key::D:
             _direction = {1, 0};
             break;
         case Arcade::Key::Space:
