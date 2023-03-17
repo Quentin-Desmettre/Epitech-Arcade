@@ -6,7 +6,7 @@
 ##
 
 rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
-INCLUDE_DIRS := $(shell find ../../../ -name "*.hpp" -printf '%h\n' | sed 's/ /\\ /g' | sort | uniq | awk '{printf " -I%s", $$0}')
+INCLUDE_DIRS = -I ../../../include/libs -I ../../../include/
 
 SOURCEDIR = ./
 
@@ -18,12 +18,12 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_sdl2.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -fPIC -g  -fno-gnu-unique -g
 
 all: try-clean $(NAME)
 
 $(NAME):   $(OBJ)
-	ld -fPIC -shared -o $(NAME) $(OBJ)
+	$(CXX) -shared -o $(NAME) $(OBJ) -rdynamic -lc $(CXXFLAGS)
 
 try-clean:
 	(ls *.gc* > /dev/null 2>&1 && rm -rf $(OBJ) *.gc*) || true

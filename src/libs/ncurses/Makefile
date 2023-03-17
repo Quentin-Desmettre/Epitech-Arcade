@@ -18,7 +18,7 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_ncurses.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lncurses -fPIC -shared
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lncurses -fPIC -shared -fno-gnu-unique -g
 
 all: try-clean $(NAME)
 

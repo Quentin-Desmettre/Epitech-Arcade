@@ -18,7 +18,7 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_sfml.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -fPIC
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -fPIC -fno-gnu-unique -g
 
 all: try-clean $(NAME)
 

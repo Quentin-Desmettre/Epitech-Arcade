@@ -44,8 +44,8 @@ namespace Arcade {
             IDisplay *_display;
             IGame *_game;
             bool _run, _isInMenu;
-            bool _isSelectingGame;
-            std::size_t _selectedIndex;
+            int _selectedGraph, _selectedGame;
+            ControlMap _controls;
 
             void handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
             void exitGame();
@@ -54,6 +54,7 @@ namespace Arcade {
             void loadSelectedLibrary();
             void loadGameLibrary(const std::string &name);
             void loadGraphicLibrary(const std::string &name);
+            static void incrementIndex(int &index, std::size_t len, int dir);
     };
 };
 

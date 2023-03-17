@@ -10,17 +10,25 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
-
-#define foreach(item, container) for (auto &item: container)
+#include <algorithm>
+#include <iostream>
 
 extern "C" void *createDisplay()
 {
+    std::cerr << "NCurses" << std::endl;
+    initscr();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+    if (has_colors() && can_change_color())
+        start_color();
     return new Arcade::NCurses::NCurses();
 }
 
 extern "C" void deleteDisplay(void *display)
 {
     delete reinterpret_cast<Arcade::NCurses::NCurses *>(display);
+    endwin();
 }
 
 Arcade::NCurses::NCurses::NCurses():
@@ -72,7 +80,7 @@ void Arcade::NCurses::NCurses::render(IGameData &gameData)
 
     // Display game
     gameData.getEntities();
-    foreach (entity, gameData.getEntities()) {
+    for (const auto &entity: gameData.getEntities()) {
         Size entitySize = {
                 std::round(cellSize * entity->getSize().first),
                 std::round(cellSize * entity->getSize().second)
@@ -84,17 +92,22 @@ void Arcade::NCurses::NCurses::render(IGameData &gameData)
         Texture tex(entity->getTexture(), entitySize.first, entitySize.second);
         game.draw(tex, entityPos);
     }
+    refresh();
 }
 
-void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex)
+void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                                          int selectedGame, int selectedGraph, const ControlMap &map)
 {
     waitUntilNextFrame();
 
     // Re-create menus if files/winSize differ
     Size winSize = _win.getSize();
-    if (winSize != _lastWinSize) {
+    if (winSize != _lastWinSize || games != _gameNames || graphics != _graphicalNames || map != _controls) {
         _lastWinSize = winSize;
-        createMenus(games, graphics, isSelectingGame, selectedIndex, winSize);
+        _gameNames = games;
+        _graphicalNames = graphics;
+        _controls = map;
+        createMenus(selectedGame, selectedGraph);
     }
 
     // Check if pointers are valid
@@ -106,39 +119,44 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     }
 
     // If selected has changed, update it
-    if (isSelectingGame) {
-        _gameMenu->setSelected(selectedIndex);
-        _graphicalMenu->setSelected(-1);
-    } else {
-        _graphicalMenu->setSelected(selectedIndex);
-        _gameMenu->setSelected(-1);
-    }
+    _gameMenu->setSelected(selectedGame);
+    _graphicalMenu->setSelected(selectedGraph);
 
     // Render menus
     _gameMenu->render();
     _graphicalMenu->render();
+    _controlMenu->render();
 }
 
-void Arcade::NCurses::NCurses::createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, bool isSelectingGame, int selectedIndex, const Size &winSize)
+void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedIndex)
 {
-    Size menuSize = getMaxSize(getSizeForMenu("Graphical libraries", graphics), getSizeForMenu("Game libraries", games));
+    Size winSize = _win.getSize();
+    Size menuSize = getMaxSize(getSizeForMenu("Graphical libraries", _graphicalNames), getSizeForMenu("Game libraries", _gameNames),
+                               getSizeForMenu("Controls", _controls));
+    Pos controlsPos = {
+            winSize.first / 2 - menuSize.first * 1.5 + 1,
+            (winSize.second - menuSize.second) / 2
+    };
     Pos graphicalPos = {
-            winSize.first / 2 - menuSize.first - 1,
+            winSize.first / 2 - menuSize.first / 2 + 1,
             (winSize.second - menuSize.second) / 2
     };
     Pos gamePos = {
-            winSize.first / 2 + 1,
+            winSize.first / 2 + menuSize.first / 2 + 1,
             graphicalPos.second
     };
 
-    if (graphicalPos.first < 0 || gamePos.first + menuSize.first >= winSize.first ||
-        graphicalPos.second < 0 || graphicalPos.second + menuSize.second >= winSize.second) {
+    if (!isPositionOk(controlsPos, menuSize, winSize)
+    || !isPositionOk(graphicalPos, menuSize, winSize)
+    || !isPositionOk(gamePos, menuSize, winSize)) {
         _gameMenu = nullptr;
         _graphicalMenu = nullptr;
+        _controlMenu = nullptr;
         return;
     }
-    _gameMenu = std::make_unique<Menu>(&_win, "Game libraries", gamePos, games, isSelectingGame ? selectedIndex: - 1, menuSize);
-    _graphicalMenu = std::make_unique<Menu>(&_win, "Graphical libraries", graphicalPos, graphics, isSelectingGame ? -1 : selectedIndex, menuSize);
+    _gameMenu = std::make_unique<Menu>(&_win, "Game libraries", gamePos, _gameNames, isSelectingGame ? selectedIndex: - 1, menuSize);
+    _graphicalMenu = std::make_unique<Menu>(&_win, "Graphical libraries", graphicalPos, _graphicalNames, isSelectingGame ? -1 : selectedIndex, menuSize);
+    _controlMenu = std::make_unique<Menu>(&_win, "Controls", controlsPos, getNames(_controls), -1, menuSize);
 }
 
 std::vector<Arcade::Key> Arcade::NCurses::NCurses::getPressedKeys()
@@ -167,12 +185,27 @@ Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const st
     return {static_cast<int>(requiredWidth), static_cast<int>(items.size() + 5)};
 }
 
-Size Arcade::NCurses::NCurses::getMaxSize(const Size &a, const Size &b)
+Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const ControlMap &items)
+{
+    return getSizeForMenu(title, getNames(items));
+}
+
+std::vector<std::string> Arcade::NCurses::NCurses::getNames(const ControlMap &items)
+{
+    std::vector<std::string> stringItems{items.size(), ""};
+
+    std::transform(items.begin(), items.end(), stringItems.begin(), [](const auto &item) {
+        return item.first + ": " + item.second;
+    });
+    return stringItems;
+}
+
+Size Arcade::NCurses::NCurses::getMaxSize(const Size &a, const Size &b, const Size &c)
 {
     Size max;
 
-    max.first = std::max(a.first, b.first);
-    max.second = std::max(a.second, b.second);
+    max.first = std::max(a.first, std::max(b.first, c.first));
+    max.second = std::max(a.second, std::max(b.second, c.second));
     return max;
 }
 
@@ -194,4 +227,10 @@ void Arcade::NCurses::NCurses::waitUntilNextFrame()
     _lastFrame = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()
     ).count();
+}
+
+bool Arcade::NCurses::NCurses::isPositionOk(const Pos &pos, const Size &size, const Size &winSize)
+{
+    return pos.first >= 0 && pos.first + size.first < winSize.first &&
+           pos.second >= 0 && pos.second + size.second < winSize.second;
 }
