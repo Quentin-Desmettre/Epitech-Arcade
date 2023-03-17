@@ -21,13 +21,14 @@ namespace Arcade {
                 std::string getGameName() const;
                 std::vector<IEntity *> &getEntities();
                 std::pair<int, int> getMapSize() const;
-                const ControlMap &getControls() const override {return {};}
+                const ControlMap &getControls() const override {return _controls;}
                 void addScore(std::string name, int score);
                 void addEntity(IEntity *entity);
                 void removeEntities();
             private:
                 std::map<std::string, int> _scores;
                 std::vector<IEntity *> _entities;
+                ControlMap _controls;
         };
     }
 }

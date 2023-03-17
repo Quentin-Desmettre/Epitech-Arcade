@@ -137,13 +137,15 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
         _sprite.scale(_cellSize / _sprite.getGlobalBounds().width, _cellSize / _sprite.getGlobalBounds().height);
         _sprite.scale(entity->getSize().first, entity->getSize().second);
         _sprite.setOrigin(_sprite.getGlobalBounds().width / 2, _sprite.getGlobalBounds().height / 2);
-        _sprite.setPosition(entity->getPosition().first * _cellSize, entity->getPosition().second * _cellSize);
+        _sprite.setPosition((0.5 + entity->getPosition().first) * _cellSize, (0.5 + entity->getPosition().second) * _cellSize);
         _sprite.setRotation(entity->getRotation());
         _window.draw(_sprite);
     }
-    // _text.setString(gameData.getGameName());
-    // _text.setPosition(0, 0);
-    // _window.draw(_text);
+    _text.setString(gameData.getGameName());
+    _text.setPosition(((0.3 + gameData.getMapSize().second) * _cellSize + 1280) / 2, 25);
+    _text.setCharacterSize(30);
+    centerTextOrigin();
+    _window.draw(_text);
     _window.display();
 }
 
@@ -183,14 +185,14 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
         _text.setString(graphics[i]);
         _text.setPosition(640, 380 + i * 45);
         centerTextOrigin();
-        drawTextWithColor(i == selectedGraph ? sf::Color::Red : sf::Color::White);
+        drawTextWithColor(static_cast<int>(i) == selectedGraph ? sf::Color::Red : sf::Color::White);
     }
 
     for (size_t i = 0; i < games.size(); i++) {
         _text.setString(games[i]);
         _text.setPosition(1010, 380 + i * 45);
         centerTextOrigin();
-        drawTextWithColor(i == selectedGame ? sf::Color::Red : sf::Color::White);
+        drawTextWithColor(static_cast<int>(i) == selectedGame ? sf::Color::Red : sf::Color::White);
     }
 
     for (auto &key : map)
