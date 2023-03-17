@@ -86,7 +86,6 @@ const std::map<SDL_Scancode, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
         {SDL_SCANCODE_F13, Arcade::Key::F13},
         {SDL_SCANCODE_F14, Arcade::Key::F14},
         {SDL_SCANCODE_F15, Arcade::Key::F15},
-        
 };
 
 Arcade::Sdl::Sdl::Sdl():
@@ -110,6 +109,10 @@ Arcade::Sdl::Sdl::Sdl():
     _controlsTitle = std::make_unique<Text>(_window.getRenderer(),
                                             &_boldGlobalFont,
                                             "Controls",
+                                            SDL_Color{255, 255, 255, 255});
+    _scoreText = std::make_unique<Text>(_window.getRenderer(),
+                                            &_boldGlobalFont,
+                                            "Score",
                                             SDL_Color{255, 255, 255, 255});
     _graphTitle->setPosition({537, 317});
     _gameTitle->setPosition({970, 317});
@@ -209,6 +212,30 @@ void Arcade::Sdl::Sdl::drawMenuTitlesAndBg()
     _window.drawLine({161 + 40 - 35, 350}, {161 - 40 + 219 - 35, 350}, White);
 }
 
+void Arcade::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
+{
+    double cellSize = calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
+
+    if (_infoPanelTitle.get() == nullptr) {
+        _infoPanelTitle = std::make_unique<Text>(_window.getRenderer(),
+                                                &_boldGlobalFont,
+                                                gameData.getGameName(),
+                                                SDL_Color{255, 255, 255, 255});
+        std::cout << _infoPanelTitle->getSize().first << std::endl;
+        _infoPanelTitle->getRawTexture();
+        _infoPanelTitle->setPosition({(gameData.getMapSize().second * cellSize + 1280) / 2
+        - _infoPanelTitle->getSize().first / 2, 25});
+    }
+    _window.draw(*_infoPanelTitle);
+    for (int i = 0; auto &score : gameData.getScores()) {
+        _scoreText->setText(score.first + ": " + std::to_string(score.second));
+        _scoreText->setPosition({gameData.getMapSize().second * cellSize + 40, 100  + i * 50});
+        _window.draw(*_scoreText);
+
+        i++;
+    }
+}
+
 void Arcade::Sdl::Sdl::render(IGameData &gameData)
 {
     double cellSize = calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
@@ -235,6 +262,7 @@ void Arcade::Sdl::Sdl::render(IGameData &gameData)
         // Draw it
         _window.draw(s);
     }
+    drawInfoPanel(gameData);
     _window.display();
 }
 
