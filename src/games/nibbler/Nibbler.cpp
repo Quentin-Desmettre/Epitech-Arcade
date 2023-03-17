@@ -51,7 +51,7 @@ void Arcade::Nibbler::Game::restart()
 {
     initMap();
     _gameData->addScore("Score", 0);
-    _gameData->addScore("Time", 990);
+    _gameData->addScore("Time", 60);
     _time = _gameData->getScores()["Time"];
     _direction = {1, 0};
     _body.clear();
@@ -96,8 +96,8 @@ void Arcade::Nibbler::Game::handleKeys(const std::vector<Arcade::Key> &pressedKe
         case Arcade::Key::Right:
             _direction = {1, 0};
             break;
-        case Arcade::Key::Escape:
-            _exit = true;
+        case Arcade::Key::Space:
+            restart();
             break;
         default:
             _direction = {0, 0};
@@ -137,8 +137,8 @@ void Arcade::Nibbler::Game::growUpSnake()
         _body.push_back(_child);
         _is_child = false;
     }
-    if (getAtPos(_head.first, _head.second) == 'o') {
-        _map[_head.first][_head.second] = ' ';
+    if (getAtPos(_body[0].first, _body[0].second) == 'o') {
+        _map[_body[0].first][_body[0].second] = ' ';
         _is_child = true;
         _child = _body.back();
     }
@@ -181,9 +181,9 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
 
 int Arcade::Nibbler::Game::isSnakeDead()
 {
-    for (size_t i = 0; i < _body.size(); i++) {
-        if (_head.first == _body[i].first && _head.second == _body[i].second) {
-            restart();
+    for (size_t i = 1; i < _body.size(); i++) {
+        if (_body[0].first == _body[i].first && _body[0].second == _body[i].second) {
+            _exit = true;
             return 1;
         }
     }
@@ -197,8 +197,8 @@ void Arcade::Nibbler::Game::update()
     _time_dif += dif;
 
     _time -= dif;
-    if (_time < 0) {
-        _time = 0;
+    _time = _time < 0 ? 0 : _time;
+    if (_time == 0 || _exit == true) {
         return;
     }
     if (_time_dif > 0.8)
@@ -233,20 +233,20 @@ void Arcade::Nibbler::Game::convertToGameData()
     for (int i = 0; i < 19; i++) {
         for (int j = 0; j < 19; j++) {
             if (_map[i][j] == 'X')
-                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "wall.png", 0));
+                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "wall", 0));
             if (_map[i][j] == 'o')
-                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "fruit.png", 0));
+                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "fruit", 0));
         }
     }
     if (_is_child)
-        _gameData->addEntity(new Arcade::Nibbler::Entity({_child.first, _child.second}, {1, 1}, "body.png", 0));
+        _gameData->addEntity(new Arcade::Nibbler::Entity({_child.first, _child.second}, {1, 1}, "body", 0));
     std::pair<float, float> pos = {(_head.first - _body[0].first) * _offset * 10 / 4.0, (_head.second - _body[0].second) * _offset * 10 / 4.0};
-    _gameData->addEntity(new Arcade::Nibbler::Entity({_body[0].first + pos.first, _body[0].second + pos.second}, {1, 1}, "head.png", 0));
+    _gameData->addEntity(new Arcade::Nibbler::Entity({_body[0].first + pos.first, _body[0].second + pos.second}, {1, 1}, "head", 0));
     for (size_t i = 1; i < _body.size(); i++) {
         pos = {(_body[i - 1].first - _body[i].first) * _offset * 10 / 4.0, (_body[i - 1].second - _body[i].second) * _offset * 10 / 4.0};
-        _gameData->addEntity(new Arcade::Nibbler::Entity({_body[i].first + pos.first, _body[i].second + pos.second}, {1, 1}, "body.png", 0));
+        _gameData->addEntity(new Arcade::Nibbler::Entity({_body[i].first + pos.first, _body[i].second + pos.second}, {1, 1}, "body", 0));
     }
-    _gameData->addScore("Score", 0);
+    _gameData->addScore("Score", _body.size() - 4);
     _gameData->addScore("Time", _time);
 }
 
