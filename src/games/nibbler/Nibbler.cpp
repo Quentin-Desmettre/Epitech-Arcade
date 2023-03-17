@@ -152,7 +152,8 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
         {0, 1},
         {0, -1}
     };
-    std::pair<int, int> def = {_head.first * 2 - _body[0].first, _head.second * 2 - _body[0].second}; 
+    std::pair<int, int> def = {_head.first * 2 - _body[0].first, _head.second * 2 - _body[0].second};
+    std::pair<int, int> dif = {def.first - _head.first, def.second - _head.second};
     for (size_t i = 0; i < dir.size(); i++) {
         if (getAtPos(_head, dir[i].first, dir[i].second) == 'X' || (_head.first + dir[i].first == _body[0].first && _head.second + dir[i].second == _body[0].second)) {
             dir.erase(dir.begin() + i);
@@ -172,8 +173,8 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
         }
     }
     if (getAtPos(def) != 'X') {
-        folowSnake({def.first - _body[0].first, def.second - _body[0].second});
-        return {def.first - _body[0].first, def.second - _body[0].second};
+        folowSnake(dif);
+        return dif;
     }
     return {0, 0};
 }
@@ -200,6 +201,8 @@ void Arcade::Nibbler::Game::update()
         _time = 0;
         return;
     }
+    if (_time_dif > 0.8)
+        std::cout << _time_dif << std::endl;
     while (_time_dif > 0.4 || _is_stuck == true) {
         if (_is_stuck == true)
             _time_dif = 0.4;
