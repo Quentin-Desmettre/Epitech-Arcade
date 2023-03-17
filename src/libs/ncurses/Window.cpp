@@ -159,15 +159,32 @@ void Arcade::NCurses::Window::draw(const std::string &text, const Pos &pos)
     mvwprintw(_win, pos.second, pos.first, "%s", text.c_str());
 }
 
-void Arcade::NCurses::Window::draw(const Texture &text, const Pos &pos)
+std::vector<std::string> split(const std::string &s, const std::string &delimiter) {
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> res;
+
+    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back (token);
+    }
+
+    res.push_back (s.substr (pos_start));
+    return res;
+}
+#include <iostream>
+void Arcade::NCurses::Window::draw(const Texture &text, Pos pos)
 {
     auto colorPair = COLOR_PAIR(text.getColorPair());
+    auto lines = split(text.getContent(), "\n");
 
     if (_hasColors)
         wattron(_win, colorPair);
-    mvwprintw(_win, pos.second, pos.first, "%s", text.getContent().c_str());
+    for (auto &line : lines)
+        mvwprintw(_win, pos.second++, pos.first, "%s", line.c_str());
     if (_hasColors)
-        wattroff(_win, colorPair);
+        wattron(_win, 0);
 }
 
 void Arcade::NCurses::Window::clear()

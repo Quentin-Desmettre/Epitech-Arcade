@@ -9,7 +9,7 @@
 #include <sstream>
 #include <fstream>
 #include <regex>
-
+#include <iostream>
 /*
  *
  *
@@ -45,9 +45,9 @@ const std::map<std::string, Arcade::NCurses::Color> Arcade::NCurses::Texture::_c
 const char Arcade::NCurses::Texture::_defaultContent = '#';
 const Arcade::NCurses::Color Arcade::NCurses::Texture::_defaultBgColor = BLACK;
 const Arcade::NCurses::Color Arcade::NCurses::Texture::_defaultTextColor = WHITE;
-const std::string Arcade::NCurses::Texture::_textRegex = "/^text: .$/gm";
-const std::string Arcade::NCurses::Texture::_bgColorRegex = "/^bg-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$/gm";
-const std::string Arcade::NCurses::Texture::_textColorRegex = "/^text-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$/gm";
+const std::string Arcade::NCurses::Texture::_textRegex = "^text: .$";
+const std::string Arcade::NCurses::Texture::_bgColorRegex = "^bg-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$";
+const std::string Arcade::NCurses::Texture::_textColorRegex = "^text-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$";
 std::vector<short> Arcade::NCurses::Texture::_availableColorPairs;
 std::map<std::pair<Arcade::NCurses::Color, Arcade::NCurses::Color>, short>Arcade::NCurses::Texture:: _colorPairs = {};
 
@@ -55,7 +55,7 @@ Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height
     _bgColor(_defaultBgColor), _textColor(_defaultTextColor)
 {
     if (_availableColorPairs.empty() && _colorPairs.empty())
-        for (int i = 1; i < COLOR_PAIRS; i++)
+        for (int i = COLOR_PAIRS - 1; i > 0; i--)
             _availableColorPairs.push_back(static_cast<short>(i));
 
     std::ifstream reader(path);
@@ -94,6 +94,7 @@ void Arcade::NCurses::Texture::fillContent(char c, int width, int height)
         if (i != height - 1)
             oss << std::endl;
     }
+    _c = c;
     _text = oss.str();
 }
 
@@ -137,4 +138,9 @@ short Arcade::NCurses::Texture::getColorPair() const
     if (_colorPairs.find({_textColor, _bgColor}) == _colorPairs.end())
         return -1;
     return _colorPairs[{_textColor, _bgColor}];
+}
+
+void Arcade::NCurses::Texture::setSize(int width, int height)
+{
+    fillContent(_c, width, height);
 }
