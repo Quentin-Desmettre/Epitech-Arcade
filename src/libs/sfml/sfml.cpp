@@ -75,52 +75,21 @@ std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
     return keys;
 }
 
-void Arcade::SFML::calculateCellSize(int width, int height)
+void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
 {
-    float cellSizeX = _window.getSize().x / width;
-    float cellSizeY = _window.getSize().y / height;
-
-    _cellSize = cellSizeX < cellSizeY ? cellSizeX : cellSizeY;
-}
-
-void Arcade::SFML::centerTextOrigin()
-{
-    _text.setOrigin(_text.getLocalBounds().width / 2, _text.getLocalBounds().height / 2);
-}
-
-void Arcade::SFML::drawTextWithColor(sf::Color color)
-{
-    _text.setFillColor(color);
+    _text.setCharacterSize(30);
+    _text.setString(gameData.getGameName());
+    _text.setPosition(((0.3 + gameData.getMapSize().second) * _cellSize + 1280) / 2, 25);
+    centerTextOrigin();
     _window.draw(_text);
-    _text.setFillColor(sf::Color::White);
-}
+    _text.setCharacterSize(24);
 
-void Arcade::SFML::drawRect(sf::Vector2f size, sf::Vector2f position)
-{
-    _rectangle.setSize(size);
-    _rectangle.setPosition(position);
-    _window.draw(_rectangle);
-}
-
-void Arcade::SFML::drawLine(sf::Vector2f start, sf::Vector2f end)
-{
-    sf::Vertex line[] = {
-        sf::Vertex(start, sf::Color::White),
-        sf::Vertex(end, sf::Color::White)
-    };
-    _window.draw(line, 2, sf::Lines);
-}
-
-bool Arcade::SFML::loadTexture(std::string texturePath)
-{
-    if (_textureMap.find(texturePath) == _textureMap.end()) {
-        if (_texture.loadFromFile(texturePath) == false) {
-            std::cerr << "Error: Cannot load texture: " << texturePath << std::endl;
-            return false;
-        }
-        _textureMap[texturePath] = std::make_unique<sf::Texture>(_texture);
+    for (int i = 0; auto &score : gameData.getScores()) {
+        _text.setString(score.first + ": " + std::to_string(score.second));
+        _text.setPosition((0.3 + gameData.getMapSize().second) * _cellSize + 90, 100  + i * 50);
+        _window.draw(_text);
+        i++;
     }
-    return true;
 }
 
 void Arcade::SFML::render(Arcade::IGameData &gameData)
@@ -129,7 +98,6 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
 
     _window.clear();
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
-
     for (auto &entity : entities) {
         if (loadTexture("assets/" + gameData.getGameName() + "/sfml/" + entity->getTexture()) == false)
             continue;
@@ -141,24 +109,17 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
         _sprite.setRotation(entity->getRotation());
         _window.draw(_sprite);
     }
-    _text.setString(gameData.getGameName());
-    _text.setPosition(((0.3 + gameData.getMapSize().second) * _cellSize + 1280) / 2, 25);
-    _text.setCharacterSize(30);
-    centerTextOrigin();
-    _window.draw(_text);
+    drawInfoPanel(gameData);
     _window.display();
 }
 
-void Arcade::SFML::renderMenu(const std::vector<std::string> &games,
-const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map)
+void Arcade::SFML::setupMenu()
 {
-    std::vector<std::string> controls;
-
-    _window.clear();
     if (loadTexture("assets/menubg.png") == false)
         return;
     _sprite.setTexture(*_textureMap["assets/menubg.png"].get());
     _window.draw(_sprite);
+
     drawRect({248, 475}, {887, 291});
     drawRect({248, 475}, {516, 291});
     drawRect({248 + 70, 475}, {80, 291});
@@ -180,6 +141,15 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     centerTextOrigin();
     drawTextWithColor(sf::Color::White);
     _text.setCharacterSize(20);
+}
+
+void Arcade::SFML::renderMenu(const std::vector<std::string> &games,
+const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map)
+{
+    std::vector<std::string> controls;
+
+    _window.clear();
+    setupMenu();
 
     for (size_t i = 0; i < graphics.size(); i++) {
         _text.setString(graphics[i]);
@@ -187,14 +157,12 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGraph ? sf::Color::Red : sf::Color::White);
     }
-
     for (size_t i = 0; i < games.size(); i++) {
         _text.setString(games[i]);
         _text.setPosition(1010, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGame ? sf::Color::Red : sf::Color::White);
     }
-
     for (auto &key : map)
         controls.push_back(key.first + " : " + key.second);
     for (size_t i = 0; i < controls.size(); i++) {
