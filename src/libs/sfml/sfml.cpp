@@ -102,9 +102,11 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
         if (loadTexture("assets/" + gameData.getGameName() + "/sfml/" + entity->getTexture()) == false)
             continue;
         _sprite.setTexture(*_textureMap["assets/" + gameData.getGameName() + "/sfml/" + entity->getTexture()].get());
-        _sprite.scale(_cellSize / _sprite.getGlobalBounds().width, _cellSize / _sprite.getGlobalBounds().height);
-        _sprite.scale(entity->getSize().first, entity->getSize().second);
-        _sprite.setOrigin(_sprite.getGlobalBounds().width / 2, _sprite.getGlobalBounds().height / 2);
+        _sprite.setTextureRect(sf::IntRect(0, 0, _sprite.getTexture()->getSize().x, _sprite.getTexture()->getSize().y));
+        _sprite.setScale(1, 1);
+        _sprite.scale(_cellSize / _sprite.getLocalBounds().width * entity->getSize().first,
+        _cellSize / _sprite.getLocalBounds().height * entity->getSize().second);
+        _sprite.setOrigin(_sprite.getLocalBounds().width / 2, _sprite.getLocalBounds().height / 2);
         _sprite.setPosition((0.5 + entity->getPosition().first) * _cellSize, (0.5 + entity->getPosition().second) * _cellSize);
         _sprite.setRotation(entity->getRotation());
         _window.draw(_sprite);
