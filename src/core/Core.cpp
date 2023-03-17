@@ -99,16 +99,14 @@ int Arcade::Core::run()
     _selectedGraph = 0;
     while (_run) {
         pressedKeys = _display->getPressedKeys();
-        // if (!_isInMenu && _game->exit())
-        //     exitGame();
         if (_isInMenu) {
             _display->renderMenu(_gameLibs, _graphicalLibs, _selectedGame, _selectedGraph, _controls);
-            handleMenuEvents(oldKeys, pressedKeys);
         } else {
             _display->render(_game->getGameData());
             _game->handleKeys(pressedKeys);
             _game->update();
         }
+        handleMenuEvents(oldKeys, pressedKeys);
         oldKeys = pressedKeys;
     }
     return 0;
@@ -116,14 +114,17 @@ int Arcade::Core::run()
 
 void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys)
 {
-    if (isKeyPressed(Key::Enter, oldKeys, newKeys)) {
+    if (isKeyPressed(Key::Enter, oldKeys, newKeys) && _isInMenu) {
         return loadSelectedLibrary();
     }
-    if (isKeyPressed(Key::Space, oldKeys, newKeys)) {
+    if (isKeyPressed(Key::Space, oldKeys, newKeys) && _isInMenu) {
         return loadGraphicLibrary("./lib/" + _graphicalLibs[_selectedGraph]);
     }
     if (isKeyPressed(Key::Escape, oldKeys, newKeys)) {
-        _run = false;
+        if (_isInMenu)
+            _run = false;
+        else
+            exitGame();
         return;
     }
 
@@ -132,6 +133,8 @@ void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::
     || isKeyPressed(Key::Right, oldKeys, newKeys)) {
         incrementIndex(_selectedGame, _gameLibs.size(),
                        (isKeyPressed(Key::Left, oldKeys, newKeys) ? -1 : 1));
+        if (!_isInMenu)
+            loadGameLibrary("./lib/" + _gameLibs[_selectedGame]);
     }
 
     // Change selected graphical lib
@@ -139,6 +142,8 @@ void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::
     || isKeyPressed(Key::Down, oldKeys, newKeys)) {
         incrementIndex(_selectedGraph, _graphicalLibs.size(),
                        (isKeyPressed(Key::Up, oldKeys, newKeys) ? -1 : 1));
+        if (!_isInMenu)
+            loadGraphicLibrary("./lib/" + _graphicalLibs[_selectedGraph]);
     }
 }
 
