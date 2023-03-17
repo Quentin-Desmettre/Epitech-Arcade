@@ -9,7 +9,6 @@
 #include "Menu.hpp"
 #include <thread>
 #include <chrono>
-#include <cmath>
 #include <algorithm>
 #include <iostream>
 
@@ -57,42 +56,54 @@ void Arcade::NCurses::NCurses::render(IGameData &gameData)
      * If it takes t x-cells, we display it as t*x/n by y/m chars.
      * If it takes t y-cells, we display it as x/n by t*y/m chars.
      */
+    _win.clear();
+    renderScores(gameData);
+    renderEntities(gameData);
+    refresh();
+}
+
+void Arcade::NCurses::NCurses::renderScores(IGameData &gameData)
+{
     Size winSize = _win.getSize();
     Window scores(&_win, {winSize.first * 0.15, 0}, {winSize.first * 0.7, 3});
-//    Window controls(&_win, {0, 3}, {0, 0});
 
-    Size availableSize = {winSize.first, winSize.second - 3};
-    int cellSize = std::min(availableSize.first / gameData.getMapSize().first, availableSize.second / gameData.getMapSize().second);
-    Size gameSize = {cellSize * gameData.getMapSize().first, cellSize * gameData.getMapSize().second};
-    Window game(&_win, {winSize.first / 2- gameSize.first, 3}, gameSize);
-
-    // Display scores
     scores.drawBox();
-    int xOffset = 1;
+    int totalLen = 0;
+    for (const auto &score: gameData.getScores())
+        totalLen += static_cast<int>(score.first.size() + 2 + std::to_string(score.second).size() + 3);
+    int xOffset = (winSize.first * 0.7 - totalLen) / 2;
     for (const auto &score: gameData.getScores()) {
         scores.draw(score.first + ": " + std::to_string(score.second) + " | ", {xOffset, 1});
         xOffset += static_cast<int>(score.first.size() + 2 + std::to_string(score.second).size() + 3);
     }
+}
 
-    // Display controls
-//    controls.drawBox();
-//    controls.draw("Controls", {1, 1});
+void Arcade::NCurses::NCurses::renderEntities(IGameData &gameData)
+{
+    Size winSize = _win.getSize();
+    Size availableSize = {winSize.first, winSize.second - 3};
+    int cellSize = std::min(availableSize.first / gameData.getMapSize().first, availableSize.second / gameData.getMapSize().second);
+    Size gameSize = {cellSize * gameData.getMapSize().first * 2, cellSize * gameData.getMapSize().second + 1};
+    Window game(&_win, {winSize.first / 2 - gameSize.first / 2, 3}, gameSize);
 
-    // Display game
     gameData.getEntities();
+    static std::map<std::string, std::unique_ptr<Texture>> textures;
     for (const auto &entity: gameData.getEntities()) {
         Size entitySize = {
-                std::round(cellSize * entity->getSize().first),
-                std::round(cellSize * entity->getSize().second)
+                (cellSize * entity->getSize().first) * 2,
+                (cellSize * entity->getSize().second)
         };
         Pos entityPos = {
-                std::round(cellSize * entity->getPosition().first - entitySize.first / 2),
-                std::round(cellSize * entity->getPosition().second - entitySize.second / 2)
+                (cellSize * entity->getPosition().first) * 2,
+                (cellSize * entity->getPosition().second) + 1
         };
-        Texture tex(entity->getTexture(), entitySize.first, entitySize.second);
-        game.draw(tex, entityPos);
+        std::string path = "assets/" + gameData.getGameName() + "/ncurses/" + entity->getTexture();
+        if (textures.find(path) == textures.end())
+            textures[path] = std::make_unique<Texture>(path, entitySize.first, entitySize.second);
+        else
+            textures[path]->setSize(entitySize.first, entitySize.second);
+        game.draw(*textures[path].get(), entityPos);
     }
-    refresh();
 }
 
 void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
@@ -115,6 +126,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     if (!_graphicalMenu || !_gameMenu) {
         _win.drawBox();
         _win.draw("Window is too small", {(winSize.first - 19) / 2, winSize.second / 2});
+        refresh();
         return;
     }
 
@@ -126,6 +138,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     _gameMenu->render();
     _graphicalMenu->render();
     _controlMenu->render();
+    refresh();
 }
 
 void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedIndex)

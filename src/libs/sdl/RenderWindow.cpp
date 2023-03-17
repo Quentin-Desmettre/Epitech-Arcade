@@ -30,10 +30,10 @@ Arcade::Sdl::RenderWindow::~RenderWindow()
 void Arcade::Sdl::RenderWindow::draw(const Sprite &sprite)
 {
     SDL_Rect destRect = {
-            .x = sprite.getPosition().first,
-            .y = sprite.getPosition().second,
-            .w = sprite.getSize().first,
-            .h = sprite.getSize().second
+            .x = static_cast<int>(sprite.getPosition().first),
+            .y = static_cast<int>(sprite.getPosition().second),
+            .w = static_cast<int>(sprite.getSize().first),
+            .h = static_cast<int>(sprite.getSize().second)
     };
     SDL_Rect srcRect = {
             .x = sprite.getTextureRect().left,
@@ -51,10 +51,10 @@ void Arcade::Sdl::RenderWindow::draw(Text &text)
 {
     text.getRawTexture();
     SDL_Rect destRect = {
-            .x = text.getPosition().first,
-            .y = text.getPosition().second,
-            .w = text.getSize().first,
-            .h = text.getSize().second
+            .x = static_cast<int>(text.getPosition().first),
+            .y = static_cast<int>(text.getPosition().second),
+            .w = static_cast<int>(text.getSize().first),
+            .h = static_cast<int>(text.getSize().second)
     };
     if (text.getRawTexture())
         SDL_RenderCopy(_renderer, text.getRawTexture(), nullptr, &destRect);
@@ -68,10 +68,10 @@ void Arcade::Sdl::RenderWindow::draw(const RectangleShape &rect)
 
     // Draw rect
     SDL_Rect destRect = {
-            .x = rect.getPosition().first,
-            .y = rect.getPosition().second,
-            .w = rect.getSize().first,
-            .h = rect.getSize().second
+            .x = static_cast<int>(rect.getPosition().first),
+            .y = static_cast<int>(rect.getPosition().second),
+            .w = static_cast<int>(rect.getSize().first),
+            .h = static_cast<int>(rect.getSize().second)
     };
     SDL_SetRenderDrawColor(_renderer, rect.getFillColor().r, rect.getFillColor().g, rect.getFillColor().b, rect.getFillColor().a);
     SDL_RenderFillRect(_renderer, &destRect);

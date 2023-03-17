@@ -26,7 +26,7 @@ namespace Arcade {
     } // Arcade
 } // Sdl
 
-typedef std::pair<int, int> SpriteSize;
+typedef std::pair<double, double> SpriteSize;
 
 class Arcade::Sdl::Sprite {
     public:

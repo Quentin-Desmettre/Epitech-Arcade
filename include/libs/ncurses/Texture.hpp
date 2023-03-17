@@ -39,6 +39,8 @@ public:
     Color getTextColor() const;
     Color getBackgroundColor() const;
 
+    void setSize(int width, int height);
+
     static bool createColorPair(Color fg, Color bg);
     static void removeColorPair(Color fg, Color bg);
     short getColorPair() const;
@@ -46,6 +48,7 @@ private:
     void fillContent(char c, int width, int height);
 
     std::string _text;
+    char _c;
     Color _bgColor, _textColor;
     bool _hasUsedColorPair;
 
