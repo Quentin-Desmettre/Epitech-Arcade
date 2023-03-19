@@ -67,6 +67,18 @@ std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
                 case sf::Keyboard::Space:
                     keys.push_back(Arcade::Key::Space);
                     break;
+                case sf::Keyboard::Z:
+                    keys.push_back(Arcade::Key::Z);
+                    break;
+                case sf::Keyboard::Q:
+                    keys.push_back(Arcade::Key::Q);
+                    break;
+                case sf::Keyboard::S:
+                    keys.push_back(Arcade::Key::S);
+                    break;
+                case sf::Keyboard::D:
+                    keys.push_back(Arcade::Key::D);
+                    break;
                 default:
                     break;
             }
