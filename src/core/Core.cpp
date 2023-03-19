@@ -42,7 +42,7 @@ Arcade::Core::Core(int ac, char **av):
     DirectoryLister dirLister;
     std::string tmpFile;
 
-    if (ac != 2)
+    if (ac != 2 && (ac == 3 && std::string(av[2]) != "-test"))
         throw std::invalid_argument("Usage: ./arcade displayLib.so");
 
     try {
@@ -72,6 +72,8 @@ Arcade::Core::Core(int ac, char **av):
     if (_gameLibs.empty())
         throw NoLibraryException(LibLoader::GAME);
     loadGraphicLibrary(av[1]);
+    if (ac == 3 && std::string(av[2]) == "-test")
+        _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
     _controls = {
             {"Quit", "ESC"},
             {"Load game & graph", "ENTER"},
@@ -91,7 +93,7 @@ Arcade::Core::~Core()
 
 int Arcade::Core::run()
 {
-    std::vector<Key> oldKeys, pressedKeys;
+    std::vector<Key> oldKeys, pressedKeys, testKeys;
 
     _run = true;
     _isInMenu = true;
@@ -99,6 +101,11 @@ int Arcade::Core::run()
     _selectedGraph = 0;
     while (_run) {
         pressedKeys = _display->getPressedKeys();
+        if (_testInterface && !_isInMenu)
+            testKeys = _testInterface->getPressedKeys();
+        for (auto &key : testKeys)
+            if (find(pressedKeys.begin(), pressedKeys.end(), key) == pressedKeys.end())
+                pressedKeys.push_back(key);
         if (_isInMenu) {
             _display->renderMenu(_gameLibs, _graphicalLibs, _selectedGame, _selectedGraph, _controls);
         } else {

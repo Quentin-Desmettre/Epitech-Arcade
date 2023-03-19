@@ -18,6 +18,7 @@ graphicals:
 	@make -C src/libs/sfml/
 	@make -C src/libs/sdl/
 	@make -C src/libs/ncurses/
+	@make -C src/libs/test/
 
 tests_run:
 	cd tests && make
