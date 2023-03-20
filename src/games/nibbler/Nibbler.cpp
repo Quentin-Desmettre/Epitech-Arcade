@@ -234,21 +234,24 @@ void Arcade::Nibbler::Game::update()
 void Arcade::Nibbler::Game::convertToGameData()
 {
     _gameData->removeEntities();
+    std::pair<float, float> size = {1, 1};
     for (int i = 0; i < 19; i++) {
         for (int j = 0; j < 19; j++) {
-            if (_map[i][j] == 'X')
-                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "wall", 0));
+            if (_map[i][j] == 'X') {
+                _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>({i, j}), size, "wall", 0.f));
+            }
+
             if (_map[i][j] == 'o')
-                _gameData->addEntity(new Arcade::Nibbler::Entity({i, j}, {1, 1}, "fruit", 0));
+                _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{i, j}, size, "fruit", 0.f));
         }
     }
     if (_is_child)
-        _gameData->addEntity(new Arcade::Nibbler::Entity({_child.first, _child.second}, {1, 1}, "body", 0));
+        _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{_child.first, _child.second}, size, "body", 0));
     std::pair<float, float> pos = {(_head.first - _body[0].first) * _offset * 10 / 4.0, (_head.second - _body[0].second) * _offset * 10 / 4.0};
-    _gameData->addEntity(new Arcade::Nibbler::Entity({_body[0].first + pos.first, _body[0].second + pos.second}, {1, 1}, "head", 0));
+    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{_body[0].first + pos.first, _body[0].second + pos.second}, size, std::string("head"), 0.f));
     for (size_t i = 1; i < _body.size(); i++) {
         pos = {(_body[i - 1].first - _body[i].first) * _offset * 10 / 4.0, (_body[i - 1].second - _body[i].second) * _offset * 10 / 4.0};
-        _gameData->addEntity(new Arcade::Nibbler::Entity({_body[i].first + pos.first, _body[i].second + pos.second}, {1, 1}, "body", 0));
+        _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{_body[i].first + pos.first, _body[i].second + pos.second}, size, std::string("body"), 0.f));
     }
     _gameData->addScore("Score", _body.size() - 4);
     _gameData->addScore("Time", _time);

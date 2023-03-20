@@ -94,7 +94,7 @@ void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
 
 void Arcade::SFML::render(Arcade::IGameData &gameData)
 {
-    std::vector<IEntity *> entities = gameData.getEntities();
+    std::vector<std::shared_ptr<IEntity>> entities = gameData.getEntities();
 
     _window.clear();
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);

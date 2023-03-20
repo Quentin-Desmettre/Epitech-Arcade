@@ -8,6 +8,7 @@
 #ifndef GAMEDATA_HPP_
 #define GAMEDATA_HPP_
 
+#include <memory>
 #include "GameInterfaces.hpp"
 #include "Entity.hpp"
 
@@ -19,15 +20,15 @@ namespace Arcade {
                 ~GameData();
                 std::map<std::string, int> getScores() const;
                 std::string getGameName() const;
-                std::vector<IEntity *> &getEntities();
+                std::vector<std::shared_ptr<IEntity>> &getEntities();
                 std::pair<int, int> getMapSize() const;
                 const ControlMap &getControls() const override {return _controls;}
                 void addScore(std::string name, int score);
-                void addEntity(IEntity *entity);
+                void addEntity(std::shared_ptr<IEntity> entity);
                 void removeEntities();
             private:
                 std::map<std::string, int> _scores;
-                std::vector<IEntity *> _entities;
+                std::vector<std::shared_ptr<IEntity>> _entities;
                 ControlMap _controls;
         };
     }

@@ -31,7 +31,7 @@ std::string Arcade::Nibbler::GameData::getGameName() const
     return "Nibbler";
 }
 
-std::vector<Arcade::IEntity *> &Arcade::Nibbler::GameData::getEntities()
+std::vector<std::shared_ptr<Arcade::IEntity>> &Arcade::Nibbler::GameData::getEntities()
 {
     return _entities;
 }
@@ -46,7 +46,7 @@ void Arcade::Nibbler::GameData::addScore(std::string name, int score)
     _scores[name] = score;
 }
 
-void Arcade::Nibbler::GameData::addEntity(Arcade::IEntity *entity)
+void Arcade::Nibbler::GameData::addEntity(std::shared_ptr<Arcade::IEntity> entity)
 {
     // std::cout << entity.getTexture() << std::endl;
     _entities.push_back(entity);

@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #include <string>
 
 namespace Arcade {
@@ -141,7 +142,7 @@ namespace Arcade {
         public:
             virtual std::map<std::string, int> getScores() const = 0;
             virtual std::string getGameName() const = 0;
-            virtual std::vector<IEntity *> &getEntities() = 0;
+            virtual std::vector<std::shared_ptr<Arcade::IEntity>> &getEntities() = 0;
             virtual std::pair<int, int> getMapSize() const = 0;
             virtual const ControlMap &getControls() const = 0;
     };
