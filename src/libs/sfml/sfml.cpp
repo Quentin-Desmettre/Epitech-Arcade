@@ -132,6 +132,11 @@ void Arcade::SFML::setupMenu()
     if (loadTexture("assets/menubg.png") == false)
         return;
     _sprite.setTexture(*_textureMap["assets/menubg.png"].get());
+    _sprite.setTextureRect(sf::IntRect(0, 0, _sprite.getTexture()->getSize().x, _sprite.getTexture()->getSize().y));
+    _sprite.setPosition(0, 0);
+    _sprite.setOrigin(0, 0);
+    _sprite.setScale(1, 1);
+    _sprite.setRotation(0);
     _window.draw(_sprite);
 
     drawRect({248, 475}, {887, 291});
