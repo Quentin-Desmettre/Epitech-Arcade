@@ -96,7 +96,7 @@ Arcade::Core::~Core()
         _libLoader.unloadGameLib(_game);
 }
 
-int Arcade::Core::run()
+int Arcade::Core::run(std::string const libName)
 {
     std::vector<Key> oldKeys, pressedKeys, testKeys;
 
@@ -104,6 +104,9 @@ int Arcade::Core::run()
     _isInMenu = true;
     _selectedGame = 0;
     _selectedGraph = 0;
+    for (size_t i = 0; i < _graphicalLibs.size(); i++)
+        if (libName.find(_graphicalLibs[i]) != std::string::npos)
+            _selectedGraph = i;
     while (_run) {
         if (!(!_testOnly || _isInMenu))
             pressedKeys = _display->getPressedKeys();
