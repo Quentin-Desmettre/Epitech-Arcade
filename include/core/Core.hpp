@@ -48,6 +48,7 @@ namespace Arcade {
             int _selectedGraph, _selectedGame;
             ControlMap _controls;
             IDisplay *_testInterface;
+            bool _testOnly;
 
             void handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
             void exitGame();
