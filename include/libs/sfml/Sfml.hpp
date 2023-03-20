@@ -35,6 +35,7 @@ class Arcade::SFML : public Arcade::IDisplay {
         void drawRect(sf::Vector2f size, sf::Vector2f position);
         void drawLine(sf::Vector2f start, sf::Vector2f end);
         void drawInfoPanel(IGameData &gameData);
+        std::string truncString(std::string str);
         void setupMenu();
         sf::RenderWindow _window;
         sf::Event _event;
