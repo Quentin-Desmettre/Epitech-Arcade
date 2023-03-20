@@ -20,7 +20,7 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = tests_core
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 --coverage -g3
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 --coverage -g
 
 all: clean $(NAME)
 
