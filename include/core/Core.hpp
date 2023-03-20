@@ -37,7 +37,7 @@ namespace Arcade {
             Core(int ac, char **av);
             ~Core();
 
-            int run();
+            int run(std::string const libName);
 
         private:
             std::vector<std::string> _graphicalLibs, _gameLibs;

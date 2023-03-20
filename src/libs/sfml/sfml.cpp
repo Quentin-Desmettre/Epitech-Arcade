@@ -42,8 +42,10 @@ std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
     std::vector<Arcade::Key> keys;
 
     while (_window.pollEvent(_event)) {
-        if (_event.type == sf::Event::Closed)
+        if (_event.type == sf::Event::Closed) {
+            keys.push_back(Arcade::Key::Escape);
             _window.close();
+        }
         if (_event.type == sf::Event::KeyPressed) {
             switch (_event.key.code) {
                 case sf::Keyboard::Escape:
