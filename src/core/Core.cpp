@@ -37,6 +37,7 @@ Arcade::Core::Core(int ac, char **av):
     _libLoader(LibLoader::getInstance()),
     _display(nullptr),
     _game(nullptr),
+    _testInterface(nullptr),
     _testOnly(false)
 {
     LibLoader::LibType libType;
@@ -104,6 +105,8 @@ int Arcade::Core::run()
     _selectedGame = 0;
     _selectedGraph = 0;
     while (_run) {
+        if (!(!_testOnly || _isInMenu))
+            pressedKeys = _display->getPressedKeys();
         testKeys.clear();
         pressedKeys.clear();
         if (!_testOnly || _isInMenu)
