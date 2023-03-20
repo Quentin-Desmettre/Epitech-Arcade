@@ -46,4 +46,5 @@ class Arcade::SFML : public Arcade::IDisplay {
         sf::Music _music;
         sf::RectangleShape _rectangle;
         float _cellSize;
+        bool _isMenu;
 };
