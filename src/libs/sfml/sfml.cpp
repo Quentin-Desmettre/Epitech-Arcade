@@ -67,6 +67,18 @@ std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
                 case sf::Keyboard::Space:
                     keys.push_back(Arcade::Key::Space);
                     break;
+                case sf::Keyboard::Z:
+                    keys.push_back(Arcade::Key::Z);
+                    break;
+                case sf::Keyboard::Q:
+                    keys.push_back(Arcade::Key::Q);
+                    break;
+                case sf::Keyboard::S:
+                    keys.push_back(Arcade::Key::S);
+                    break;
+                case sf::Keyboard::D:
+                    keys.push_back(Arcade::Key::D);
+                    break;
                 default:
                     break;
             }
@@ -120,6 +132,11 @@ void Arcade::SFML::setupMenu()
     if (loadTexture("assets/menubg.png") == false)
         return;
     _sprite.setTexture(*_textureMap["assets/menubg.png"].get());
+    _sprite.setTextureRect(sf::IntRect(0, 0, _sprite.getTexture()->getSize().x, _sprite.getTexture()->getSize().y));
+    _sprite.setPosition(0, 0);
+    _sprite.setOrigin(0, 0);
+    _sprite.setScale(1, 1);
+    _sprite.setRotation(0);
     _window.draw(_sprite);
 
     drawRect({248, 475}, {887, 291});

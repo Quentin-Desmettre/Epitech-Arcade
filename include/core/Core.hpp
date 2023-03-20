@@ -12,6 +12,7 @@
 #include <exception>
 #include "LibLoader.hpp"
 #include "IDisplay.hpp"
+#include "test.hpp"
 
 namespace Arcade {
     class Core {
@@ -46,6 +47,8 @@ namespace Arcade {
             bool _run, _isInMenu;
             int _selectedGraph, _selectedGame;
             ControlMap _controls;
+            IDisplay *_testInterface;
+            bool _testOnly;
 
             void handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
             void exitGame();

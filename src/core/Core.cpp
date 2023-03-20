@@ -36,13 +36,14 @@ const char *Arcade::Core::NoLibraryException::what() const noexcept
 Arcade::Core::Core(int ac, char **av):
     _libLoader(LibLoader::getInstance()),
     _display(nullptr),
-    _game(nullptr)
+    _game(nullptr),
+    _testOnly(false)
 {
     LibLoader::LibType libType;
     DirectoryLister dirLister;
     std::string tmpFile;
 
-    if (ac != 2)
+    if (ac != 2 && !(ac == 3 && (std::string(av[2]) == "-test" || std::string(av[2]) == "-test-only")))
         throw std::invalid_argument("Usage: ./arcade displayLib.so");
 
     try {
@@ -72,6 +73,11 @@ Arcade::Core::Core(int ac, char **av):
     if (_gameLibs.empty())
         throw NoLibraryException(LibLoader::GAME);
     loadGraphicLibrary(av[1]);
+    if (ac == 3 && (std::string(av[2]) == "-test" || std::string(av[2]) == "-test-only")) {
+        _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
+        if (std::string(av[2]) == "-test-only")
+            _testOnly = true;
+    }
     _controls = {
             {"Quit", "ESC"},
             {"Load game & graph", "ENTER"},
@@ -91,14 +97,22 @@ Arcade::Core::~Core()
 
 int Arcade::Core::run()
 {
-    std::vector<Key> oldKeys, pressedKeys;
+    std::vector<Key> oldKeys, pressedKeys, testKeys;
 
     _run = true;
     _isInMenu = true;
     _selectedGame = 0;
     _selectedGraph = 0;
     while (_run) {
-        pressedKeys = _display->getPressedKeys();
+        testKeys.clear();
+        pressedKeys.clear();
+        if (!_testOnly || _isInMenu)
+            pressedKeys = _display->getPressedKeys();
+        if (_testInterface && !_isInMenu && pressedKeys.empty())
+            testKeys = _testInterface->getPressedKeys();
+        for (auto &key : testKeys)
+            if (find(pressedKeys.begin(), pressedKeys.end(), key) == pressedKeys.end())
+                pressedKeys.push_back(key);
         if (_isInMenu) {
             _display->renderMenu(_gameLibs, _graphicalLibs, _selectedGame, _selectedGraph, _controls);
         } else {
@@ -115,6 +129,8 @@ int Arcade::Core::run()
 void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys)
 {
     if (isKeyPressed(Key::Enter, oldKeys, newKeys) && _isInMenu) {
+        if (_testInterface)
+            _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
         return loadSelectedLibrary();
     }
     if (isKeyPressed(Key::Space, oldKeys, newKeys) && _isInMenu) {
