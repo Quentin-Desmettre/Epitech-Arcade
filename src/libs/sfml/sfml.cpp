@@ -127,6 +127,13 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
     _window.display();
 }
 
+std::string Arcade::SFML::truncString(std::string str)
+{
+    if (str.size() > 19)
+        str = str.substr(0, 19) + "...";
+    return str;
+}
+
 void Arcade::SFML::setupMenu()
 {
     if (loadTexture("assets/menubg.png") == false)
@@ -171,13 +178,13 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     setupMenu();
 
     for (size_t i = 0; i < graphics.size(); i++) {
-        _text.setString(graphics[i]);
+        _text.setString(truncString(graphics[i]));
         _text.setPosition(640, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGraph ? sf::Color::Red : sf::Color::White);
     }
     for (size_t i = 0; i < games.size(); i++) {
-        _text.setString(games[i]);
+        _text.setString(truncString(games[i]));
         _text.setPosition(1010, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGame ? sf::Color::Red : sf::Color::White);
@@ -185,7 +192,7 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     for (auto &key : map)
         controls.push_back(key.first + " : " + key.second);
     for (size_t i = 0; i < controls.size(); i++) {
-        _text.setString(controls[i]);
+        _text.setString(truncString(controls[i]));
         _text.setPosition(235, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(sf::Color::White);
