@@ -179,12 +179,15 @@ void Arcade::NCurses::Window::draw(const Texture &text, Pos pos)
     auto colorPair = COLOR_PAIR(text.getColorPair());
     auto lines = split(text.getContent(), "\n");
 
-    if (_hasColors)
+    if (_hasColors) {
+        wattron(_win, 0);
         wattron(_win, colorPair);
+    }
     for (auto &line : lines)
         mvwprintw(_win, pos.second++, pos.first, "%s", line.c_str());
     if (_hasColors)
-        wattron(_win, 0);
+        wattroff(_win, colorPair);
+    wattron(_win, 0);
 }
 
 void Arcade::NCurses::Window::clear()
@@ -193,6 +196,7 @@ void Arcade::NCurses::Window::clear()
     std::string cleaner(size.first * size.second, ' ');
 
     wmove(_win, 0, 0);
+    wattron(_win, 0);
     wprintw(_win, "%s", cleaner.c_str());
 }
 

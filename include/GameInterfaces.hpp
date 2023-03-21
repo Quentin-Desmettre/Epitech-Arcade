@@ -145,13 +145,14 @@ namespace Arcade {
             virtual std::vector<std::shared_ptr<Arcade::IEntity>> &getEntities() = 0;
             virtual std::pair<int, int> getMapSize() const = 0;
             virtual const ControlMap &getControls() const = 0;
+            virtual bool isGameOver() const = 0;
     };
 
     class IGame {
         public:
             virtual ~IGame() = default;
             virtual void handleKeys(const std::vector<Key> &pressedKeys) = 0;
-            virtual void update() = 0;
+            virtual void update(const std::string &username) = 0;
             virtual IGameData &getGameData() const = 0;
     };
 };

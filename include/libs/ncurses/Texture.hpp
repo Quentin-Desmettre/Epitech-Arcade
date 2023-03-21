@@ -40,6 +40,9 @@ public:
     Color getBackgroundColor() const;
 
     void setSize(int width, int height);
+    void setTextColor(Color color);
+    void setBackgroundColor(Color color);
+    void setContent(char c);
 
     static bool createColorPair(Color fg, Color bg);
     static void removeColorPair(Color fg, Color bg);
@@ -51,6 +54,7 @@ private:
     char _c;
     Color _bgColor, _textColor;
     bool _hasUsedColorPair;
+    int _width, _height;
 
     static const std::map<std::string, Color> _colorMap;
     static std::map<std::pair<Color, Color>, short> _colorPairs;

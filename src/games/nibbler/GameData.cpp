@@ -48,11 +48,15 @@ void Arcade::Nibbler::GameData::addScore(std::string name, int score)
 
 void Arcade::Nibbler::GameData::addEntity(std::shared_ptr<Arcade::IEntity> entity)
 {
-    // std::cout << entity.getTexture() << std::endl;
     _entities.push_back(entity);
 }
 
 void Arcade::Nibbler::GameData::removeEntities()
 {
     _entities.clear();
+}
+
+bool Arcade::Nibbler::GameData::isGameOver() const
+{
+    return true;
 }

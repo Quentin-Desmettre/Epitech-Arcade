@@ -42,8 +42,10 @@ std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
     std::vector<Arcade::Key> keys;
 
     while (_window.pollEvent(_event)) {
-        if (_event.type == sf::Event::Closed)
+        if (_event.type == sf::Event::Closed) {
+            keys.push_back(Arcade::Key::Escape);
             _window.close();
+        }
         if (_event.type == sf::Event::KeyPressed) {
             switch (_event.key.code) {
                 case sf::Keyboard::Escape:
@@ -66,6 +68,18 @@ std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
                     break;
                 case sf::Keyboard::Space:
                     keys.push_back(Arcade::Key::Space);
+                    break;
+                case sf::Keyboard::Z:
+                    keys.push_back(Arcade::Key::Z);
+                    break;
+                case sf::Keyboard::Q:
+                    keys.push_back(Arcade::Key::Q);
+                    break;
+                case sf::Keyboard::S:
+                    keys.push_back(Arcade::Key::S);
+                    break;
+                case sf::Keyboard::D:
+                    keys.push_back(Arcade::Key::D);
                     break;
                 default:
                     break;
@@ -115,11 +129,23 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
     _window.display();
 }
 
+std::string Arcade::SFML::truncString(std::string str)
+{
+    if (str.size() > 19)
+        str = str.substr(0, 19) + "...";
+    return str;
+}
+
 void Arcade::SFML::setupMenu()
 {
     if (loadTexture("assets/menubg.png") == false)
         return;
     _sprite.setTexture(*_textureMap["assets/menubg.png"].get());
+    _sprite.setTextureRect(sf::IntRect(0, 0, _sprite.getTexture()->getSize().x, _sprite.getTexture()->getSize().y));
+    _sprite.setPosition(0, 0);
+    _sprite.setOrigin(0, 0);
+    _sprite.setScale(1, 1);
+    _sprite.setRotation(0);
     _window.draw(_sprite);
 
     drawRect({248, 475}, {887, 291});
@@ -154,13 +180,13 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     setupMenu();
 
     for (size_t i = 0; i < graphics.size(); i++) {
-        _text.setString(graphics[i]);
+        _text.setString(truncString(graphics[i]));
         _text.setPosition(640, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGraph ? sf::Color::Red : sf::Color::White);
     }
     for (size_t i = 0; i < games.size(); i++) {
-        _text.setString(games[i]);
+        _text.setString(truncString(games[i]));
         _text.setPosition(1010, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGame ? sf::Color::Red : sf::Color::White);
@@ -168,7 +194,7 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     for (auto &key : map)
         controls.push_back(key.first + " : " + key.second);
     for (size_t i = 0; i < controls.size(); i++) {
-        _text.setString(controls[i]);
+        _text.setString(truncString(controls[i]));
         _text.setPosition(235, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(sf::Color::White);
