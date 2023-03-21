@@ -6,7 +6,6 @@
 */
 
 #include "Texture.hpp"
-#include <sstream>
 #include <fstream>
 #include <regex>
 #include <iostream>
@@ -62,6 +61,8 @@ Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height
     std::string line;
     char c = _defaultContent;
 
+    _width = width;
+    _height = height;
     if (!reader) {
         fillContent(_defaultContent, width, height);
         _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
@@ -142,5 +143,28 @@ short Arcade::NCurses::Texture::getColorPair() const
 
 void Arcade::NCurses::Texture::setSize(int width, int height)
 {
+    _width = width;
+    _height = height;
     fillContent(_c, width, height);
+}
+
+void Arcade::NCurses::Texture::setTextColor(Color color)
+{
+    if (_hasUsedColorPair)
+        removeColorPair(_textColor, _bgColor);
+    _textColor = color;
+    _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
+}
+
+void Arcade::NCurses::Texture::setBackgroundColor(Color color)
+{
+    if (_hasUsedColorPair)
+        removeColorPair(_textColor, _bgColor);
+    _bgColor = color;
+    _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
+}
+
+void Arcade::NCurses::Texture::setContent(char c)
+{
+    fillContent(c, _width, _height);
 }
