@@ -17,6 +17,7 @@ namespace Arcade {
             public:
                 GameData();
                 ~GameData();
+                bool isGameOver() const override;
                 std::map<std::string, int> getScores() const;
                 std::string getGameName() const;
                 std::vector<IEntity *> &getEntities();

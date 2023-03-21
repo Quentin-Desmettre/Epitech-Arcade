@@ -55,9 +55,18 @@ void Arcade::NCurses::NCurses::render(IGameData &gameData)
      * If it takes t x-cells, we display it as t*x/n by y/m chars.
      * If it takes t y-cells, we display it as x/n by t*y/m chars.
      */
+    auto size = _win.getSize();
     _win.clear();
     renderScores(gameData);
     renderEntities(gameData);
+    if (gameData.isGameOver()) {
+        Texture t("", size.first / 4, size.second / 8);
+        t.setBackgroundColor(Color::RED);
+        t.setTextColor(Color::WHITE);
+        t.setContent(' ');
+        _win.draw(t, {size.first / 2 - size.first / 8, size.second / 2 - size.second / 16 - 1});
+        _win.draw("GAME OVER", {size.first / 2 - 4, size.second / 2 - 1});
+    }
     refresh();
 }
 

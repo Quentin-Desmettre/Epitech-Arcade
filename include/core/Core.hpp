@@ -37,7 +37,7 @@ namespace Arcade {
             Core(int ac, char **av);
             ~Core();
 
-            int run(std::string const libName);
+            int run(const std::string &libName);
 
         private:
             std::vector<std::string> _graphicalLibs, _gameLibs;
@@ -49,8 +49,9 @@ namespace Arcade {
             ControlMap _controls;
             IDisplay *_testInterface;
             bool _testOnly;
+            std::string _username;
 
-            void handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
+            void handleEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
             void exitGame();
             bool isKeyPressed(Key key, const std::vector<Key> &pressedKeys) const ;
             bool isKeyPressed(Key key, const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys) const;
@@ -58,6 +59,8 @@ namespace Arcade {
             void loadGameLibrary(const std::string &name);
             void loadGraphicLibrary(const std::string &name);
             static void incrementIndex(int &index, std::size_t len, int dir);
+            void fetchAvailableLibs();
+            std::vector<Key> fetchPressedKeys();
     };
 };
 

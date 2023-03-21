@@ -160,8 +160,6 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
             i--;
         }
     }
-    if (dir.size() == 0)
-        std::cout << "ERROR stuck" << std::endl;
     if (dir.size() == 1) {
         folowSnake(dir[0]);
         return dir[0];
@@ -194,7 +192,7 @@ int Arcade::Nibbler::Game::isSnakeDead()
     return 0;
 }
 
-void Arcade::Nibbler::Game::update()
+void Arcade::Nibbler::Game::update(const std::string &username)
 {
     float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
     _clock = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -205,8 +203,6 @@ void Arcade::Nibbler::Game::update()
     if (_time == 0 || _exit == true) {
         return;
     }
-    if (_time_dif > 0.8)
-        std::cout << _time_dif << std::endl;
     while (_time_dif > 0.4 || _is_stuck == true) {
         if (_is_stuck == true)
             _time_dif = 0.4;
