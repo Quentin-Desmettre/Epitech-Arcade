@@ -198,11 +198,12 @@ void Arcade::Nibbler::Game::update(const std::string &username)
     _clock = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     _time_dif += dif;
 
+    if (_exit == true)
+        return convertToGameData();
     _time -= dif;
     _time = _time < 0 ? 0 : _time;
-    if (_time == 0 || _exit == true) {
-        return;
-    }
+    if (_time == 0)
+        return convertToGameData();
     while (_time_dif > 0.4 || _is_stuck == true) {
         if (_is_stuck == true)
             _time_dif = 0.4;
@@ -241,6 +242,12 @@ void Arcade::Nibbler::Game::convertToGameData()
                 _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{i, j}, size, "fruit", 0.f));
         }
     }
+    // std::cout << _exit << std::endl;
+    // std::cout << _time << std::endl;
+    if (_time == 0 || _exit == true || isSnakeDead())
+        _gameData->setGameOver(true);
+    else
+        _gameData->setGameOver(false);
     if (_is_child)
         _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{_child.first, _child.second}, size, "body", 0));
     std::pair<float, float> pos = {(_head.first - _body[0].first) * _offset * 10 / 4.0, (_head.second - _body[0].second) * _offset * 10 / 4.0};

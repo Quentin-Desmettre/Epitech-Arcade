@@ -58,5 +58,10 @@ void Arcade::Nibbler::GameData::removeEntities()
 
 bool Arcade::Nibbler::GameData::isGameOver() const
 {
-    return true;
+    return _gameOver;
+}
+
+void Arcade::Nibbler::GameData::setGameOver(int gameOver)
+{
+    _gameOver = gameOver;
 }

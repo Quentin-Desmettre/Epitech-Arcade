@@ -27,10 +27,12 @@ namespace Arcade {
                 void addScore(std::string name, int score);
                 void addEntity(std::shared_ptr<IEntity> entity);
                 void removeEntities();
+                void setGameOver(int gameOver);
             private:
                 std::map<std::string, int> _scores;
                 std::vector<std::shared_ptr<IEntity>> _entities;
                 ControlMap _controls;
+                int _gameOver;
         };
     }
 }
