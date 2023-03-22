@@ -37,48 +37,35 @@ Arcade::Core::Core(int ac, char **av):
     _libLoader(LibLoader::getInstance()),
     _display(nullptr),
     _game(nullptr),
+    _run(false),
+    _isInMenu(false),
+    _selectedGraph(0),
+    _selectedGame(0),
     _testInterface(nullptr),
     _testOnly(false)
 {
-    LibLoader::LibType libType;
-    DirectoryLister dirLister;
-    std::string tmpFile;
+    if (ac == 1)
+        throw std::invalid_argument("Usage: ./arcade displayLib.so [-test] [-test-only] [-h] [--help] [--username=USERNAME]");
 
-    if (ac != 2 && !(ac == 3 && (std::string(av[2]) == "-test" || std::string(av[2]) == "-test-only")))
-        throw std::invalid_argument("Usage: ./arcade displayLib.so");
+    for (int i = 1; i < ac; i++) {
+        // Help
+        if (std::string(av[i]) == "-h" || std::string(av[i]) == "--help")
+            throw std::invalid_argument("Usage: ./arcade displayLib.so [-test] [-test-only] [-h] [--help] [--username=USERNAME]");
 
-    try {
-        dirLister.open("./lib", true);
-    } catch (DirectoryLister::OpenFailureException &e) {
-        std::cerr << "Error: ./lib: " << e.what() << std::endl;
-        exit(84);
-    }
-
-    while (1) {
-        try {
-            tmpFile = dirLister.get();
-        } catch (DirectoryLister::NoMoreFileException &e) {
-            break;
+        // Test
+        else if (std::string(av[i]) == "-test" || std::string(av[i]) == "-test-only") {
+            _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
+            _testOnly = std::string(av[i]) == "-test-only";
         }
 
-        if (tmpFile.size() < 3 || tmpFile.substr(tmpFile.size() - 3) != ".so")
-            continue;
-        libType = _libLoader.getLibType("./lib/" + tmpFile);
-        if (libType == LibLoader::GRAPHICAL)
-            _graphicalLibs.push_back(tmpFile);
-        else if (libType == LibLoader::GAME)
-            _gameLibs.push_back(tmpFile);
+        // Username
+        else if (std::string(av[i]).find("--username=") == 0 and std::string(av[i]).size() > 11)
+            _username = std::string(av[i]).substr(11);
     }
-    if (_graphicalLibs.empty())
-        throw NoLibraryException(LibLoader::GRAPHICAL);
-    if (_gameLibs.empty())
-        throw NoLibraryException(LibLoader::GAME);
+
+    fetchAvailableLibs();
     loadGraphicLibrary(av[1]);
-    if (ac == 3 && (std::string(av[2]) == "-test" || std::string(av[2]) == "-test-only")) {
-        _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
-        if (std::string(av[2]) == "-test-only")
-            _testOnly = true;
-    }
+
     _controls = {
             {"Quit", "ESC"},
             {"Load game & graph", "ENTER"},
@@ -86,6 +73,7 @@ Arcade::Core::Core(int ac, char **av):
             {"Select game", "LEFT/RIGHT"},
             {"Select graph", "UP/DOWN"},
     };
+
 }
 
 Arcade::Core::~Core()
@@ -96,7 +84,26 @@ Arcade::Core::~Core()
         _libLoader.unloadGameLib(_game);
 }
 
-int Arcade::Core::run(std::string const libName)
+std::vector<Arcade::Key> Arcade::Core::fetchPressedKeys()
+{
+    std::vector<Key> testKeys, pressedKeys;
+
+    // Get normal keys
+    if (!_testOnly || _isInMenu)
+        pressedKeys = _display->getPressedKeys();
+
+    // Get test keys
+    if (_testInterface && !_isInMenu && pressedKeys.empty())
+        testKeys = _testInterface->getPressedKeys();
+
+    // Merge keys
+    for (auto &key : testKeys)
+        if (find(pressedKeys.begin(), pressedKeys.end(), key) == pressedKeys.end())
+            pressedKeys.push_back(key);
+    return pressedKeys;
+}
+
+int Arcade::Core::run(const std::string &libName)
 {
     std::vector<Key> oldKeys, pressedKeys, testKeys;
 
@@ -104,36 +111,31 @@ int Arcade::Core::run(std::string const libName)
     _isInMenu = true;
     _selectedGame = 0;
     _selectedGraph = 0;
+
+    // Get the index of the selected graphical
     for (size_t i = 0; i < _graphicalLibs.size(); i++)
         if (libName.find(_graphicalLibs[i]) != std::string::npos)
-            _selectedGraph = i;
+            _selectedGraph = static_cast<int>(i);
+
+    // Game loop
     while (_run) {
-        if (!(!_testOnly || _isInMenu))
-            pressedKeys = _display->getPressedKeys();
-        testKeys.clear();
-        pressedKeys.clear();
-        if (!_testOnly || _isInMenu)
-            pressedKeys = _display->getPressedKeys();
-        if (_testInterface && !_isInMenu && pressedKeys.empty())
-            testKeys = _testInterface->getPressedKeys();
-        for (auto &key : testKeys)
-            if (find(pressedKeys.begin(), pressedKeys.end(), key) == pressedKeys.end())
-                pressedKeys.push_back(key);
+        pressedKeys = fetchPressedKeys();
         if (_isInMenu) {
             _display->renderMenu(_gameLibs, _graphicalLibs, _selectedGame, _selectedGraph, _controls);
         } else {
             _display->render(_game->getGameData());
             _game->handleKeys(pressedKeys);
-            _game->update();
+            _game->update(_username);
         }
-        handleMenuEvents(oldKeys, pressedKeys);
+        handleEvents(oldKeys, pressedKeys);
         oldKeys = pressedKeys;
     }
     return 0;
 }
 
-void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys)
+void Arcade::Core::handleEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys)
 {
+    // Load libraries
     if (isKeyPressed(Key::Enter, oldKeys, newKeys) && _isInMenu) {
         if (_testInterface)
             _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
@@ -142,6 +144,8 @@ void Arcade::Core::handleMenuEvents(const std::vector<Key> &oldKeys, const std::
     if (isKeyPressed(Key::Space, oldKeys, newKeys) && _isInMenu) {
         return loadGraphicLibrary("./lib/" + _graphicalLibs[_selectedGraph]);
     }
+
+    // Exit
     if (isKeyPressed(Key::Escape, oldKeys, newKeys)) {
         if (_isInMenu)
             _run = false;
@@ -226,4 +230,48 @@ void Arcade::Core::loadGraphicLibrary(const std::string &name)
     if (!newDisplay)
         throw LibraryNotLoadedException();
     _display = newDisplay;
+}
+
+void Arcade::Core::fetchAvailableLibs()
+{
+    LibLoader::LibType libType;
+    DirectoryLister dirLister;
+    std::string tmpFile;
+
+    _graphicalLibs.clear();
+    _gameLibs.clear();
+
+    // Open lib directory
+    try {
+        dirLister.open("./lib", true);
+    } catch (DirectoryLister::OpenFailureException &e) {
+        std::cerr << "Error: ./lib: " << e.what() << std::endl;
+        exit(84);
+    }
+
+    while (true) {
+        // No more file in directory
+        try {
+            tmpFile = dirLister.get();
+        } catch (DirectoryLister::NoMoreFileException &e) {
+            break;
+        }
+
+        // Not a dynamic library
+        if (tmpFile.size() < 3 || tmpFile.substr(tmpFile.size() - 3) != ".so")
+            continue;
+
+        // Get library type
+        libType = _libLoader.getLibType("./lib/" + tmpFile);
+        if (libType == LibLoader::GRAPHICAL)
+            _graphicalLibs.push_back(tmpFile);
+        else if (libType == LibLoader::GAME)
+            _gameLibs.push_back(tmpFile);
+    }
+
+    // Errors
+    if (_graphicalLibs.empty())
+        throw NoLibraryException(LibLoader::GRAPHICAL);
+    if (_gameLibs.empty())
+        throw NoLibraryException(LibLoader::GAME);
 }

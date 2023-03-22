@@ -19,10 +19,10 @@ namespace Arcade {
         class Game : public Arcade::IGame {
             public:
                 Game();
-                ~Game();
-                void handleKeys(const std::vector<Key> &pressedKeys);
-                void update();
-                IGameData &getGameData() const;
+                ~Game() override;
+                void handleKeys(const std::vector<Key> &pressedKeys) override;
+                void update(const std::string &username) override;
+                IGameData &getGameData() const override;
             protected:
             private:
                 std::pair<float, float> changeDirection();

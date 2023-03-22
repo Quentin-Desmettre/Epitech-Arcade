@@ -222,7 +222,6 @@ void Arcade::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
                                                 &_boldGlobalFont,
                                                 gameData.getGameName(),
                                                 SDL_Color{255, 255, 255, 255});
-        std::cout << _infoPanelTitle->getSize().first << std::endl;
         _infoPanelTitle->getRawTexture();
         _infoPanelTitle->setPosition({(gameData.getMapSize().second * cellSize + 1280) / 2
         - _infoPanelTitle->getSize().first / 2, 25});
