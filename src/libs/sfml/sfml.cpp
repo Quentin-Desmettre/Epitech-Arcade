@@ -106,6 +106,16 @@ void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
         _window.draw(_text);
         i++;
     }
+
+    if (gameData.isGameOver()) {
+        _text.setCharacterSize(40);
+        _text.setString("GAME OVER");
+        _text.setFillColor(sf::Color::Red);
+        _text.setPosition(((0.25 + gameData.getMapSize().second) * _cellSize + 1280) / 2, 700);
+        centerTextOrigin();
+        _window.draw(_text);
+        _text.setFillColor(sf::Color::White);
+    }
 }
 
 void Arcade::SFML::render(Arcade::IGameData &gameData)

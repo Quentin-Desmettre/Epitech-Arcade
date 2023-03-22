@@ -93,6 +93,7 @@ Arcade::Sdl::Sdl::Sdl():
         _window{1280, 832},
         _globalFont("assets/arial.ttf", 20),
         _boldGlobalFont("assets/arial.ttf", 25, true),
+        _gameOverFont("assets/arial.ttf", 40, true),
         _menuBackground()
 {
     _menuBackgroundTexture = std::move(std::make_unique<Texture>("assets/menubg.png", _window.getRenderer()));
@@ -115,6 +116,10 @@ Arcade::Sdl::Sdl::Sdl():
                                             &_boldGlobalFont,
                                             "Score",
                                             SDL_Color{255, 255, 255, 255});
+    _gameOverText = std::make_unique<Text>(_window.getRenderer(),
+                                            &_gameOverFont,
+                                            "GAME OVER",
+                                            SDL_Color{255, 0, 0, 255});
     _graphTitle->setPosition({537, 317});
     _gameTitle->setPosition({970, 317});
     _controlsTitle->setPosition({190, 317});
@@ -231,8 +236,14 @@ void Arcade::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
         _scoreText->setText(score.first + ": " + std::to_string(score.second));
         _scoreText->setPosition({gameData.getMapSize().second * cellSize + 40, 100  + i * 50});
         _window.draw(*_scoreText);
-
         i++;
+    }
+
+    if (gameData.isGameOver()) {
+        _infoPanelTitle->getRawTexture();
+        _gameOverText->setPosition({((0.25 + gameData.getMapSize().second) * cellSize + 1280) / 2
+        - _gameOverText->getSize().first / 2, 700});
+        _window.draw(*_gameOverText);
     }
 }
 

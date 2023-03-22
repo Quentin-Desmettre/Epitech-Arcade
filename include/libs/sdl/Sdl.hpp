@@ -34,11 +34,11 @@ public:
 private:
     // Globals
     RenderWindow _window;
-    Font _globalFont, _boldGlobalFont;
+    Font _globalFont, _boldGlobalFont, _gameOverFont;
 
     // Menu
     using UniqueText = std::unique_ptr<Text>;
-    UniqueText _graphTitle, _gameTitle, _controlsTitle, _infoPanelTitle, _scoreText;
+    UniqueText _graphTitle, _gameTitle, _controlsTitle, _infoPanelTitle, _scoreText, _gameOverText;
     std::vector<UniqueText> _graphItems, _gameItems, _controlsItems;
     std::vector<std::string> _graphNames, _gameNames;
     ControlMap _controls;
