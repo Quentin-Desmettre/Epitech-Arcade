@@ -30,6 +30,7 @@ Arcade::SFML::SFML()
     _text.setFillColor(sf::Color::White);
     _text.setStyle(sf::Text::Bold);
     _rectangle.setFillColor(sf::Color::Black);
+    _isMenu = true;
 }
 
 Arcade::SFML::~SFML()
@@ -44,7 +45,8 @@ std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
     while (_window.pollEvent(_event)) {
         if (_event.type == sf::Event::Closed) {
             keys.push_back(Arcade::Key::Escape);
-            _window.close();
+            if (_isMenu)
+                _window.close();
         }
         if (_event.type == sf::Event::KeyPressed) {
             switch (_event.key.code) {
@@ -104,12 +106,23 @@ void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
         _window.draw(_text);
         i++;
     }
+
+    if (gameData.isGameOver()) {
+        _text.setCharacterSize(40);
+        _text.setString("GAME OVER");
+        _text.setFillColor(sf::Color::Red);
+        _text.setPosition(((0.25 + gameData.getMapSize().second) * _cellSize + 1280) / 2, 700);
+        centerTextOrigin();
+        _window.draw(_text);
+        _text.setFillColor(sf::Color::White);
+    }
 }
 
 void Arcade::SFML::render(Arcade::IGameData &gameData)
 {
     std::vector<IEntity *> entities = gameData.getEntities();
 
+    _isMenu = false;
     _window.clear();
     calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
     for (auto &entity : entities) {
@@ -176,6 +189,7 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
 {
     std::vector<std::string> controls;
 
+    _isMenu = true;
     _window.clear();
     setupMenu();
 
