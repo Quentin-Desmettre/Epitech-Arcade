@@ -5,12 +5,18 @@
 ## Makefile
 ##
 
-rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 INCLUDE_DIRS = -I ../../../include/libs -I ../../../include/
 
 SOURCEDIR = ./
 
-SRC = $(call rwildc,$(SOURCEDIR),*.cpp)
+SRC = \
+	Font.cpp \
+	RectangleShape.cpp \
+	RenderWindow.cpp \
+	Sdl.cpp \
+	Sprite.cpp \
+	Text.cpp \
+	Texture.cpp
 
 CXX = g++
 
