@@ -1,12 +1,13 @@
 #include <cstdio>
+#include "games/centipede/Centipede.hpp"
 
 extern "C"
 {
     void *createGame() {
-        return new int;
+        return new Arcade::Centipede::Game();
     }
 
     void deleteGame(void *game) {
-        delete static_cast<int *>(game);
+        delete static_cast<Arcade::Centipede::Game *>(game);
     }
 }
