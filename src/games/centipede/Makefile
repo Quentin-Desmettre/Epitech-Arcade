@@ -5,12 +5,15 @@
 ## Makefile
 ##
 
-rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 INCLUDE_DIRS := $(shell find ../../../ -name "*.hpp" -printf '%h\n' | sed 's/ /\\ /g' | sort | uniq | awk '{printf " -I%s", $$0}')
 
 SOURCEDIR = ./
 
-SRC = $(call rwildc,$(SOURCEDIR),*.cpp)
+SRC = Centipede.cpp \
+	Entity.cpp \
+	main.cpp \
+	GameData.cpp \
+	Snake.cpp \
 
 CXX = g++
 
