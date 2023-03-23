@@ -5,12 +5,13 @@
 ## Makefile
 ##
 
-rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
-INCLUDE_DIRS := $(shell find ../../../ -name "*.hpp" -printf '%h\n' | sed 's/ /\\ /g' | sort | uniq | awk '{printf " -I%s", $$0}')
+INCLUDE_DIRS = -I../../../include -I../../../include/core -I../../../include/games/nibbler -I../../../include/libs/ncurses -I../../../include/libs/sdl -I../../../include/libs/sfml -I../../../include/libs/test
 
-SOURCEDIR = ./
-
-SRC = $(call rwildc,$(SOURCEDIR),*.cpp)
+SRC = \
+	Entity.cpp \
+	GameData.cpp \
+	main.cpp \
+	Nibbler.cpp
 
 CXX = g++
 
