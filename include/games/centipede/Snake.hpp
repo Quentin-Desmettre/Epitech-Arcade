@@ -23,6 +23,7 @@ namespace Arcade {
                 int touch(std::pair<int, int> pos, std::vector<Snake> &snakes);
 
                 std::vector<std::pair<int, int>> getBody() const;
+                int getBodySize() const;
                 std::pair<int, int> getHead() const;
             protected:
             private:

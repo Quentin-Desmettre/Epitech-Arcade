@@ -11,7 +11,7 @@
 Arcade::Centipede::Snake::Snake()
 {
     _head = {12, 0};
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 8; i++) {
         _body.push_back({12, -1});
     }
     _tail = {10, 0};

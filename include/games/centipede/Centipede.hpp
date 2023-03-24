@@ -32,6 +32,8 @@ namespace Arcade {
                 void initMap();
                 void convertToGameData();
                 void removeSnake();
+                void moveShip(float dif);
+                void moveBullet(float dif);
 
                 std::shared_ptr<Arcade::Centipede::GameData> _gameData;
                 char _map[25][25];
@@ -45,6 +47,8 @@ namespace Arcade {
                 float _time;
                 float _time_dif;
                 float _offset;
+                int _score;
+                int nb_centi;
         };
     }
 }

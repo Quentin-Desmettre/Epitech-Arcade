@@ -34,6 +34,8 @@ void Arcade::Centipede::Game::restart()
     b_pos = {-1, -1};
     _lauch = false;
     _time_dif = 0;
+    _score = 0;
+    nb_centi = 20;
 }
 
 char Arcade::Centipede::Game::getAtPos(int x, int y)
@@ -100,16 +102,8 @@ void Arcade::Centipede::Game::removeSnake()
     convertToGameData();
 }
 
-void Arcade::Centipede::Game::update(const std::string &username)
+void Arcade::Centipede::Game::moveShip(float dif)
 {
-    float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
-    _clock = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    _time_dif += dif;
-    std::pair<int, int> tmp;
-    int before = b_pos.second;
-
-    if (_exit == true)
-        return convertToGameData();
     p_pos.first += _direction.first * dif * 25.0;
     p_pos.second += _direction.second * dif * 25.0;
     
@@ -121,6 +115,11 @@ void Arcade::Centipede::Game::update(const std::string &username)
         p_pos.second = 19;
     if (p_pos.second > 24)
         p_pos.second = 24;
+}
+
+
+void Arcade::Centipede::Game::moveBullet(float dif)
+{
     if (_lauch == true && b_pos.first <= -3) {
         b_pos = p_pos;
         _lauch = false;
@@ -130,6 +129,20 @@ void Arcade::Centipede::Game::update(const std::string &username)
         if (b_pos.second < -3)
             b_pos = {-3, -3};
     }
+}
+
+void Arcade::Centipede::Game::update(const std::string &username)
+{
+    float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
+    _clock = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    _time_dif += dif;
+    std::pair<int, int> tmp;
+    int before = b_pos.second;
+
+    if (_exit == true)
+        return convertToGameData();
+    moveShip(dif);
+    moveBullet(dif);
     while (_time_dif > 0.1) {
         for (auto &snake : _snake) {
             snake.move(_map);
@@ -137,6 +150,20 @@ void Arcade::Centipede::Game::update(const std::string &username)
         _time_dif -= 0.1;
     }
     _offset = _time_dif;
+    for (size_t i = 0; i < _snake.size(); i++) {
+        if (_snake[i].getBody()[_snake[i].getBody().size() - 1].second > 25) {
+            _score -= _snake[i].getBody().size();
+            _snake.erase(_snake.begin() + i);
+            if (nb_centi > 0) {
+                _snake.push_back(Snake());
+                nb_centi -= 1;
+            }
+        }
+    }
+    if (_snake.size() == 0 && nb_centi == 0)
+        _exit = true;
+    if (_snake.size() == 0 && nb_centi > 0)
+        _snake.push_back(Snake());
     for (size_t i = 0; i < _snake.size(); i++) {
         if (_snake[i].touch(p_pos, _snake)) {
             _exit = true;
@@ -148,8 +175,10 @@ void Arcade::Centipede::Game::update(const std::string &username)
         tmp.second = before;
         if (getAtPos(tmp.first, tmp.second) != ' ' && getAtPos(tmp.first, tmp.second) != 0) {
             _map[tmp.first][tmp.second] -= 1;
-            if (_map[tmp.first][tmp.second] < '1' || _map[tmp.first][tmp.second] > '5')
+            if (_map[tmp.first][tmp.second] < '1' || _map[tmp.first][tmp.second] > '5') {
                 _map[tmp.first][tmp.second] = ' ';
+                _score += 1;
+            }
             b_pos = {-1, -1};
             break;
         }
@@ -157,6 +186,7 @@ void Arcade::Centipede::Game::update(const std::string &username)
             if (_snake[i].touch(tmp, _snake)) {
                 _map[tmp.first][tmp.second] = '5';
                 b_pos = {-1, -1};
+                _score += 1;
                 return removeSnake();
             }
         }
@@ -170,6 +200,7 @@ void Arcade::Centipede::Game::convertToGameData()
         _gameData->setGameOver(true);
     else
         _gameData->setGameOver(false);
+    _gameData->addScore("Score", _score);
     _gameData->removeEntities();
     std::string tmp;
     std::pair<float, float> size = {1, 1};
