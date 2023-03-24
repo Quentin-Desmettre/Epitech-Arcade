@@ -59,17 +59,12 @@ int Arcade::Centipede::Snake::touch(std::pair<int, int> pos, std::vector<Arcade:
 {
     std::vector<std::pair<int, int>> tmp = {};
     size_t size = _body.size();
-    if (_body[0] == pos) {
-        _head = _body[0];
-        _body.erase(_body.begin());
-        return 1;
-    }
     if (_body[size - 1] == pos) {
         _tail = _body[size - 1];
         _body.pop_back();
         return 1;
     }
-    for (size_t i = 1; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         if (_body[i] == pos) {
             for (size_t j = i + 1; j < size; j++)
                 tmp.push_back(_body[j]);

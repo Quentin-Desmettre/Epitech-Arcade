@@ -96,7 +96,7 @@ void Arcade::Nibbler::Game::handleKeys(const std::vector<Arcade::Key> &pressedKe
         case Arcade::Key::D:
             _direction = {1, 0};
             break;
-        case Arcade::Key::Space:
+        case Arcade::Key::R:
             restart();
             break;
         default:

@@ -72,6 +72,9 @@ void Arcade::Centipede::Game::handleKeys(const std::vector<Arcade::Key> &pressed
             case Arcade::Key::Space:
                 _lauch = true;
                 break;
+            case Arcade::Key::R:
+                restart();
+                break;
             default:
                 break;
         }
@@ -94,6 +97,7 @@ void Arcade::Centipede::Game::removeSnake()
         if (_snake[i].getBody().size() == 0)
             _snake.erase(_snake.begin() + i);
     }
+    convertToGameData();
 }
 
 void Arcade::Centipede::Game::update(const std::string &username)
@@ -104,6 +108,8 @@ void Arcade::Centipede::Game::update(const std::string &username)
     std::pair<int, int> tmp;
     int before = b_pos.second;
 
+    if (_exit == true)
+        return convertToGameData();
     p_pos.first += _direction.first * dif * 25.0;
     p_pos.second += _direction.second * dif * 25.0;
     
@@ -131,6 +137,12 @@ void Arcade::Centipede::Game::update(const std::string &username)
         _time_dif -= 0.1;
     }
     _offset = _time_dif;
+    for (size_t i = 0; i < _snake.size(); i++) {
+        if (_snake[i].touch(p_pos, _snake)) {
+            _exit = true;
+            return removeSnake();
+        }
+    }
     for (; before >= b_pos.second; before--) {
         tmp.first = int(round(b_pos.first));
         tmp.second = before;
@@ -144,9 +156,8 @@ void Arcade::Centipede::Game::update(const std::string &username)
         for (size_t i = 0; i < _snake.size(); i++) {
             if (_snake[i].touch(tmp, _snake)) {
                 _map[tmp.first][tmp.second] = '5';
-                removeSnake();
                 b_pos = {-1, -1};
-                return convertToGameData();
+                return removeSnake();
             }
         }
     }
@@ -155,6 +166,10 @@ void Arcade::Centipede::Game::update(const std::string &username)
 
 void Arcade::Centipede::Game::convertToGameData()
 {
+    if (_exit == true)
+        _gameData->setGameOver(true);
+    else
+        _gameData->setGameOver(false);
     _gameData->removeEntities();
     std::string tmp;
     std::pair<float, float> size = {1, 1};

@@ -55,3 +55,13 @@ void Arcade::Centipede::GameData::removeEntities()
 {
     _entities.clear();
 }
+
+void Arcade::Centipede::GameData::setGameOver(int gameOver)
+{
+    _gameOver = gameOver;
+}
+
+bool Arcade::Centipede::GameData::isGameOver() const
+{
+    return _gameOver;
+}
