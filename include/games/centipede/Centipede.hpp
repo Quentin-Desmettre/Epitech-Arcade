@@ -34,6 +34,7 @@ namespace Arcade {
                 void removeSnake();
                 void moveShip(float dif);
                 void moveBullet(float dif);
+                int checkBulletMove(int before);
 
                 std::shared_ptr<Arcade::Centipede::GameData> _gameData;
                 char _map[25][25];

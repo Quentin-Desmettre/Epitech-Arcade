@@ -131,12 +131,40 @@ void Arcade::Centipede::Game::moveBullet(float dif)
     }
 }
 
+int Arcade::Centipede::Game::checkBulletMove(int before)
+{
+    std::pair<int, int> tmp;
+
+    for (; before >= b_pos.second; before--) {
+        tmp.first = int(round(b_pos.first));
+        tmp.second = before;
+        if (getAtPos(tmp.first, tmp.second) != ' ' && getAtPos(tmp.first, tmp.second) != 0) {
+            _map[tmp.first][tmp.second] -= 1;
+            if (_map[tmp.first][tmp.second] < '1' || _map[tmp.first][tmp.second] > '5') {
+                _map[tmp.first][tmp.second] = ' ';
+                _score += 1;
+            }
+            b_pos = {-1, -1};
+            break;
+        }
+        for (size_t i = 0; i < _snake.size(); i++) {
+            if (_snake[i].touch(tmp, _snake)) {
+                _map[tmp.first][tmp.second] = '5';
+                b_pos = {-1, -1};
+                _score += 1;
+                return 1;
+            }
+        }
+    }
+    return 0;
+   
+}
+
 void Arcade::Centipede::Game::update(const std::string &username)
 {
     float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
     _clock = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     _time_dif += dif;
-    std::pair<int, int> tmp;
     int before = b_pos.second;
 
     if (_exit == true)
@@ -170,27 +198,8 @@ void Arcade::Centipede::Game::update(const std::string &username)
             return removeSnake();
         }
     }
-    for (; before >= b_pos.second; before--) {
-        tmp.first = int(round(b_pos.first));
-        tmp.second = before;
-        if (getAtPos(tmp.first, tmp.second) != ' ' && getAtPos(tmp.first, tmp.second) != 0) {
-            _map[tmp.first][tmp.second] -= 1;
-            if (_map[tmp.first][tmp.second] < '1' || _map[tmp.first][tmp.second] > '5') {
-                _map[tmp.first][tmp.second] = ' ';
-                _score += 1;
-            }
-            b_pos = {-1, -1};
-            break;
-        }
-        for (size_t i = 0; i < _snake.size(); i++) {
-            if (_snake[i].touch(tmp, _snake)) {
-                _map[tmp.first][tmp.second] = '5';
-                b_pos = {-1, -1};
-                _score += 1;
-                return removeSnake();
-            }
-        }
-    }
+    if (checkBulletMove(before) == 1)
+        return removeSnake();
     convertToGameData();
 }
 
@@ -208,22 +217,26 @@ void Arcade::Centipede::Game::convertToGameData()
         for (int j = 0; j < 24; j++) {
             if (_map[i][j] != ' ') {
                 tmp = _map[i][j];
-                _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::pair<float, float>({i, j}), size, tmp, 0.f));
+                _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::vector<std::pair<float, float>>{{i, j}}, size, tmp, 0.f));
             }
         }
     }
-    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(p_pos, size, "ship", 0.f));
-    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(b_pos, size, "bullet", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::vector<std::pair<float, float>>{p_pos}, size, "ship", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::vector<std::pair<float, float>>{b_pos}, size, "bullet", 0.f));
+    std::vector<std::pair<float, float>> heads = {};
+    std::vector<std::pair<float, float>> bodys = {};
     for (auto &snake : _snake) {
         std::vector<std::pair<int, int>> body = snake.getBody();
         std::pair<int, int> head = snake.getHead();
         std::pair<float, float> pos = {(head.first - body[0].first) * _offset * 10 / 1.0, (head.second - body[0].second) * _offset * 10 / 1.0};
-        _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::pair<float, float>{body[0].first + pos.first, body[0].second + pos.second}, size, "head", 0.f));
+        heads.push_back({body[0].first + pos.first, body[0].second + pos.second});
         for (size_t i = 1; i < body.size(); i++) {
             pos = {(body[i - 1].first - body[i].first) * _offset * 10 / 1.0, (body[i - 1].second - body[i].second) * _offset * 10 / 1.0};
-            _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::pair<float, float>{body[i].first + pos.first, body[i].second + pos.second}, size, "body", 0.f));
+            bodys.push_back({body[i].first + pos.first, body[i].second + pos.second});
         }
     }
+    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(heads, size, "head", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(bodys, size, "body", 0.f));
     // for (auto &entity : _gameData->getEntities()) {
     //     std::cout << entity->getPosition().first << " " << entity->getPosition().second << std::endl;
     // }

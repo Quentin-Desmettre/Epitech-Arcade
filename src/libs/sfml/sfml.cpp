@@ -121,6 +121,7 @@ void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
 void Arcade::SFML::render(Arcade::IGameData &gameData)
 {
     std::vector<std::shared_ptr<IEntity>> entities = gameData.getEntities();
+    std::vector<std::pair<float, float>> positon;
 
     _isMenu = false;
     _window.clear();
@@ -134,9 +135,12 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
         _sprite.scale(_cellSize / _sprite.getLocalBounds().width * entity->getSize().first,
         _cellSize / _sprite.getLocalBounds().height * entity->getSize().second);
         _sprite.setOrigin(_sprite.getLocalBounds().width / 2, _sprite.getLocalBounds().height / 2);
-        _sprite.setPosition((0.5 + entity->getPosition().first) * _cellSize, (0.5 + entity->getPosition().second) * _cellSize);
         _sprite.setRotation(entity->getRotation());
-        _window.draw(_sprite);
+        positon = entity->getPosition();
+        for (auto &pos : positon) {
+            _sprite.setPosition((0.5 + pos.first) * _cellSize, (0.5 + pos.second) * _cellSize);
+            _window.draw(_sprite);
+        }
     }
     drawInfoPanel(gameData);
     _window.display();

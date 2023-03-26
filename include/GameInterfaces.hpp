@@ -127,7 +127,7 @@ namespace Arcade {
              * @brief Gets the position of the entity. This position is expressed in terms of cell.
              * For an entity in the middle of the screen, the position will be (map_size_x / 2, map_size_y / 2).
             */
-            virtual std::pair<float, float> getPosition() const = 0;
+            virtual std::vector<std::pair<float, float>> getPosition() const = 0;
 
             /**
              * @brief Gets the size of the entity. This size is expressed in terms of cell percentage.

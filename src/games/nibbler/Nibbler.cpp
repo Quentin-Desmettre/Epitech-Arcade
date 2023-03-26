@@ -232,30 +232,33 @@ void Arcade::Nibbler::Game::convertToGameData()
 {
     _gameData->removeEntities();
     std::pair<float, float> size = {1, 1};
+    std::vector<std::pair<float, float>> wall = {};
+    std::vector<std::pair<float, float>> fruit = {};
     for (int i = 0; i < 19; i++) {
         for (int j = 0; j < 19; j++) {
-            if (_map[i][j] == 'X') {
-                _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>({i, j}), size, "wall", 0.f));
-            }
-
+            if (_map[i][j] == 'X')
+                wall.push_back(std::pair<float, float>({i, j}));
             if (_map[i][j] == 'o')
-                _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{i, j}, size, "fruit", 0.f));
+                fruit.push_back(std::pair<float, float>({i, j}));
         }
     }
-    // std::cout << _exit << std::endl;
-    // std::cout << _time << std::endl;
+    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(wall, size, "wall", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(fruit, size, "fruit", 0.f));
+
+    std::vector<std::pair<float, float>> body = {};
     if (_time == 0 || _exit == true || isSnakeDead())
         _gameData->setGameOver(true);
     else
         _gameData->setGameOver(false);
     if (_is_child)
-        _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{_child.first, _child.second}, size, "body", 0));
+        body.push_back(_child);
     std::pair<float, float> pos = {(_head.first - _body[0].first) * _offset * 10 / 4.0, (_head.second - _body[0].second) * _offset * 10 / 4.0};
-    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{_body[0].first + pos.first, _body[0].second + pos.second}, size, std::string("head"), 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::vector<std::pair<float, float>>{{_body[0].first + pos.first, _body[0].second + pos.second}}, size, std::string("head"), 0.f));
     for (size_t i = 1; i < _body.size(); i++) {
         pos = {(_body[i - 1].first - _body[i].first) * _offset * 10 / 4.0, (_body[i - 1].second - _body[i].second) * _offset * 10 / 4.0};
-        _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::pair<float, float>{_body[i].first + pos.first, _body[i].second + pos.second}, size, std::string("body"), 0.f));
+        body.push_back({_body[i].first + pos.first, _body[i].second + pos.second});
     }
+    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(body, size, std::string("body"), 0.f));
     _gameData->addScore("Score", _body.size() - 4);
     _gameData->addScore("Time", _time);
 }
