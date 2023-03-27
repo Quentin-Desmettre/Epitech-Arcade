@@ -25,7 +25,7 @@ typedef std::vector<std::string> StringVector;
 class Arcade::NCurses::NCurses: public Arcade::IDisplay {
 public:
     NCurses();
-    ~NCurses() override = default;
+    ~NCurses() override;
 
     std::vector<Key> getPressedKeys() override;
     void render(IGameData &gameData) override;
@@ -58,6 +58,7 @@ private:
     Size _lastWinSize;
     int _fps;
     long _lastFrame;
+    int _baseInputDelay;
 };
 
 #endif /* !NCURSES_HPP_ */

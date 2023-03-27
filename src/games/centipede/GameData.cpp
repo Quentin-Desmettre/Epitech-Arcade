@@ -47,7 +47,6 @@ void Arcade::Centipede::GameData::addScore(std::string name, int score)
 
 void Arcade::Centipede::GameData::addEntity(std::shared_ptr<Arcade::IEntity> entity)
 {
-    // std::cout << entity.getTexture() << std::endl;
     _entities.push_back(entity);
 }
 

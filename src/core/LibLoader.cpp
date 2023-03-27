@@ -7,6 +7,7 @@
 
 #include "LibLoader.hpp"
 #include <stdexcept>
+#include <iostream>
 
 Arcade::LibLoader::LibType Arcade::LibLoader::getLibType(const std::string &path) const
 {

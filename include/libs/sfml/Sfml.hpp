@@ -21,7 +21,8 @@ namespace Arcade {
 class Arcade::SFML : public Arcade::IDisplay {
     public:
         SFML();
-        ~SFML();
+        ~SFML() override;
+
         std::vector<Key> getPressedKeys() override;
         void render(IGameData &gameData) override;
         void renderMenu(const std::vector<std::string> &games,

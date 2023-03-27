@@ -38,62 +38,6 @@ Arcade::SFML::~SFML()
     _window.close();
 }
 
-std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
-{
-    std::vector<Arcade::Key> keys;
-
-    while (_window.pollEvent(_event)) {
-        if (_event.type == sf::Event::Closed) {
-            keys.push_back(Arcade::Key::Escape);
-            if (_isMenu)
-                _window.close();
-        }
-        if (_event.type == sf::Event::KeyPressed) {
-            switch (_event.key.code) {
-                case sf::Keyboard::Escape:
-                    keys.push_back(Arcade::Key::Escape);
-                    break;
-                case sf::Keyboard::Up:
-                    keys.push_back(Arcade::Key::Up);
-                    break;
-                case sf::Keyboard::Down:
-                    keys.push_back(Arcade::Key::Down);
-                    break;
-                case sf::Keyboard::Left:
-                    keys.push_back(Arcade::Key::Left);
-                    break;
-                case sf::Keyboard::Right:
-                    keys.push_back(Arcade::Key::Right);
-                    break;
-                case sf::Keyboard::Return:
-                    keys.push_back(Arcade::Key::Enter);
-                    break;
-                case sf::Keyboard::Space:
-                    keys.push_back(Arcade::Key::Space);
-                    break;
-                case sf::Keyboard::Z:
-                    keys.push_back(Arcade::Key::Z);
-                    break;
-                case sf::Keyboard::Q:
-                    keys.push_back(Arcade::Key::Q);
-                    break;
-                case sf::Keyboard::S:
-                    keys.push_back(Arcade::Key::S);
-                    break;
-                case sf::Keyboard::D:
-                    keys.push_back(Arcade::Key::D);
-                    break;
-                case sf::Keyboard::R:
-                    keys.push_back(Arcade::Key::R);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    return keys;
-}
-
 void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
 {
     _text.setCharacterSize(30);
@@ -222,4 +166,19 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     }
 
     _window.display();
+}
+
+std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
+{
+    std::vector<Arcade::Key> keys;
+    sf::Event ev{};
+
+    for (int i = 0; i < Arcade::Key::KeyCount; i++) {
+        if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(i)))
+            keys.push_back(static_cast<Arcade::Key>(i));
+    }
+    while (_window.pollEvent(ev))
+        if (ev.type == sf::Event::Closed)
+            keys.push_back(Arcade::Key::Escape);
+    return keys;
 }
