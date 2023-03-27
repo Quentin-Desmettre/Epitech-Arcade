@@ -12,17 +12,17 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
-#include "IDisplay.hpp"
+#include "ADisplay.hpp"
 
 namespace Arcade {
     class SFML;
 };
 
-class Arcade::SFML : public Arcade::IDisplay {
+class Arcade::SFML : public Arcade::ADisplay {
     public:
         SFML();
-        ~SFML();
-        std::vector<Key> getPressedKeys() override;
+        ~SFML() override;
+
         void render(IGameData &gameData) override;
         void renderMenu(const std::vector<std::string> &games,
         const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map) override;

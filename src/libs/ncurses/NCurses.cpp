@@ -184,16 +184,6 @@ void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedInd
     _controlMenu = std::make_unique<Menu>(&_win, "Controls", controlsPos, getNames(_controls), -1, menuSize);
 }
 
-std::vector<Arcade::Key> Arcade::NCurses::NCurses::getPressedKeys()
-{
-    Key k;
-    std::vector<Key> keys;
-
-    while ((k = Arcade::NCurses::Window::getKey()) != Key::Unknown)
-        keys.push_back(k);
-    return keys;
-}
-
 Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const std::vector<std::string> &items)
 {
     // Menu should be large enough to contain the biggest item + 8 characters, for padding and box.

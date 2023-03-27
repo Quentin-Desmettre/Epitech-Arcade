@@ -7,13 +7,16 @@
 
 #include "LibLoader.hpp"
 #include <stdexcept>
+#include <iostream>
 
 Arcade::LibLoader::LibType Arcade::LibLoader::getLibType(const std::string &path) const
 {
     LibHandle handle(path);
 
-    if (!handle)
+    if (!handle) {
+        std::cout << dlerror() << std::endl;
         return (ERROR);
+    }
     if (handle.symbolExists(_createDisplaySymbol) && handle.symbolExists(_deleteDisplaySymbol))
         return (GRAPHICAL);
     if (handle.symbolExists(_createGameSymbol) && handle.symbolExists(_deleteGameSymbol))

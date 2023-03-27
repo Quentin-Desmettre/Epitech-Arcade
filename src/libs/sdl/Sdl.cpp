@@ -292,20 +292,6 @@ std::string Arcade::Sdl::Sdl::texturePath(const IEntity &entity, const std::stri
     return "assets/" + gameName + "/sdl/" + entity.getTexture();
 }
 
-std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()
-{
-    SDL_Event event;
-    std::vector<Key> keys;
-
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT)
-            keys.push_back(Key::Escape);
-        else if (event.type == SDL_KEYDOWN && _keyMap.find(event.key.keysym.sym) != _keyMap.end())
-            keys.push_back(_keyMap.at(event.key.keysym.sym));
-    }
-    return keys;
-}
-
 std::string Arcade::Sdl::Sdl::simplifyName(const std::string &name)
 {
     static const std::size_t maxSize = std::string("arcade_centipede.so").size();

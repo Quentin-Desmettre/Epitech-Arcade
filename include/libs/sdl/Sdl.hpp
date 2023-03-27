@@ -7,7 +7,7 @@
 
 #ifndef EPITECH_ARCADE_SDL_HPP
 #define EPITECH_ARCADE_SDL_HPP
-#include "IDisplay.hpp"
+#include "ADisplay.hpp"
 #include "sdl/RenderWindow.hpp"
 #include "sdl/Font.hpp"
 #include "sdl/Text.hpp"
@@ -20,12 +20,11 @@ namespace Arcade {
     } // Arcade
 } // Sdl
 
-class Arcade::Sdl::Sdl: public Arcade::IDisplay {
+class Arcade::Sdl::Sdl: public Arcade::ADisplay {
 public:
     Sdl();
     ~Sdl() override;
 
-    std::vector<Key> getPressedKeys();
     void render(IGameData &gameData) override;
     void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
                     int selectedGame, int selectedGraph, const ControlMap &controls) override;

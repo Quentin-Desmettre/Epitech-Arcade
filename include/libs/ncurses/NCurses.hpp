@@ -7,7 +7,7 @@
 
 #ifndef NCURSES_HPP_
 #define NCURSES_HPP_
-#include "../../IDisplay.hpp"
+#include "../../ADisplay.hpp"
 #include <ncurses.h>
 #include <vector>
 #include "Window.hpp"
@@ -22,12 +22,11 @@ namespace Arcade {
 
 typedef std::vector<std::string> StringVector;
 
-class Arcade::NCurses::NCurses: public Arcade::IDisplay {
+class Arcade::NCurses::NCurses: public Arcade::ADisplay {
 public:
     NCurses();
     ~NCurses() override = default;
 
-    std::vector<Key> getPressedKeys() override;
     void render(IGameData &gameData) override;
     void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
                     int selectedGame, int selectedGraph, const ControlMap &map) override;

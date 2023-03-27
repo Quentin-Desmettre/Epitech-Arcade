@@ -11,7 +11,9 @@ SRC = \
 	Menu.cpp \
 	NCurses.cpp \
 	Window.cpp \
-	Texture.cpp
+	Texture.cpp \
+	../../ADisplay.cpp \
+	../../XDisplay.cpp
 
 CXX = g++
 
@@ -19,7 +21,7 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_ncurses.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lncurses -fPIC -shared -fno-gnu-unique -g
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lncurses -fPIC -shared -fno-gnu-unique -g -lX11
 
 all: try-clean $(NAME)
 

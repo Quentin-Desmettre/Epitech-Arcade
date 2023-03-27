@@ -11,7 +11,9 @@ SOURCEDIR = ./
 
 SRC = \
 	utils.cpp \
-	sfml.cpp
+	sfml.cpp \
+	../../ADisplay.cpp \
+	../../XDisplay.cpp
 
 CXX = g++
 
@@ -19,7 +21,7 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_sfml.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -fPIC -fno-gnu-unique
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -fPIC -fno-gnu-unique -lX11
 
 all: try-clean $(NAME)
 
