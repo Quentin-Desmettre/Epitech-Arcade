@@ -167,3 +167,11 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
 
     _window.display();
 }
+
+std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
+{
+    sf::Event ev{};
+
+    while (_window.pollEvent(ev));
+    return Arcade::ADisplay::getPressedKeys();
+}

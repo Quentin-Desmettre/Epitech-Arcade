@@ -263,7 +263,6 @@ void Arcade::Core::fetchAvailableLibs()
 
         // Get library type
         libType = _libLoader.getLibType("./lib/" + tmpFile);
-        std::cout << "Library type:" << libType << std::endl;
         if (libType == LibLoader::GRAPHICAL)
             _graphicalLibs.push_back(tmpFile);
         else if (libType == LibLoader::GAME)

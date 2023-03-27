@@ -25,6 +25,8 @@ public:
     static void closeDisplay() DESTRUCTOR;
     static void getKeyboardState(char state[32]);
     static bool isKeyPressed(Arcade::Key code);
+    static void setInputDelay(int ms);
+    static int getInputDelay();
 
 private:
     static KeySym keyToKeySym(Arcade::Key key);

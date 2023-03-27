@@ -8,6 +8,7 @@
 #include "sdl/Sdl.hpp"
 #include <algorithm>
 #include <iostream>
+#include "XDisplay.hpp"
 
 extern "C" void *createDisplay()
 {
@@ -304,4 +305,13 @@ std::string Arcade::Sdl::Sdl::simplifyName(const std::string &name)
 void Arcade::Sdl::Sdl::unloadTextures()
 {
     _textures.clear();
+}
+
+std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()
+{
+    SDL_Event ev;
+
+    while (SDL_PollEvent(&ev));
+
+    return Arcade::ADisplay::getPressedKeys();
 }

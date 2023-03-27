@@ -8,6 +8,8 @@
 #include "XDisplay.hpp"
 #include <iostream>
 
+#include <fstream>
+
 Display *Arcade::XDisplay::display = nullptr;
 
 KeySym Arcade::XDisplay::keyToKeySym(Arcade::Key key)
@@ -132,7 +134,6 @@ KeyCode Arcade::XDisplay::keyToKeyCode(Arcade::Key key)
 
 Display *Arcade::XDisplay::getDisplay()
 {
-    std::cout << "Opening X11 display..." << std::endl;
     if (display == nullptr)
         display = XOpenDisplay(nullptr);
     if (!display) {
@@ -162,4 +163,23 @@ bool Arcade::XDisplay::isKeyPressed(Arcade::Key code)
         return false;
     getKeyboardState(keys);
     return (keys[keycode / 8] & (1 << (keycode % 8))) != 0;
+}
+
+void Arcade::XDisplay::setInputDelay(int ms)
+{
+    std::string command = "gsettings set org.gnome.desktop.peripherals.keyboard delay " + std::to_string(ms);
+
+    system(command.c_str());
+}
+
+int Arcade::XDisplay::getInputDelay()
+{
+    system("gsettings get org.gnome.desktop.peripherals.keyboard delay | tail -c +8 > /tmp/delay");
+    std::ifstream f("/tmp/delay");
+    int delay;
+
+    if (!f)
+        return 0;
+    f >> delay;
+    return delay;
 }

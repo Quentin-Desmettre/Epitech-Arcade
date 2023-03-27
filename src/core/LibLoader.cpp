@@ -13,10 +13,8 @@ Arcade::LibLoader::LibType Arcade::LibLoader::getLibType(const std::string &path
 {
     LibHandle handle(path);
 
-    if (!handle) {
-        std::cout << dlerror() << std::endl;
+    if (!handle)
         return (ERROR);
-    }
     if (handle.symbolExists(_createDisplaySymbol) && handle.symbolExists(_deleteDisplaySymbol))
         return (GRAPHICAL);
     if (handle.symbolExists(_createGameSymbol) && handle.symbolExists(_deleteGameSymbol))
