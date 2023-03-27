@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #include <string>
 
 namespace Arcade {
@@ -126,7 +127,7 @@ namespace Arcade {
              * @brief Gets the position of the entity. This position is expressed in terms of cell.
              * For an entity in the middle of the screen, the position will be (map_size_x / 2, map_size_y / 2).
             */
-            virtual std::pair<float, float> getPosition() const = 0;
+            virtual std::vector<std::pair<float, float>> getPosition() const = 0;
 
             /**
              * @brief Gets the size of the entity. This size is expressed in terms of cell percentage.
@@ -141,7 +142,7 @@ namespace Arcade {
         public:
             virtual std::map<std::string, int> getScores() const = 0;
             virtual std::string getGameName() const = 0;
-            virtual std::vector<IEntity *> &getEntities() = 0;
+            virtual std::vector<std::shared_ptr<Arcade::IEntity>> &getEntities() = 0;
             virtual std::pair<int, int> getMapSize() const = 0;
             virtual const ControlMap &getControls() const = 0;
             virtual bool isGameOver() const = 0;

@@ -5,20 +5,18 @@
 ** GameData
 */
 
-#ifndef GAMEDATA_HPP_
-#define GAMEDATA_HPP_
+#ifndef CENTIPEDEGAMEDATA_HPP_
+#define CENTIPEDEGAMEDATA_HPP_
 
-#include <memory>
 #include "GameInterfaces.hpp"
 #include "Entity.hpp"
 
 namespace Arcade {
-    namespace Nibbler {
+    namespace Centipede {
         class GameData : public IGameData {
             public:
                 GameData();
                 ~GameData();
-                bool isGameOver() const override;
                 std::map<std::string, int> getScores() const;
                 std::string getGameName() const;
                 std::vector<std::shared_ptr<IEntity>> &getEntities();
@@ -27,12 +25,13 @@ namespace Arcade {
                 void addScore(std::string name, int score);
                 void addEntity(std::shared_ptr<IEntity> entity);
                 void removeEntities();
+                bool isGameOver() const;
                 void setGameOver(int gameOver);
             private:
                 std::map<std::string, int> _scores;
                 std::vector<std::shared_ptr<IEntity>> _entities;
                 ControlMap _controls;
-                int _gameOver;
+                bool _gameOver;
         };
     }
 }

@@ -5,12 +5,15 @@
 ## Makefile
 ##
 
-rwildc = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildc,$d/,$2))
 INCLUDE_DIRS := $(shell find ../../../ -name "*.hpp" -printf '%h\n' | sed 's/ /\\ /g' | sort | uniq | awk '{printf " -I%s", $$0}')
 
 SOURCEDIR = ./
 
-SRC = $(call rwildc,$(SOURCEDIR),*.cpp)
+SRC = Centipede.cpp \
+	Entity.cpp \
+	main.cpp \
+	GameData.cpp \
+	Snake.cpp \
 
 CXX = g++
 
@@ -18,12 +21,12 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_centipede.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -fPIC
 
 all: try-clean $(NAME)
 
-$(NAME):   $(OBJ)
-	ld -fPIC -shared -o $(NAME) $(OBJ)
+$(NAME): $(OBJ)
+	$(CXX) $(CXXFLAGS) -shared -o $(NAME) $(OBJ) -rdynamic -lc
 
 try-clean:
 	(ls *.gc* > /dev/null 2>&1 && rm -rf $(OBJ) *.gc*) || true
@@ -31,10 +34,10 @@ try-clean:
 clean:
 	rm -f $(OBJ)
 
-fclean:    clean
+fclean: clean
 	rm -f $(NAME)
 
-re:        fclean all
+re: fclean all
 
-run: 	  all
+run: all
 	./$(NAME)

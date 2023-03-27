@@ -5,12 +5,12 @@
 ** NibblerEntity
 */
 
-#ifndef NIBBLERENTITY_HPP_
-#define NIBBLERENTITY_HPP_
+#ifndef CENTIPEDEENTITY_HPP_
+#define CENTIPEDEENTITY_HPP_
 #include "GameInterfaces.hpp"
 
 namespace Arcade {
-    namespace Nibbler {
+    namespace Centipede {
         class Entity : public IEntity {
             public:
                 Entity();

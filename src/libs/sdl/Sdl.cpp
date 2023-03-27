@@ -265,13 +265,15 @@ void Arcade::Sdl::Sdl::render(IGameData &gameData)
 
         // Position sprite
         s.setTexture(*t);
-        pos = entity->getPosition();
         size = entity->getSize();
-        s.setPosition({pos.first * cellSize, pos.second * cellSize});
         s.setSize({size.first * cellSize, size.second * cellSize});
 
         // Draw it
-        _window.draw(s);
+        std::vector<std::pair<float, float>> positions = entity->getPosition();
+        for (auto &pos : positions) {
+            s.setPosition({pos.first * cellSize, pos.second * cellSize});
+            _window.draw(s);
+        }
     }
     drawInfoPanel(gameData);
     _window.display();

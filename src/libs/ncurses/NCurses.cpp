@@ -11,6 +11,7 @@
 #include <chrono>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 extern "C" void *createDisplay()
 {
@@ -101,16 +102,18 @@ void Arcade::NCurses::NCurses::renderEntities(IGameData &gameData)
                 (cellSize * entity->getSize().first) * 2,
                 (cellSize * entity->getSize().second)
         };
-        Pos entityPos = {
-                (cellSize * entity->getPosition().first) * 2,
-                (cellSize * entity->getPosition().second) + 1
-        };
         std::string path = "assets/" + gameData.getGameName() + "/ncurses/" + entity->getTexture();
         if (textures.find(path) == textures.end())
             textures[path] = std::make_unique<Texture>(path, entitySize.first, entitySize.second);
         else
             textures[path]->setSize(entitySize.first, entitySize.second);
-        game.draw(*textures[path].get(), entityPos);
+        std::vector<std::pair<float, float>> entityPos = entity->getPosition();
+        for (auto &pos: entityPos) {
+            pos.first *= cellSize * 2;
+            pos.second *= cellSize;
+            pos.second += 1;
+            game.draw(*textures[path].get(), pos);
+        }
     }
     textures.clear();
 }
