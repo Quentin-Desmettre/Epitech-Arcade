@@ -12,13 +12,13 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
-#include "ADisplay.hpp"
+#include "IDisplay.hpp"
 
 namespace Arcade {
     class SFML;
 };
 
-class Arcade::SFML : public Arcade::ADisplay {
+class Arcade::SFML : public Arcade::IDisplay {
     public:
         SFML();
         ~SFML() override;

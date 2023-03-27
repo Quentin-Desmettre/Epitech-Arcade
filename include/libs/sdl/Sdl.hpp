@@ -7,7 +7,7 @@
 
 #ifndef EPITECH_ARCADE_SDL_HPP
 #define EPITECH_ARCADE_SDL_HPP
-#include "ADisplay.hpp"
+#include "IDisplay.hpp"
 #include "sdl/RenderWindow.hpp"
 #include "sdl/Font.hpp"
 #include "sdl/Text.hpp"
@@ -20,7 +20,7 @@ namespace Arcade {
     } // Arcade
 } // Sdl
 
-class Arcade::Sdl::Sdl: public Arcade::ADisplay {
+class Arcade::Sdl::Sdl: public Arcade::IDisplay {
 public:
     Sdl();
     ~Sdl() override;

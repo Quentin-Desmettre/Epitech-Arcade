@@ -7,7 +7,7 @@
 
 #ifndef NCURSES_HPP_
 #define NCURSES_HPP_
-#include "../../ADisplay.hpp"
+#include "../../IDisplay.hpp"
 #include <ncurses.h>
 #include <vector>
 #include "Window.hpp"
@@ -22,7 +22,7 @@ namespace Arcade {
 
 typedef std::vector<std::string> StringVector;
 
-class Arcade::NCurses::NCurses: public Arcade::ADisplay {
+class Arcade::NCurses::NCurses: public Arcade::IDisplay {
 public:
     NCurses();
     ~NCurses() override;

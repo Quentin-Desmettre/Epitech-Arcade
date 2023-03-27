@@ -11,9 +11,7 @@ SOURCEDIR = ./
 
 SRC = \
 	utils.cpp \
-	sfml.cpp \
-	../../ADisplay.cpp \
-	../../XDisplay.cpp
+	sfml.cpp
 
 CXX = g++
 

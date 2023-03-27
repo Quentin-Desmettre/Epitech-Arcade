@@ -170,8 +170,15 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
 
 std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
 {
+    std::vector<Arcade::Key> keys;
     sf::Event ev{};
 
-    while (_window.pollEvent(ev));
-    return Arcade::ADisplay::getPressedKeys();
+    for (int i = 0; i < Arcade::Key::KeyCount; i++) {
+        if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(i)))
+            keys.push_back(static_cast<Arcade::Key>(i));
+    }
+    while (_window.pollEvent(ev))
+        if (ev.type == sf::Event::Closed)
+            keys.push_back(Arcade::Key::Escape);
+    return keys;
 }

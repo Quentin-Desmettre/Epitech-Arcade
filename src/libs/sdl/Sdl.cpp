@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iostream>
 #include "XDisplay.hpp"
+#include <set>
 
 extern "C" void *createDisplay()
 {
@@ -310,8 +311,23 @@ void Arcade::Sdl::Sdl::unloadTextures()
 std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()
 {
     SDL_Event ev;
+    static std::set<Key> pressedKeysSet;
+    bool isToCheck;
 
-    while (SDL_PollEvent(&ev));
+    while (SDL_PollEvent(&ev)) {
+        if (ev.type == SDL_QUIT)
+            pressedKeysSet.insert(Arcade::Key::Escape);
+        isToCheck = (ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP) && _keyMap.find(ev.key.keysym.sym) != _keyMap.end();
+        if (ev.type == SDL_KEYDOWN && isToCheck) {
+            pressedKeysSet.insert(_keyMap.at(ev.key.keysym.sym));
+        }
+        else if (ev.type == SDL_KEYUP && isToCheck) {
+            pressedKeysSet.erase(_keyMap.at(ev.key.keysym.sym));
+        }
+    }
 
-    return Arcade::ADisplay::getPressedKeys();
+    std::vector<Key> pressedKeys;
+    for (auto &i: pressedKeysSet)
+        pressedKeys.push_back(i);
+    return pressedKeys;
 }

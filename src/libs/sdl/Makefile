@@ -16,9 +16,7 @@ SRC = \
 	Sdl.cpp \
 	Sprite.cpp \
 	Text.cpp \
-	Texture.cpp \
-	../../ADisplay.cpp \
-	../../XDisplay.cpp
+	Texture.cpp
 
 CXX = g++
 

@@ -12,7 +12,6 @@ SRC = \
 	NCurses.cpp \
 	Window.cpp \
 	Texture.cpp \
-	../../ADisplay.cpp \
 	../../XDisplay.cpp
 
 CXX = g++

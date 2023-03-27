@@ -45,7 +45,6 @@ Arcade::NCurses::NCurses::NCurses():
 void Arcade::NCurses::NCurses::render(IGameData &gameData)
 {
     waitUntilNextFrame();
-    system("gsettings set org.gnome.desktop.peripherals.keyboard delay 0");
 
     /*
      * Display scores at the top
@@ -127,6 +126,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
                                           int selectedGame, int selectedGraph, const ControlMap &map)
 {
     waitUntilNextFrame();
+    Arcade::XDisplay::setInputDelay(_baseInputDelay);
 
     // Re-create menus if files/winSize differ
     Size winSize = _win.getSize();
@@ -156,6 +156,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     _graphicalMenu->render();
     _controlMenu->render();
     refresh();
+    Arcade::XDisplay::setInputDelay(0);
 }
 
 void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedIndex)
