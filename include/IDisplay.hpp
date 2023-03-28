@@ -17,6 +17,7 @@ namespace Arcade {
 
 /**
  * @brief Interface for the display.
+ *
  * For a display library to be compatible with the Arcade, it must contains the following symbols:
  * - "createDisplay" : a function that returns a pointer to an instance of Arcade::IDisplay
  * - "destroyDisplay" : a function that takes a pointer to an instance of Arcade::IDisplay as parameter and deletes it

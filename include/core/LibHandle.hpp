@@ -18,7 +18,7 @@
 
 namespace Arcade::Core {
     class LibHandle;
-};
+}
 
 /**
  * @brief A wrapper around a dynamic library handle.

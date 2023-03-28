@@ -51,6 +51,7 @@ namespace Arcade::Core {
 
             /**
              * @brief Constructor for the Core class.
+             *
              * It will pre-load the available libraries.
              * Throws:
              *  - Arcade::Core::NoLibraryException if no game / graphics library is found.
@@ -63,6 +64,7 @@ namespace Arcade::Core {
 
             /**
              * @brief Runs the arcade.
+             *
              * This function will select (via a menu) the graphic/game lib to play with, and run the main loop.
              * @param libName
              * @return
