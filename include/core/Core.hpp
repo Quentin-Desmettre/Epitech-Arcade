@@ -14,29 +14,61 @@
 #include "IDisplay.hpp"
 #include "test.hpp"
 
-namespace Arcade {
+/**
+ * @brief Namespace for the core of the arcade.
+ * It contains classes that are used to load, manage, and communicate between libraries.
+ */
+namespace Arcade::Core {
+
+    /**
+     * @brief Class that handles the communication between the graphical and game libraries.
+     */
     class Core {
         public:
+            /**
+             * @brief Exception thrown when no library is found.
+             */
             class NoLibraryException: public std::exception {
                 public:
-                    NoLibraryException(LibLoader::LibType type);
-                    ~NoLibraryException() = default;
+                    explicit NoLibraryException(LibLoader::LibType type);
+                    ~NoLibraryException() override = default;
                     const char *what() const noexcept override;
                 private:
                     std::string _message;
             };
+
+            /**
+             * @brief Exception thrown when a library could not be loaded.
+             */
             class LibraryNotLoadedException: public std::exception {
                 public:
                     LibraryNotLoadedException();
-                    ~LibraryNotLoadedException() = default;
+                    ~LibraryNotLoadedException() override = default;
                     const char *what() const noexcept override;
                 private:
                     std::string _message;
             };
 
+            /**
+             * @brief Constructor for the Core class.
+             *
+             * It will pre-load the available libraries.
+             * Throws:
+             *  - Arcade::Core::NoLibraryException if no game / graphics library is found.
+             *  - Arcade::Core::LibraryNotLoadedException If the given library (av[1]) could not be loaded.
+             * @param ac The number of arguments.
+             * @param av The arguments.
+             */
             Core(int ac, char **av);
             ~Core();
 
+            /**
+             * @brief Runs the arcade.
+             *
+             * This function will select (via a menu) the graphic/game lib to play with, and run the main loop.
+             * @param libName
+             * @return
+             */
             int run(const std::string &libName);
 
         private:

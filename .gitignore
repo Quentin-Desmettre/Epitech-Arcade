@@ -15,7 +15,7 @@ cmake-build-debug
 err
 out
 keys.txt
-
+doc
 
 # Compiled Object files
 *.slo

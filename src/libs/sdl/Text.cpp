@@ -9,11 +9,11 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
-Arcade::Sdl::Text::Text(SDL_Renderer *renderer,
+Arcade::Graphics::Sdl::Text::Text(SDL_Renderer *renderer,
                         const Font *font,
                         const std::string &text,
                         SDL_Color color):
-    Arcade::Sdl::Sprite(),
+    Arcade::Graphics::Sdl::Sprite(),
     _font(font),
     _text(text),
     _color(color),
@@ -24,7 +24,7 @@ Arcade::Sdl::Text::Text(SDL_Renderer *renderer,
 {
 }
 
-Arcade::Sdl::Text::~Text()
+Arcade::Graphics::Sdl::Text::~Text()
 {
     if (_surface)
         SDL_FreeSurface(_surface);
@@ -32,28 +32,28 @@ Arcade::Sdl::Text::~Text()
         SDL_DestroyTexture(_texture);
 }
 
-void Arcade::Sdl::Text::setText(const std::string &text)
+void Arcade::Graphics::Sdl::Text::setText(const std::string &text)
 {
     _text = text;
     _isSurfaceUpdated = false;
     _size = {0, 0};
 }
 
-void Arcade::Sdl::Text::setFont(const Font &font)
+void Arcade::Graphics::Sdl::Text::setFont(const Font &font)
 {
     _font = &font;
     _isSurfaceUpdated = false;
     _size = {0, 0};
 }
 
-void Arcade::Sdl::Text::setColor(SDL_Color color)
+void Arcade::Graphics::Sdl::Text::setColor(SDL_Color color)
 {
     _color = color;
     _isSurfaceUpdated = false;
     _size = {0, 0};
 }
 
-SDL_Texture *Arcade::Sdl::Text::getRawTexture()
+SDL_Texture *Arcade::Graphics::Sdl::Text::getRawTexture()
 {
     if (_isSurfaceUpdated)
         return _texture;
@@ -72,7 +72,7 @@ SDL_Texture *Arcade::Sdl::Text::getRawTexture()
     return _texture;
 }
 
-SpriteSize Arcade::Sdl::Text::getSize() const
+SpriteSize Arcade::Graphics::Sdl::Text::getSize() const
 {
     if (!_surface)
         return {0, 0};

@@ -9,7 +9,6 @@ INCLUDE_DIRS = -I../../include -I../../include/core -I../../include/games/nibble
 
 SRC = \
 	Core.cpp \
-	DirectoryLister.cpp \
 	LibHandle.cpp \
 	LibLoader.cpp \
 	main.cpp

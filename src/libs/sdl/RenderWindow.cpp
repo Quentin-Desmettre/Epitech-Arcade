@@ -11,7 +11,7 @@
 #include <chrono>
 #include <thread>
 
-Arcade::Sdl::RenderWindow::RenderWindow(int width, int height)
+Arcade::Graphics::Sdl::RenderWindow::RenderWindow(int width, int height)
 {
     _lastFrame = 0;
     _window = SDL_CreateWindow("Arcade", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
@@ -21,13 +21,13 @@ Arcade::Sdl::RenderWindow::RenderWindow(int width, int height)
         throw std::runtime_error("Error: SDL2: Failed to create window.");
 }
 
-Arcade::Sdl::RenderWindow::~RenderWindow()
+Arcade::Graphics::Sdl::RenderWindow::~RenderWindow()
 {
     SDL_DestroyRenderer(_renderer);
     SDL_DestroyWindow(_window);
 }
 
-void Arcade::Sdl::RenderWindow::draw(const Sprite &sprite)
+void Arcade::Graphics::Sdl::RenderWindow::draw(const Sprite &sprite)
 {
     SDL_Rect destRect = {
             .x = static_cast<int>(sprite.getPosition().first),
@@ -47,7 +47,7 @@ void Arcade::Sdl::RenderWindow::draw(const Sprite &sprite)
     }
 }
 
-void Arcade::Sdl::RenderWindow::draw(Text &text)
+void Arcade::Graphics::Sdl::RenderWindow::draw(Text &text)
 {
     text.getRawTexture();
     SDL_Rect destRect = {
@@ -60,7 +60,7 @@ void Arcade::Sdl::RenderWindow::draw(Text &text)
         SDL_RenderCopy(_renderer, text.getRawTexture(), nullptr, &destRect);
 }
 
-void Arcade::Sdl::RenderWindow::draw(const RectangleShape &rect)
+void Arcade::Graphics::Sdl::RenderWindow::draw(const RectangleShape &rect)
 {
     // Save old color
     SDL_Color baseColor;
@@ -80,7 +80,7 @@ void Arcade::Sdl::RenderWindow::draw(const RectangleShape &rect)
     SDL_SetRenderDrawColor(_renderer, baseColor.r, baseColor.g, baseColor.b, baseColor.a);
 }
 
-void Arcade::Sdl::RenderWindow::drawLine(const SpriteSize &start, const SpriteSize &end, const SDL_Color &color)
+void Arcade::Graphics::Sdl::RenderWindow::drawLine(const SpriteSize &start, const SpriteSize &end, const SDL_Color &color)
 {
     // Save old color
     SDL_Color baseColor;
@@ -94,23 +94,23 @@ void Arcade::Sdl::RenderWindow::drawLine(const SpriteSize &start, const SpriteSi
     SDL_SetRenderDrawColor(_renderer, baseColor.r, baseColor.g, baseColor.b, baseColor.a);
 }
 
-SDL_Renderer *Arcade::Sdl::RenderWindow::getRenderer() const
+SDL_Renderer *Arcade::Graphics::Sdl::RenderWindow::getRenderer() const
 {
     return _renderer;
 }
 
-void Arcade::Sdl::RenderWindow::clear()
+void Arcade::Graphics::Sdl::RenderWindow::clear()
 {
     SDL_RenderClear(_renderer);
 }
 
-void Arcade::Sdl::RenderWindow::display()
+void Arcade::Graphics::Sdl::RenderWindow::display()
 {
     waitForNextFrame();
     SDL_RenderPresent(_renderer);
 }
 
-void Arcade::Sdl::RenderWindow::waitForNextFrame()
+void Arcade::Graphics::Sdl::RenderWindow::waitForNextFrame()
 {
     long now = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()

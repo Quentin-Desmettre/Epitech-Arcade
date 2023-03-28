@@ -17,19 +17,19 @@ extern "C" void *createDisplay()
         throw std::runtime_error("Error: SDL2: Failed to init SDL.");
     if (TTF_Init() < 0)
         throw std::runtime_error("Error: SDL2: Failed to init SDL_ttf.");
-    return new Arcade::Sdl::Sdl();
+    return new Arcade::Graphics::Sdl::Sdl();
 }
 
 extern "C" void deleteDisplay(void *display)
 {
-    delete reinterpret_cast<Arcade::Sdl::Sdl *>(display);
-    Arcade::Sdl::Sdl::unloadTextures();
+    delete reinterpret_cast<Arcade::Graphics::Sdl::Sdl *>(display);
+    Arcade::Graphics::Sdl::Sdl::unloadTextures();
     TTF_Quit();
     SDL_Quit();
 }
 
-std::map<std::string, std::unique_ptr<Arcade::Sdl::Texture>> Arcade::Sdl::Sdl::_textures = {};
-const std::map<int, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
+std::map<std::string, std::unique_ptr<Arcade::Graphics::Sdl::Texture>> Arcade::Graphics::Sdl::Sdl::_textures = {};
+const std::map<int, Arcade::Key> Arcade::Graphics::Sdl::Sdl::_keyMap = {
         {SDLK_UP, Arcade::Key::Up},
         {SDLK_DOWN, Arcade::Key::Down},
         {SDLK_LEFT, Arcade::Key::Left},
@@ -91,7 +91,7 @@ const std::map<int, Arcade::Key> Arcade::Sdl::Sdl::_keyMap = {
         {SDLK_F15, Arcade::Key::F15}
 };
 
-Arcade::Sdl::Sdl::Sdl():
+Arcade::Graphics::Sdl::Sdl::Sdl():
         _window{1280, 832},
         _globalFont("assets/arial.ttf", 20),
         _boldGlobalFont("assets/arial.ttf", 25, true),
@@ -127,9 +127,9 @@ Arcade::Sdl::Sdl::Sdl():
     _controlsTitle->setPosition({190, 317});
 }
 
-Arcade::Sdl::Sdl::~Sdl() = default;
+Arcade::Graphics::Sdl::Sdl::~Sdl() = default;
 
-void Arcade::Sdl::Sdl::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+void Arcade::Graphics::Sdl::Sdl::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
                                   int selectedGame, int selectedGraph, const ControlMap &controls)
 {
     if (graphics != _graphNames || games != _gameNames || controls != _controls)
@@ -144,7 +144,7 @@ void Arcade::Sdl::Sdl::renderMenu(const std::vector<std::string> &games, const s
     _window.display();
 }
 
-void Arcade::Sdl::Sdl::createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, const ControlMap &controls)
+void Arcade::Graphics::Sdl::Sdl::createMenus(const std::vector<std::string> &games, const std::vector<std::string> &graphics, const ControlMap &controls)
 {
     // Set graph items
     _graphItems.clear();
@@ -178,7 +178,7 @@ void Arcade::Sdl::Sdl::createMenus(const std::vector<std::string> &games, const 
     _controls = controls;
 }
 
-void Arcade::Sdl::Sdl::drawMenuItems(int selectedGame, int selectedGraph)
+void Arcade::Graphics::Sdl::Sdl::drawMenuItems(int selectedGame, int selectedGraph)
 {
     // Set color of selected item if not in game
     for (std::size_t i = 0; i < _graphItems.size(); i++) {
@@ -202,7 +202,7 @@ void Arcade::Sdl::Sdl::drawMenuItems(int selectedGame, int selectedGraph)
         _window.draw(*control);
 }
 
-void Arcade::Sdl::Sdl::drawMenuTitlesAndBg()
+void Arcade::Graphics::Sdl::Sdl::drawMenuTitlesAndBg()
 {
     // Draw rectangles
     _window.draw(RectangleShape{{248, 475}, {887, 291}, Black}); // Game
@@ -220,7 +220,7 @@ void Arcade::Sdl::Sdl::drawMenuTitlesAndBg()
     _window.drawLine({161 + 40 - 35, 350}, {161 - 40 + 219 - 35, 350}, White);
 }
 
-void Arcade::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
+void Arcade::Graphics::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
 {
     double cellSize = calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
 
@@ -249,7 +249,7 @@ void Arcade::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
     }
 }
 
-void Arcade::Sdl::Sdl::render(IGameData &gameData)
+void Arcade::Graphics::Sdl::Sdl::render(IGameData &gameData)
 {
     double cellSize = calculateCellSize(gameData.getMapSize().first, gameData.getMapSize().second);
     Texture *t;
@@ -281,7 +281,7 @@ void Arcade::Sdl::Sdl::render(IGameData &gameData)
     _window.display();
 }
 
-double Arcade::Sdl::Sdl::calculateCellSize(int width, int height)
+double Arcade::Graphics::Sdl::Sdl::calculateCellSize(int width, int height)
 {
     double cellSizeX = 1280.0 / width;
     double cellSizeY = 832.0 / height;
@@ -289,12 +289,12 @@ double Arcade::Sdl::Sdl::calculateCellSize(int width, int height)
     return std::min(cellSizeX, cellSizeY);
 }
 
-std::string Arcade::Sdl::Sdl::texturePath(const IEntity &entity, const std::string &gameName)
+std::string Arcade::Graphics::Sdl::Sdl::texturePath(const IEntity &entity, const std::string &gameName)
 {
     return "assets/" + gameName + "/sdl/" + entity.getTexture();
 }
 
-std::string Arcade::Sdl::Sdl::simplifyName(const std::string &name)
+std::string Arcade::Graphics::Sdl::Sdl::simplifyName(const std::string &name)
 {
     static const std::size_t maxSize = std::string("arcade_centipede.so").size();
 
@@ -303,12 +303,12 @@ std::string Arcade::Sdl::Sdl::simplifyName(const std::string &name)
     return name.substr(0, maxSize - 3) + "...";
 }
 
-void Arcade::Sdl::Sdl::unloadTextures()
+void Arcade::Graphics::Sdl::Sdl::unloadTextures()
 {
     _textures.clear();
 }
 
-std::vector<Arcade::Key> Arcade::Sdl::Sdl::getPressedKeys()
+std::vector<Arcade::Key> Arcade::Graphics::Sdl::Sdl::getPressedKeys()
 {
     SDL_Event ev;
     static std::set<Key> pressedKeysSet;

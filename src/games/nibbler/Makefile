@@ -10,7 +10,6 @@ INCLUDE_DIRS = -I../../../include -I../../../include/core -I../../../include/gam
 SRC = \
 	Entity.cpp \
 	GameData.cpp \
-	main.cpp \
 	Nibbler.cpp
 
 CXX = g++

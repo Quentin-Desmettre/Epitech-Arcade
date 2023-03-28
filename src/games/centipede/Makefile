@@ -11,7 +11,6 @@ SOURCEDIR = ./
 
 SRC = Centipede.cpp \
 	Entity.cpp \
-	main.cpp \
 	GameData.cpp \
 	Snake.cpp \
 

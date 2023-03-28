@@ -12,6 +12,17 @@
 #include <iostream>
 #include <cmath>
 
+extern "C"
+{
+    void *createGame() {
+        return new Arcade::Centipede::Game();
+    }
+
+    void deleteGame(void *game) {
+        delete static_cast<Arcade::Centipede::Game *>(game);
+    }
+}
+
 void Arcade::Centipede::Game::restart()
 {
     for (int i = 0; i < 25; i++) {

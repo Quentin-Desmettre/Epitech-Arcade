@@ -12,25 +12,57 @@
 #include "sdl/Sprite.hpp"
 #include <stdexcept>
 
-namespace Arcade {
-    namespace Sdl {
-        class Text;
-    } // Arcade
+namespace Arcade::Graphics::Sdl {
+    class Text;
 } // Sdl
 
-class Arcade::Sdl::Text: public Arcade::Sdl::Sprite {
+/**
+ * @brief A text, with a font, a color and a text.
+ */
+class Arcade::Graphics::Sdl::Text: public Arcade::Graphics::Sdl::Sprite {
     public:
+        /**
+         * @brief Creates a new text.
+         * @param renderer The SDL2 rendered to use
+         * @param font The font to use
+         * @param text The text to display
+         * @param color The color of the text
+         */
         explicit Text(SDL_Renderer *renderer,
                       const Font *font = nullptr,
                       const std::string &text = "",
                       SDL_Color color = {255, 255, 255, 255});
         ~Text();
 
+        /**
+         * @brief Sets the text.
+         * @param text The new text
+         */
         void setText(const std::string &text);
+
+        /**
+         * @brief Sets the font.
+         * @param font The new font
+         */
         void setFont(const Font &font);
+
+        /**
+         * @brief Sets the color.
+         * @param color The new color
+         */
         void setColor(SDL_Color color);
+
+        /**
+         * @brief Gets the size of the text
+         * @return The size of the text
+         */
         SpriteSize getSize() const override;
 
+        /**
+         * @brief Gets the raw SDL_Texture pointer.
+         * @note You should call this method to update the content of the text.
+         * @return The raw SDL_Texture pointer.
+         */
         SDL_Texture *getRawTexture();
 
     private:

@@ -30,7 +30,7 @@
  *  - none
  */
 
-const std::map<std::string, Arcade::NCurses::Color> Arcade::NCurses::Texture::_colorMap = {
+const std::map<std::string, Arcade::Graphics::NCurses::Color> Arcade::Graphics::NCurses::Texture::_colorMap = {
     {"black", BLACK},
     {"red", RED},
     {"green", GREEN},
@@ -41,16 +41,16 @@ const std::map<std::string, Arcade::NCurses::Color> Arcade::NCurses::Texture::_c
     {"white", WHITE}
 };
 
-const char Arcade::NCurses::Texture::_defaultContent = '#';
-const Arcade::NCurses::Color Arcade::NCurses::Texture::_defaultBgColor = BLACK;
-const Arcade::NCurses::Color Arcade::NCurses::Texture::_defaultTextColor = WHITE;
-const std::string Arcade::NCurses::Texture::_textRegex = "^text: .$";
-const std::string Arcade::NCurses::Texture::_bgColorRegex = "^bg-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$";
-const std::string Arcade::NCurses::Texture::_textColorRegex = "^text-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$";
-std::vector<short> Arcade::NCurses::Texture::_availableColorPairs;
-std::map<std::pair<Arcade::NCurses::Color, Arcade::NCurses::Color>, short>Arcade::NCurses::Texture:: _colorPairs = {};
+const char Arcade::Graphics::NCurses::Texture::_defaultContent = '#';
+const Arcade::Graphics::NCurses::Color Arcade::Graphics::NCurses::Texture::_defaultBgColor = BLACK;
+const Arcade::Graphics::NCurses::Color Arcade::Graphics::NCurses::Texture::_defaultTextColor = WHITE;
+const std::string Arcade::Graphics::NCurses::Texture::_textRegex = "^text: .$";
+const std::string Arcade::Graphics::NCurses::Texture::_bgColorRegex = "^bg-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$";
+const std::string Arcade::Graphics::NCurses::Texture::_textColorRegex = "^text-color: (black|red|green|yellow|blue|magenta|cyan|white|none)$";
+std::vector<short> Arcade::Graphics::NCurses::Texture::_availableColorPairs;
+std::map<std::pair<Arcade::Graphics::NCurses::Color, Arcade::Graphics::NCurses::Color>, short>Arcade::Graphics::NCurses::Texture:: _colorPairs = {};
 
-Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height):
+Arcade::Graphics::NCurses::Texture::Texture(const std::string &path, int width, int height):
     _bgColor(_defaultBgColor), _textColor(_defaultTextColor)
 {
     if (_availableColorPairs.empty() && _colorPairs.empty())
@@ -80,13 +80,13 @@ Arcade::NCurses::Texture::Texture(const std::string &path, int width, int height
     _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
 }
 
-Arcade::NCurses::Texture::~Texture()
+Arcade::Graphics::NCurses::Texture::~Texture()
 {
     if (_hasUsedColorPair)
         Texture::removeColorPair(_textColor, _bgColor);
 }
 
-void Arcade::NCurses::Texture::fillContent(char c, int width, int height)
+void Arcade::Graphics::NCurses::Texture::fillContent(char c, int width, int height)
 {
     std::ostringstream oss;
 
@@ -99,22 +99,22 @@ void Arcade::NCurses::Texture::fillContent(char c, int width, int height)
     _text = oss.str();
 }
 
-std::string Arcade::NCurses::Texture::getContent() const
+std::string Arcade::Graphics::NCurses::Texture::getContent() const
 {
     return _text;
 }
 
-Arcade::NCurses::Color Arcade::NCurses::Texture::getTextColor() const
+Arcade::Graphics::NCurses::Color Arcade::Graphics::NCurses::Texture::getTextColor() const
 {
     return _textColor;
 }
 
-Arcade::NCurses::Color Arcade::NCurses::Texture::getBackgroundColor() const
+Arcade::Graphics::NCurses::Color Arcade::Graphics::NCurses::Texture::getBackgroundColor() const
 {
     return _bgColor;
 }
 
-bool Arcade::NCurses::Texture::createColorPair(Color fg, Color bg)
+bool Arcade::Graphics::NCurses::Texture::createColorPair(Color fg, Color bg)
 {
     if (_colorPairs.find({fg, bg}) != _colorPairs.end())
         return false;
@@ -126,7 +126,7 @@ bool Arcade::NCurses::Texture::createColorPair(Color fg, Color bg)
     return true;
 }
 
-void Arcade::NCurses::Texture::removeColorPair(Color fg, Color bg)
+void Arcade::Graphics::NCurses::Texture::removeColorPair(Color fg, Color bg)
 {
     if (_colorPairs.find({fg, bg}) == _colorPairs.end())
         return;
@@ -134,21 +134,21 @@ void Arcade::NCurses::Texture::removeColorPair(Color fg, Color bg)
     _colorPairs.erase({fg, bg});
 }
 
-short Arcade::NCurses::Texture::getColorPair() const
+short Arcade::Graphics::NCurses::Texture::getColorPair() const
 {
     if (_colorPairs.find({_textColor, _bgColor}) == _colorPairs.end())
         return -1;
     return _colorPairs[{_textColor, _bgColor}];
 }
 
-void Arcade::NCurses::Texture::setSize(int width, int height)
+void Arcade::Graphics::NCurses::Texture::setSize(int width, int height)
 {
     _width = width;
     _height = height;
     fillContent(_c, width, height);
 }
 
-void Arcade::NCurses::Texture::setTextColor(Color color)
+void Arcade::Graphics::NCurses::Texture::setTextColor(Color color)
 {
     if (_hasUsedColorPair)
         removeColorPair(_textColor, _bgColor);
@@ -156,7 +156,7 @@ void Arcade::NCurses::Texture::setTextColor(Color color)
     _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
 }
 
-void Arcade::NCurses::Texture::setBackgroundColor(Color color)
+void Arcade::Graphics::NCurses::Texture::setBackgroundColor(Color color)
 {
     if (_hasUsedColorPair)
         removeColorPair(_textColor, _bgColor);
@@ -164,7 +164,7 @@ void Arcade::NCurses::Texture::setBackgroundColor(Color color)
     _hasUsedColorPair = Texture::createColorPair(_textColor, _bgColor);
 }
 
-void Arcade::NCurses::Texture::setContent(char c)
+void Arcade::Graphics::NCurses::Texture::setContent(char c)
 {
     fillContent(c, _width, _height);
 }
