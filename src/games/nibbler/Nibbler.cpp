@@ -13,6 +13,17 @@
 #include <memory>
 #include <chrono>
 
+extern "C"
+{
+    void *createGame() {
+        return new Arcade::Nibbler::Game();
+    }
+
+    void deleteGame(void *game) {
+        delete static_cast<Arcade::Nibbler::Game *>(game);
+    }
+}
+
 void Arcade::Nibbler::Game::initMap()
 {
     std::string mapString =

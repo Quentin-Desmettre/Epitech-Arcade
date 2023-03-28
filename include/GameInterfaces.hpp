@@ -129,10 +129,16 @@ namespace Arcade {
 
     typedef std::map<std::string, std::string> ControlMap;
 
+    /**
+     * @brief Interface of an entity.
+     * An entity is the building block of a game; That is to say, anything displayed by a graphical library is an entity (except for scores and controls).
+     * For instance, if you want to display walls, create a WallEntity and sets it every position where you want a wall to be.
+     * If you want particles, create a ParticleEntity with a small size and a specific texture and add to it as many positions as you want.
+     */
     class IEntity {
         public:
             /**
-             * @brief Gets the position of the entity. This position is expressed in terms of cell.
+             * @brief Gets all the positions of the entity. These positions are expressed in terms of cell.
              * The entity should be centered in the cell.
              * For an entity in the middle of the screen, the position would be (map_size_x / 2, map_size_y / 2).
             */
