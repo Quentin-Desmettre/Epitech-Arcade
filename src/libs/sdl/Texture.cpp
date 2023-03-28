@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <iostream>
 
-Arcade::Sdl::Texture::Texture(const std::string &texturePath, SDL_Renderer *renderer):
+Arcade::Graphics::Sdl::Texture::Texture(const std::string &texturePath, SDL_Renderer *renderer):
     _size({0, 0}),
     _texture(nullptr)
 {
@@ -30,18 +30,18 @@ Arcade::Sdl::Texture::Texture(const std::string &texturePath, SDL_Renderer *rend
     SDL_FreeSurface(surface);
 }
 
-Arcade::Sdl::Texture::~Texture()
+Arcade::Graphics::Sdl::Texture::~Texture()
 {
     if (_texture)
         SDL_DestroyTexture(_texture);
 }
 
-TextureSize Arcade::Sdl::Texture::getSize() const
+TextureSize Arcade::Graphics::Sdl::Texture::getSize() const
 {
     return _size;
 }
 
-SDL_Texture *Arcade::Sdl::Texture::getRawTexture() const
+SDL_Texture *Arcade::Graphics::Sdl::Texture::getRawTexture() const
 {
     return _texture;
 }

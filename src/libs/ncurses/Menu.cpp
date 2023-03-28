@@ -7,7 +7,7 @@
 
 #include "Menu.hpp"
 
-Arcade::NCurses::Menu::Menu(Window *parent,
+Arcade::Graphics::NCurses::Menu::Menu(Window *parent,
                    const std::string &name,
                    const Pos &pos,
                    const std::vector<std::string> &items,
@@ -23,7 +23,7 @@ Arcade::NCurses::Menu::Menu(Window *parent,
     _itemsWin = std::make_unique<Window>(parent, itemsPos, itemsSize);
 }
 
-void Arcade::NCurses::Menu::render()
+void Arcade::Graphics::NCurses::Menu::render()
 {
     // Draw title
     auto size = _titleWin->getSize();
@@ -40,27 +40,27 @@ void Arcade::NCurses::Menu::render()
         _itemsWin->draw("->", {2, _selectedItem + 1});
 }
 
-std::string Arcade::NCurses::Menu::getName() const
+std::string Arcade::Graphics::NCurses::Menu::getName() const
 {
     return _name;
 }
 
-std::pair<int, int> Arcade::NCurses::Menu::getPos() const
+std::pair<int, int> Arcade::Graphics::NCurses::Menu::getPos() const
 {
     return _pos;
 }
 
-std::vector<std::string> Arcade::NCurses::Menu::getItems() const
+std::vector<std::string> Arcade::Graphics::NCurses::Menu::getItems() const
 {
     return _items;
 }
 
-int Arcade::NCurses::Menu::getSelectedItem() const
+int Arcade::Graphics::NCurses::Menu::getSelectedItem() const
 {
     return _selectedItem;
 }
 
-void Arcade::NCurses::Menu::setSelected(int selectedItem)
+void Arcade::Graphics::NCurses::Menu::setSelected(int selectedItem)
 {
     _selectedItem = selectedItem;
 }

@@ -14,16 +14,14 @@
 #include "GameInterfaces.hpp"
 #include "libs/ncurses/Texture.hpp"
 
-namespace Arcade {
-    namespace NCurses {
-        class Window;
-    }
+namespace Arcade::Graphics::NCurses {
+    class Window;
 } // Arcade
 
 typedef std::pair<int, int> Pos;
 typedef std::pair<int, int> Size;
 
-class Arcade::NCurses::Window {
+class Arcade::Graphics::NCurses::Window {
 public:
     Window();
     Window(Window *parent, const Pos &pos, const Size &size);

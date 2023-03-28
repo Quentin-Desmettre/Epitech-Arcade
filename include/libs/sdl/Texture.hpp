@@ -11,20 +11,18 @@
 #include <utility>
 #include <SDL2/SDL.h>
 
-namespace Arcade {
-    namespace Sdl {
-        class Texture;
-        struct TextureRect;
-    } // Arcade
+namespace Arcade::Graphics::Sdl {
+    class Texture;
+    struct TextureRect;
 } // Sdl
 
 typedef std::pair<int, int> TextureSize;
 
-struct Arcade::Sdl::TextureRect {
+struct Arcade::Graphics::Sdl::TextureRect {
     int left, top, width, height;
 };
 
-class Arcade::Sdl::Texture {
+class Arcade::Graphics::Sdl::Texture {
     public:
         explicit Texture(const std::string &texturePath, SDL_Renderer *renderer);
         ~Texture();

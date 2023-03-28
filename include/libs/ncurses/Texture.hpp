@@ -12,8 +12,7 @@
 #include <ncurses.h>
 #include <vector>
 
-namespace Arcade {
-    namespace NCurses {
+namespace Arcade::Graphics::NCurses {
 
         class Texture;
         enum Color {
@@ -27,10 +26,9 @@ namespace Arcade {
             WHITE = COLOR_WHITE
         };
 
-    } // Arcade
-} // NCurses
+    } // NCurses
 
-class Arcade::NCurses::Texture {
+class Arcade::Graphics::NCurses::Texture {
 public:
     Texture(const std::string &path, int width, int height);
     ~Texture();

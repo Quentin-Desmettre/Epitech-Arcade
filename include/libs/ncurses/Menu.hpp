@@ -13,13 +13,11 @@
 #include "Window.hpp"
 #include <memory>
 
-namespace Arcade {
-    namespace NCurses {
+namespace Arcade::Graphics::NCurses {
         class Menu;
-    }
-} // Arcade
+    } // Arcade
 
-class Arcade::NCurses::Menu
+class Arcade::Graphics::NCurses::Menu
 {
 public:
     Menu(Window *parent,

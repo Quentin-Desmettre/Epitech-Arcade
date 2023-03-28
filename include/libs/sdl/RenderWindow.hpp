@@ -12,13 +12,11 @@
 #include "sdl/Text.hpp"
 #include "sdl/RectangleShape.hpp"
 
-namespace Arcade {
-    namespace Sdl {
-        class RenderWindow;
-    } // Arcade
+namespace Arcade::Graphics::Sdl {
+    class RenderWindow;
 } // Sdl
 
-class Arcade::Sdl::RenderWindow {
+class Arcade::Graphics::Sdl::RenderWindow {
     public:
         RenderWindow(int width, int height);
         ~RenderWindow();

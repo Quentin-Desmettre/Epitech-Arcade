@@ -18,5 +18,4 @@ public:
     static int getInputDelay();
 };
 
-
 #endif //EPITECH_ARCADE_XDISPLAY_HPP

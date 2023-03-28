@@ -9,7 +9,7 @@
 #include <iostream>
 #include "Sfml.hpp"
 
-void Arcade::SFML::calculateCellSize(int width, int height)
+void Arcade::Graphics::SFML::SFML::calculateCellSize(int width, int height)
 {
     float cellSizeX = _window.getSize().x / width;
     float cellSizeY = _window.getSize().y / height;
@@ -17,26 +17,26 @@ void Arcade::SFML::calculateCellSize(int width, int height)
     _cellSize = cellSizeX < cellSizeY ? cellSizeX : cellSizeY;
 }
 
-void Arcade::SFML::centerTextOrigin()
+void Arcade::Graphics::SFML::SFML::centerTextOrigin()
 {
     _text.setOrigin(_text.getLocalBounds().width / 2, _text.getLocalBounds().height / 2);
 }
 
-void Arcade::SFML::drawTextWithColor(sf::Color color)
+void Arcade::Graphics::SFML::SFML::drawTextWithColor(sf::Color color)
 {
     _text.setFillColor(color);
     _window.draw(_text);
     _text.setFillColor(sf::Color::White);
 }
 
-void Arcade::SFML::drawRect(sf::Vector2f size, sf::Vector2f position)
+void Arcade::Graphics::SFML::SFML::drawRect(sf::Vector2f size, sf::Vector2f position)
 {
     _rectangle.setSize(size);
     _rectangle.setPosition(position);
     _window.draw(_rectangle);
 }
 
-void Arcade::SFML::drawLine(sf::Vector2f start, sf::Vector2f end)
+void Arcade::Graphics::SFML::SFML::drawLine(sf::Vector2f start, sf::Vector2f end)
 {
     sf::Vertex line[] = {
         sf::Vertex(start, sf::Color::White),
@@ -45,7 +45,7 @@ void Arcade::SFML::drawLine(sf::Vector2f start, sf::Vector2f end)
     _window.draw(line, 2, sf::Lines);
 }
 
-bool Arcade::SFML::loadTexture(std::string texturePath)
+bool Arcade::Graphics::SFML::SFML::loadTexture(std::string texturePath)
 {
     if (_textureMap.find(texturePath) == _textureMap.end()) {
         if (_texture.loadFromFile(texturePath) == false) {

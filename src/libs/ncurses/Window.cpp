@@ -8,7 +8,7 @@
 #include "Window.hpp"
 #include <stdexcept>
 
-const std::map<int, Arcade::Key> Arcade::NCurses::Window::_keyMap = {
+const std::map<int, Arcade::Key> Arcade::Graphics::NCurses::Window::_keyMap = {
         {ERR, Arcade::Key::Unknown},
         {KEY_UP, Arcade::Key::Up},
         {KEY_DOWN, Arcade::Key::Down},
@@ -96,10 +96,10 @@ const std::map<int, Arcade::Key> Arcade::NCurses::Window::_keyMap = {
         {KEY_F(15), Arcade::Key::F15}
 };
 
-bool Arcade::NCurses::Window::_isInit = false;
-bool Arcade::NCurses::Window::_hasColors = false;
+bool Arcade::Graphics::NCurses::Window::_isInit = false;
+bool Arcade::Graphics::NCurses::Window::_hasColors = false;
 
-Arcade::NCurses::Window::Window()
+Arcade::Graphics::NCurses::Window::Window()
 {
     _win = stdscr;
     _pos = {0, 0};
@@ -112,7 +112,7 @@ Arcade::NCurses::Window::Window()
         _hasColors = false;
 }
 
-Arcade::NCurses::Window::Window(Window *parent, const std::pair<int, int> &pos,
+Arcade::Graphics::NCurses::Window::Window(Window *parent, const std::pair<int, int> &pos,
                                 const std::pair<int, int> &size)
 {
     if (!parent)
@@ -123,24 +123,24 @@ Arcade::NCurses::Window::Window(Window *parent, const std::pair<int, int> &pos,
     _win = subwin(parent->_win, size.second, size.first, pos.second, pos.first);
 }
 
-Arcade::NCurses::Window &Arcade::NCurses::Window::getStdWin()
+Arcade::Graphics::NCurses::Window &Arcade::Graphics::NCurses::Window::getStdWin()
 {
     static Window win;
     return win;
 }
 
-Arcade::NCurses::Window::~Window()
+Arcade::Graphics::NCurses::Window::~Window()
 {
     if (_win != stdscr)
         delwin(_win);
 }
 
-Pos Arcade::NCurses::Window::getPos() const
+Pos Arcade::Graphics::NCurses::Window::getPos() const
 {
     return _pos;
 }
 
-Size Arcade::NCurses::Window::getSize()
+Size Arcade::Graphics::NCurses::Window::getSize()
 {
     int x, y;
 
@@ -149,12 +149,12 @@ Size Arcade::NCurses::Window::getSize()
     return _size;
 }
 
-void Arcade::NCurses::Window::drawBox()
+void Arcade::Graphics::NCurses::Window::drawBox()
 {
     box(_win, 0, 0);
 }
 
-void Arcade::NCurses::Window::draw(const std::string &text, const Pos &pos)
+void Arcade::Graphics::NCurses::Window::draw(const std::string &text, const Pos &pos)
 {
     mvwprintw(_win, pos.second, pos.first, "%s", text.c_str());
 }
@@ -174,7 +174,7 @@ std::vector<std::string> split(const std::string &s, const std::string &delimite
     return res;
 }
 #include <iostream>
-void Arcade::NCurses::Window::draw(const Texture &text, Pos pos)
+void Arcade::Graphics::NCurses::Window::draw(const Texture &text, Pos pos)
 {
     auto colorPair = COLOR_PAIR(text.getColorPair());
     auto lines = split(text.getContent(), "\n");
@@ -190,7 +190,7 @@ void Arcade::NCurses::Window::draw(const Texture &text, Pos pos)
     wattron(_win, 0);
 }
 
-void Arcade::NCurses::Window::clear()
+void Arcade::Graphics::NCurses::Window::clear()
 {
     auto size = getSize();
     std::string cleaner(size.first * size.second, ' ');
@@ -200,7 +200,7 @@ void Arcade::NCurses::Window::clear()
     wprintw(_win, "%s", cleaner.c_str());
 }
 
-Arcade::Key Arcade::NCurses::Window::getKey()
+Arcade::Key Arcade::Graphics::NCurses::Window::getKey()
 {
     int ch = getch();
     if (_keyMap.find(ch) == _keyMap.end())

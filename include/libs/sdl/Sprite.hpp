@@ -9,8 +9,7 @@
 #define EPITECH_ARCADE_SPRITE_HPP
 #include "sdl/Texture.hpp"
 
-namespace Arcade {
-    namespace Sdl {
+namespace Arcade::Graphics::Sdl {
         class Sprite;
         static const auto
             White = SDL_Color{255, 255, 255, 255},
@@ -23,12 +22,11 @@ namespace Arcade {
             Cyan = SDL_Color{0, 255, 255, 255},
             Transparent = SDL_Color{0, 0, 0, 0}
         ;
-    } // Arcade
-} // Sdl
+    } // Sdl
 
 typedef std::pair<double, double> SpriteSize;
 
-class Arcade::Sdl::Sprite {
+class Arcade::Graphics::Sdl::Sprite {
     public:
         explicit Sprite(const Texture &texture);
         explicit Sprite();

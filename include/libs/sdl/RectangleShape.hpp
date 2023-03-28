@@ -9,13 +9,11 @@
 #define EPITECH_ARCADE_RECTANGLESHAPE_HPP
 #include "sdl/Sprite.hpp"
 
-namespace Arcade {
-    namespace Sdl {
+namespace Arcade::Graphics::Sdl {
         class RectangleShape;
-    } // Arcade
-} // Sdl
+    } // Sdl
 
-class Arcade::Sdl::RectangleShape {
+class Arcade::Graphics::Sdl::RectangleShape {
 public:
     RectangleShape();
     RectangleShape(SpriteSize size, SpriteSize position, const SDL_Color &fillColor);

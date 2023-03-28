@@ -13,7 +13,14 @@
 #include <memory>
 #include <string>
 
+/**
+ * @brief Namespace containing all the Arcade classes.
+ */
 namespace Arcade {
+
+    /**
+     * @brief Enum of all the possible keys that can be pressed.
+     */
     enum Key {
         Unknown = -1, ///< Unhandled key
         A       = 0,  ///< The A key
@@ -121,11 +128,13 @@ namespace Arcade {
     };
 
     typedef std::map<std::string, std::string> ControlMap;
+
     class IEntity {
         public:
             /**
              * @brief Gets the position of the entity. This position is expressed in terms of cell.
-             * For an entity in the middle of the screen, the position will be (map_size_x / 2, map_size_y / 2).
+             * The entity should be centered in the cell.
+             * For an entity in the middle of the screen, the position would be (map_size_x / 2, map_size_y / 2).
             */
             virtual std::vector<std::pair<float, float>> getPosition() const = 0;
 
@@ -134,25 +143,108 @@ namespace Arcade {
              * i.e, a size of (1, 1) means that the entity occupies the whole cell, while a size of (0.5, 0.5) means the entity occupies half of the cell.
             */
             virtual std::pair<float, float> getSize() const = 0;
+
+            /**
+             * @brief Gets the texture name of the entity.
+             * This method is used to fetch the adequate texture from the texture manager.
+             * Example: If the current display name is "libcaca", the game name is "nibbler", and the texture name is "player", the texture manager will look for the texture "assets/nibbler/libcaca/player".
+             * The textures should be correctly formatted for the display to be able to load them.
+             * If the texture could not be loaded, the behaviour is display-dependent.
+             * @return The texture name of the entity.
+             */
             virtual std::string getTexture() const = 0;
+
+            /**
+             * @brief Gets the rotation of the entity.
+             * The rotation is expressed in degrees, and is clockwise.
+             * @return The rotation of the entity.
+             */
             virtual float getRotation() const = 0;
     };
 
+    /**
+     * @brief Interface for the game data.
+     * This interface contains all the method required to represent a game.
+     */
     class IGameData {
         public:
+            /**
+             * @brief Gets the differents scores of the game.
+             * The key of the map is the name of the score, and the value is the score.
+             * For example, a game with a score and a highscore would return a map with the following keys: "score" and "highscore".
+             * But, a game with a timer and a lives counter would return a map with the following keys: "timer" and "lives".
+             * @return A map containing the scores of the game.
+             */
             virtual std::map<std::string, int> getScores() const = 0;
+
+            /**
+             * @brief Gets the name of the game.
+             * This method is used to (obviously) display the name of the game in the arcade,
+             * but it is also used to fetch the game's assets.
+             * @return The name of the game.
+             */
             virtual std::string getGameName() const = 0;
+
+            /**
+             * @brief Gets the entities of the game.
+             * The entities are the objects that are displayed on the screen (see Arcade::IEntity).
+             * @return A reference to a vector containing the entities of the game.
+             */
             virtual std::vector<std::shared_ptr<Arcade::IEntity>> &getEntities() = 0;
+
+            /**
+             * @brief Gets the size of the map, in terms of cell.
+             * @return A pair containing the size (x / y) of the map, in terms of cell.
+             */
             virtual std::pair<int, int> getMapSize() const = 0;
+
+            /**
+             * @brief Gets the controls of the game.
+             * The controls are the keys that the user can use to play the game.
+             * The key of the map is the name of the control, and the value is the key that the user must press to perform the action.
+             * For example, a game with a "move left" and a "move right" control would return a map with the following keys: "move left" => "Q" and "move right" => "D".
+             * @return
+             */
             virtual const ControlMap &getControls() const = 0;
+
+            /**
+             * @brief Gets the current state of the game.
+             * @return True if the game is over, false otherwise.
+             */
             virtual bool isGameOver() const = 0;
     };
 
+    /**
+     * @brief The IGame class is the interface that all games must implement.
+     * For a game library to be compatible with the arcade, it must contains the following symbols:
+     * - "createGame" : A function that returns a pointer to an instance of Arcade::IGame.
+     * - "destroyGame" : A function that takes a pointer to an instance of Arcade::IGame and deletes it.
+     * The only role of the game library is to perform the game logic, given the user input.
+     */
     class IGame {
         public:
             virtual ~IGame() = default;
+
+            /**
+             * @brief Handles the user input.
+             * This method may be used to set the direction of some entities, or to perform some actions.
+             * You may also want to store the pressed keys, so that the next time this method is called, you can check if a key was released.
+             * @param pressedKeys The list of currently pressed keys
+             */
             virtual void handleKeys(const std::vector<Key> &pressedKeys) = 0;
+
+            /**
+             * @brief Updates the game state.
+             * This method is the core of the game logic. Calls to this method should generally update the content of the game data.
+             * IMPORTANT: This method may not be called at a fixed rate, so it should update the game state according to the time elapsed since the last call.
+             * @param username
+             */
             virtual void update(const std::string &username) = 0;
+
+            /**
+             * @brief Gets the game data.
+             * @return A reference to the game data (as described by Arcade::IGameData)
+             */
             virtual IGameData &getGameData() const = 0;
     };
 };

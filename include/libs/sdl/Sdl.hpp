@@ -14,13 +14,11 @@
 #include "sdl/Sprite.hpp"
 #include <memory>
 
-namespace Arcade {
-    namespace Sdl {
-        class Sdl;
-    } // Arcade
+namespace Arcade::Graphics::Sdl {
+    class Sdl;
 } // Sdl
 
-class Arcade::Sdl::Sdl: public Arcade::IDisplay {
+class Arcade::Graphics::Sdl::Sdl: public Arcade::IDisplay {
 public:
     Sdl();
     ~Sdl() override;

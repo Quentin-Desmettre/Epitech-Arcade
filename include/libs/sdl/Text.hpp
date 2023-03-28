@@ -12,13 +12,11 @@
 #include "sdl/Sprite.hpp"
 #include <stdexcept>
 
-namespace Arcade {
-    namespace Sdl {
+namespace Arcade::Graphics::Sdl {
         class Text;
-    } // Arcade
-} // Sdl
+    } // Sdl
 
-class Arcade::Sdl::Text: public Arcade::Sdl::Sprite {
+class Arcade::Graphics::Sdl::Text: public Arcade::Graphics::Sdl::Sprite {
     public:
         explicit Text(SDL_Renderer *renderer,
                       const Font *font = nullptr,

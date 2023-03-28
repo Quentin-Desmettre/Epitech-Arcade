@@ -14,11 +14,11 @@
 #include <SFML/System.hpp>
 #include "IDisplay.hpp"
 
-namespace Arcade {
+namespace Arcade::Graphics::SFML {
     class SFML;
 };
 
-class Arcade::SFML : public Arcade::IDisplay {
+class Arcade::Graphics::SFML::SFML : public Arcade::IDisplay {
     public:
         SFML();
         ~SFML() override;

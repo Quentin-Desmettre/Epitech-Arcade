@@ -12,15 +12,15 @@
 extern "C"
 {
     void *createDisplay() {
-        return new Arcade::SFML();
+        return new Arcade::Graphics::SFML::SFML();
     }
 
     void deleteDisplay(void *display) {
-        delete reinterpret_cast<Arcade::SFML *>(display);
+        delete reinterpret_cast<Arcade::Graphics::SFML::SFML *>(display);
     }
 }
 
-Arcade::SFML::SFML()
+Arcade::Graphics::SFML::SFML::SFML()
 {
     _window.create(sf::VideoMode(1280, 832), "Arcade");
     _window.setFramerateLimit(60);
@@ -33,12 +33,12 @@ Arcade::SFML::SFML()
     _isMenu = true;
 }
 
-Arcade::SFML::~SFML()
+Arcade::Graphics::SFML::SFML::~SFML()
 {
     _window.close();
 }
 
-void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
+void Arcade::Graphics::SFML::SFML::drawInfoPanel(Arcade::IGameData &gameData)
 {
     _text.setCharacterSize(30);
     _text.setString(gameData.getGameName());
@@ -65,7 +65,7 @@ void Arcade::SFML::drawInfoPanel(Arcade::IGameData &gameData)
     }
 }
 
-void Arcade::SFML::render(Arcade::IGameData &gameData)
+void Arcade::Graphics::SFML::SFML::render(Arcade::IGameData &gameData)
 {
     std::vector<std::shared_ptr<IEntity>> entities = gameData.getEntities();
     std::vector<std::pair<float, float>> positon;
@@ -93,14 +93,14 @@ void Arcade::SFML::render(Arcade::IGameData &gameData)
     _window.display();
 }
 
-std::string Arcade::SFML::truncString(std::string str)
+std::string Arcade::Graphics::SFML::SFML::truncString(std::string str)
 {
     if (str.size() > 19)
         str = str.substr(0, 19) + "...";
     return str;
 }
 
-void Arcade::SFML::setupMenu()
+void Arcade::Graphics::SFML::SFML::setupMenu()
 {
     if (loadTexture("assets/menubg.png") == false)
         return;
@@ -135,7 +135,7 @@ void Arcade::SFML::setupMenu()
     _text.setCharacterSize(20);
 }
 
-void Arcade::SFML::renderMenu(const std::vector<std::string> &games,
+void Arcade::Graphics::SFML::SFML::renderMenu(const std::vector<std::string> &games,
 const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map)
 {
     std::vector<std::string> controls;
@@ -168,7 +168,7 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     _window.display();
 }
 
-std::vector<Arcade::Key> Arcade::SFML::getPressedKeys()
+std::vector<Arcade::Key> Arcade::Graphics::SFML::SFML::getPressedKeys()
 {
     std::vector<Arcade::Key> keys;
     sf::Event ev{};

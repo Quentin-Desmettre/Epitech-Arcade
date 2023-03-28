@@ -14,15 +14,13 @@
 #include <memory>
 #include "Menu.hpp"
 
-namespace Arcade {
-    namespace NCurses {
-        class NCurses;
-    }
+namespace Arcade::Graphics::NCurses {
+    class NCurses;
 }
 
 typedef std::vector<std::string> StringVector;
 
-class Arcade::NCurses::NCurses: public Arcade::IDisplay {
+class Arcade::Graphics::NCurses::NCurses: public Arcade::IDisplay {
 public:
     NCurses();
     ~NCurses() override;
@@ -46,7 +44,7 @@ private:
 
     void waitUntilNextFrame();
 
-    using UniqueMenu = std::unique_ptr<Arcade::NCurses::Menu>;
+    using UniqueMenu = std::unique_ptr<Arcade::Graphics::NCurses::Menu>;
 
     Window _win;
     UniqueMenu _graphicalMenu, _gameMenu, _controlMenu;

@@ -10,8 +10,7 @@
 #include <string>
 #include <SDL2/SDL_ttf.h>
 
-namespace Arcade {
-    namespace Sdl {
+namespace Arcade::Graphics::Sdl {
         class Font {
         public:
             Font(const std::string &fontPath, int fontSize, bool bold = false);
@@ -22,8 +21,7 @@ namespace Arcade {
         private:
             TTF_Font *_font;
         };
-    } // Arcade
-} // Sdl
+    } // Sdl
 
 
 
