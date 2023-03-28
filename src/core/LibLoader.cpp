@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <iostream>
 
-Arcade::LibLoader::LibType Arcade::LibLoader::getLibType(const std::string &path) const
+Arcade::Core::LibLoader::LibType Arcade::Core::LibLoader::getLibType(const std::string &path) const
 {
     LibHandle handle(path);
 
@@ -22,32 +22,32 @@ Arcade::LibLoader::LibType Arcade::LibLoader::getLibType(const std::string &path
     return (ERROR);
 }
 
-std::string Arcade::LibLoader::getLastError() const
+std::string Arcade::Core::LibLoader::getLastError() const
 {
     return (dlerror());
 }
 
-Arcade::IDisplay *Arcade::LibLoader::loadGraphicalLib(const std::string &path)
+Arcade::IDisplay *Arcade::Core::LibLoader::loadGraphicalLib(const std::string &path)
 {
     return loadLib<IDisplay>(path, _createDisplaySymbol, _deleteDisplaySymbol);
 }
 
-void Arcade::LibLoader::unloadGraphicalLib(Arcade::IDisplay *lib)
+void Arcade::Core::LibLoader::unloadGraphicalLib(Arcade::IDisplay *lib)
 {
     return unloadLib(static_cast<void *>(lib), _deleteDisplaySymbol);
 }
 
-Arcade::IGame *Arcade::LibLoader::loadGameLib(const std::string &path)
+Arcade::IGame *Arcade::Core::LibLoader::loadGameLib(const std::string &path)
 {
     return loadLib<IGame>(path, _createGameSymbol, _deleteGameSymbol);
 }
 
-void Arcade::LibLoader::unloadGameLib(Arcade::IGame *lib)
+void Arcade::Core::LibLoader::unloadGameLib(Arcade::IGame *lib)
 {
     return unloadLib(static_cast<void *>(lib), _deleteGameSymbol);
 }
 
-void Arcade::LibLoader::unloadLib(void *lib, const std::string &deleteSymbol)
+void Arcade::Core::LibLoader::unloadLib(void *lib, const std::string &deleteSymbol)
 {
     delete_t dtor;
 
