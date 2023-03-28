@@ -13,26 +13,63 @@
 #include <vector>
 
 namespace Arcade::Graphics::NCurses {
+    class Texture;
 
-        class Texture;
-        enum Color {
-            BLACK = COLOR_BLACK,
-            RED = COLOR_RED,
-            GREEN = COLOR_GREEN,
-            YELLOW = COLOR_YELLOW,
-            BLUE = COLOR_BLUE,
-            MAGENTA = COLOR_MAGENTA,
-            CYAN = COLOR_CYAN,
-            WHITE = COLOR_WHITE
-        };
+    /**
+     * @brief A ncurses color.
+     */
+    enum Color {
+        BLACK = COLOR_BLACK,
+        RED = COLOR_RED,
+        GREEN = COLOR_GREEN,
+        YELLOW = COLOR_YELLOW,
+        BLUE = COLOR_BLUE,
+        MAGENTA = COLOR_MAGENTA,
+        CYAN = COLOR_CYAN,
+        WHITE = COLOR_WHITE
+    };
 
-    } // NCurses
+} // NCurses
 
+/**
+ * @brief A ncurses texture.
+ *
+ * A texture is a character with a background color, a text color, and a size.
+ */
 class Arcade::Graphics::NCurses::Texture {
 public:
+
+    /**
+     * @brief Creates a new texture.
+     *
+     * A valid texture must be formatted the following way:
+     *
+     * text: <single char>
+     * bg-color: <color>
+     * text-color: <color>
+     *
+     * Color must be among the following:
+     *  - black
+     *  - red
+     *  - green
+     *  - yellow
+     *  - blue
+     *  - magenta
+     *  - cyan
+     *  - white
+     *  - none
+     *
+     * @param path Path to the texture file.
+     * @param width Width of the texture.
+     * @param height Height of the texture.
+     */
     Texture(const std::string &path, int width, int height);
     ~Texture();
 
+    /**
+     *
+     * @return
+     */
     std::string getContent() const;
     Color getTextColor() const;
     Color getBackgroundColor() const;

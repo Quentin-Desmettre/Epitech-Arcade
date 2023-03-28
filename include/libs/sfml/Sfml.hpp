@@ -14,19 +14,41 @@
 #include <SFML/System.hpp>
 #include "IDisplay.hpp"
 
+/**
+ * @brief The SFML graphical library.
+ */
 namespace Arcade::Graphics::SFML {
     class SFML;
 };
 
+/**
+ * @brief The SFML graphical library.
+ */
 class Arcade::Graphics::SFML::SFML : public Arcade::IDisplay {
     public:
+        /**
+         * @brief Creates a new SFML graphical library.
+         */
         SFML();
         ~SFML() override;
 
+        /**
+         * @see Arcade::IDisplay::getPressedKeys()
+         * @return
+         */
         std::vector<Key> getPressedKeys() override;
+
+        /**
+         * @see Arcade::IDisplay::render()
+         */
         void render(IGameData &gameData) override;
+
+        /**
+         * @see Arcade::IDisplay::renderMenu()
+         */
         void renderMenu(const std::vector<std::string> &games,
         const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map) override;
+
     private:
         std::map<std::string, std::unique_ptr<sf::Texture>> _textureMap;
         bool loadTexture(std::string texturePath);
@@ -49,3 +71,15 @@ class Arcade::Graphics::SFML::SFML : public Arcade::IDisplay {
         float _cellSize;
         bool _isMenu;
 };
+
+/**
+ * @brief Creates a new SFML graphical library.
+ * See Arcade::IDisplay::createDisplay() for more information.
+ */
+extern "C" void *createDisplay();
+
+/**
+ * @brief Deletes a SFML graphical library.
+ * See Arcade::IDisplay::deleteDisplay() for more information.
+ */
+extern "C" void deleteDisplay(void *display);

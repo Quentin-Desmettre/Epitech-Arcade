@@ -14,21 +14,46 @@
 #include <memory>
 #include "Menu.hpp"
 
+/**
+ * @brief A wrapper around the ncurses library.
+ */
 namespace Arcade::Graphics::NCurses {
     class NCurses;
 }
 
 typedef std::vector<std::string> StringVector;
 
+/**
+ * @brief The NCurses graphical library.
+ */
 class Arcade::Graphics::NCurses::NCurses: public Arcade::IDisplay {
 public:
+    /**
+     * @brief Creates a new NCurses graphical library.
+     */
     NCurses();
     ~NCurses() override;
 
+    /**
+     * @see Arcade::IDisplay::getPressedKeys()
+     */
     std::vector<Key> getPressedKeys() override;
+
+    /**
+     * @see Arcade::IDisplay::render()
+     */
     void render(IGameData &gameData) override;
+
+    /**
+     * @see Arcade::IDisplay::renderMenu()
+     */
     void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
                     int selectedGame, int selectedGraph, const ControlMap &map) override;
+
+    /**
+     * @brief Sets the framerate limit.
+     * @param fps The framerate limit.
+     */
     void setFramerateLimit(int fps);
 
 protected:
@@ -58,5 +83,17 @@ private:
     long _lastFrame;
     int _baseInputDelay;
 };
+
+/**
+ * @brief Creates a new NCurses graphical library.
+ * See Arcade::IDisplay::createDisplay() for more information.
+ */
+extern "C" void *createDisplay();
+
+/**
+ * @brief Deletes a NCurses graphical library.
+ * See Arcade::IDisplay::deleteDisplay() for more information.
+ */
+extern "C" void deleteDisplay(void *display);
 
 #endif /* !NCURSES_HPP_ */

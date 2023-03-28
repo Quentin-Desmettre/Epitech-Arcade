@@ -235,7 +235,7 @@ void Arcade::Core::Core::loadGraphicLibrary(const std::string &name)
 void Arcade::Core::Core::fetchAvailableLibs()
 {
     LibLoader::LibType libType;
-    const std::filesystem::path sandbox{"sandbox"};
+    const std::filesystem::path sandbox{"lib"};
 
     _graphicalLibs.clear();
     _gameLibs.clear();

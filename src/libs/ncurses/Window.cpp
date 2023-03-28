@@ -123,12 +123,6 @@ Arcade::Graphics::NCurses::Window::Window(Window *parent, const std::pair<int, i
     _win = subwin(parent->_win, size.second, size.first, pos.second, pos.first);
 }
 
-Arcade::Graphics::NCurses::Window &Arcade::Graphics::NCurses::Window::getStdWin()
-{
-    static Window win;
-    return win;
-}
-
 Arcade::Graphics::NCurses::Window::~Window()
 {
     if (_win != stdscr)
@@ -173,7 +167,7 @@ std::vector<std::string> split(const std::string &s, const std::string &delimite
     res.push_back (s.substr (pos_start));
     return res;
 }
-#include <iostream>
+
 void Arcade::Graphics::NCurses::Window::draw(const Texture &text, Pos pos)
 {
     auto colorPair = COLOR_PAIR(text.getColorPair());

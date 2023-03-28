@@ -25,18 +25,25 @@ namespace Arcade::Core {
      */
     class Core {
         public:
+            /**
+             * @brief Exception thrown when no library is found.
+             */
             class NoLibraryException: public std::exception {
                 public:
-                    NoLibraryException(LibLoader::LibType type);
-                    ~NoLibraryException() = default;
+                    explicit NoLibraryException(LibLoader::LibType type);
+                    ~NoLibraryException() override = default;
                     const char *what() const noexcept override;
                 private:
                     std::string _message;
             };
+
+            /**
+             * @brief Exception thrown when a library could not be loaded.
+             */
             class LibraryNotLoadedException: public std::exception {
                 public:
                     LibraryNotLoadedException();
-                    ~LibraryNotLoadedException() = default;
+                    ~LibraryNotLoadedException() override = default;
                     const char *what() const noexcept override;
                 private:
                     std::string _message;
