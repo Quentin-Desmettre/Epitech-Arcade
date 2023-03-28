@@ -24,7 +24,7 @@ OBJ = $(SRC:.cpp=.o)
 
 NAME = ../../../lib/arcade_sdl2.so
 
-CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -fPIC -g  -fno-gnu-unique -g
+CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -fPIC -g  -fno-gnu-unique -g -lX11
 
 all: try-clean $(NAME)
 

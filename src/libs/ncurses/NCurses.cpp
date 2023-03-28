@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include "XDisplay.hpp"
 
 extern "C" void *createDisplay()
 {
@@ -19,6 +20,7 @@ extern "C" void *createDisplay()
     noecho();
     curs_set(0);
     keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
     if (has_colors() && can_change_color())
         start_color();
     return new Arcade::NCurses::NCurses();
@@ -36,6 +38,8 @@ Arcade::NCurses::NCurses::NCurses():
     _fps(60),
     _lastFrame(0)
 {
+    _baseInputDelay = Arcade::XDisplay::getInputDelay();
+    Arcade::XDisplay::setInputDelay(0);
 }
 
 void Arcade::NCurses::NCurses::render(IGameData &gameData)
@@ -122,6 +126,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
                                           int selectedGame, int selectedGraph, const ControlMap &map)
 {
     waitUntilNextFrame();
+    Arcade::XDisplay::setInputDelay(_baseInputDelay);
 
     // Re-create menus if files/winSize differ
     Size winSize = _win.getSize();
@@ -151,6 +156,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     _graphicalMenu->render();
     _controlMenu->render();
     refresh();
+    Arcade::XDisplay::setInputDelay(0);
 }
 
 void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedIndex)
@@ -182,16 +188,6 @@ void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedInd
     _gameMenu = std::make_unique<Menu>(&_win, "Game libraries", gamePos, _gameNames, isSelectingGame ? selectedIndex: - 1, menuSize);
     _graphicalMenu = std::make_unique<Menu>(&_win, "Graphical libraries", graphicalPos, _graphicalNames, isSelectingGame ? -1 : selectedIndex, menuSize);
     _controlMenu = std::make_unique<Menu>(&_win, "Controls", controlsPos, getNames(_controls), -1, menuSize);
-}
-
-std::vector<Arcade::Key> Arcade::NCurses::NCurses::getPressedKeys()
-{
-    Key k;
-    std::vector<Key> keys;
-
-    while ((k = Arcade::NCurses::Window::getKey()) != Key::Unknown)
-        keys.push_back(k);
-    return keys;
 }
 
 Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const std::vector<std::string> &items)
@@ -258,4 +254,19 @@ bool Arcade::NCurses::NCurses::isPositionOk(const Pos &pos, const Size &size, co
 {
     return pos.first >= 0 && pos.first + size.first < winSize.first &&
            pos.second >= 0 && pos.second + size.second < winSize.second;
+}
+
+std::vector<Arcade::Key> Arcade::NCurses::NCurses::getPressedKeys()
+{
+    std::vector<Key> keys;
+    Key k;
+
+    while ((k = Arcade::NCurses::Window::getKey()) != Key::Unknown)
+        keys.push_back(k);
+    return keys;
+}
+
+Arcade::NCurses::NCurses::~NCurses() noexcept
+{
+    Arcade::XDisplay::setInputDelay(_baseInputDelay);
 }

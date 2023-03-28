@@ -237,9 +237,6 @@ void Arcade::Centipede::Game::convertToGameData()
     }
     _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(heads, size, "head", 0.f));
     _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(bodys, size, "body", 0.f));
-    // for (auto &entity : _gameData->getEntities()) {
-    //     std::cout << entity->getPosition().first << " " << entity->getPosition().second << std::endl;
-    // }
     // _gameData->addScore("Score", _body.size() - 4);
 }
 
