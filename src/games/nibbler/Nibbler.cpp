@@ -250,7 +250,6 @@ void Arcade::Games::Nibbler::Game::update(const std::string &username)
             growUpSnake();
         }
         if (isSnakeDead()) {
-            save_score(username);
             return;
         }
         _direction = dir;
@@ -262,6 +261,7 @@ void Arcade::Games::Nibbler::Game::update(const std::string &username)
         _offset = _time_dif;
     else
         _offset = 0.4;
+    save_score(username);
     convertToGameData();
 }
 
