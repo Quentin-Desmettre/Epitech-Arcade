@@ -7,54 +7,54 @@
 
 #include "libs/sdl/Sprite.hpp"
 
-Arcade::Sdl::Sprite::Sprite(const Texture &texture):
+Arcade::Graphics::Sdl::Sprite::Sprite(const Texture &texture):
     _texture(&texture)
 {
 }
 
-Arcade::Sdl::Sprite::Sprite():
+Arcade::Graphics::Sdl::Sprite::Sprite():
     _texture(nullptr)
 {
 }
 
-void Arcade::Sdl::Sprite::setTexture(const Texture &texture)
+void Arcade::Graphics::Sdl::Sprite::setTexture(const Texture &texture)
 {
     _texture = &texture;
     setTextureRect({0, 0, _texture->getSize().first, _texture->getSize().second});
     setSize({_texture->getSize().first, _texture->getSize().second});
 }
 
-void Arcade::Sdl::Sprite::setSize(const SpriteSize &size)
+void Arcade::Graphics::Sdl::Sprite::setSize(const SpriteSize &size)
 {
     _size = size;
 }
 
-void Arcade::Sdl::Sprite::setTextureRect(const TextureRect &rect)
+void Arcade::Graphics::Sdl::Sprite::setTextureRect(const TextureRect &rect)
 {
     _textureRect = rect;
 }
 
-void Arcade::Sdl::Sprite::setPosition(const SpriteSize &position)
+void Arcade::Graphics::Sdl::Sprite::setPosition(const SpriteSize &position)
 {
     _position = position;
 }
 
-const Arcade::Sdl::Texture &Arcade::Sdl::Sprite::getTexture() const
+const Arcade::Graphics::Sdl::Texture &Arcade::Graphics::Sdl::Sprite::getTexture() const
 {
     return *_texture;
 }
 
-SpriteSize Arcade::Sdl::Sprite::getSize() const
+SpriteSize Arcade::Graphics::Sdl::Sprite::getSize() const
 {
     return _size;
 }
 
-const Arcade::Sdl::TextureRect &Arcade::Sdl::Sprite::getTextureRect() const
+const Arcade::Graphics::Sdl::TextureRect &Arcade::Graphics::Sdl::Sprite::getTextureRect() const
 {
     return _textureRect;
 }
 
-const SpriteSize &Arcade::Sdl::Sprite::getPosition() const
+const SpriteSize &Arcade::Graphics::Sdl::Sprite::getPosition() const
 {
     return _position;
 }

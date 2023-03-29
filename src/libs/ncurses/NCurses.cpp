@@ -23,16 +23,16 @@ extern "C" void *createDisplay()
     nodelay(stdscr, TRUE);
     if (has_colors() && can_change_color())
         start_color();
-    return new Arcade::NCurses::NCurses();
+    return new Arcade::Graphics::NCurses::NCurses();
 }
 
 extern "C" void deleteDisplay(void *display)
 {
-    delete reinterpret_cast<Arcade::NCurses::NCurses *>(display);
+    delete reinterpret_cast<Arcade::Graphics::NCurses::NCurses *>(display);
     endwin();
 }
 
-Arcade::NCurses::NCurses::NCurses():
+Arcade::Graphics::NCurses::NCurses::NCurses():
     _win(),
     _lastWinSize({0, 0}),
     _fps(60),
@@ -42,7 +42,7 @@ Arcade::NCurses::NCurses::NCurses():
     Arcade::XDisplay::setInputDelay(0);
 }
 
-void Arcade::NCurses::NCurses::render(IGameData &gameData)
+void Arcade::Graphics::NCurses::NCurses::render(IGameData &gameData)
 {
     waitUntilNextFrame();
 
@@ -75,7 +75,7 @@ void Arcade::NCurses::NCurses::render(IGameData &gameData)
     refresh();
 }
 
-void Arcade::NCurses::NCurses::renderScores(IGameData &gameData)
+void Arcade::Graphics::NCurses::NCurses::renderScores(IGameData &gameData)
 {
     Size winSize = _win.getSize();
     Window scores(&_win, {winSize.first * 0.15, 0}, {winSize.first * 0.7, 3});
@@ -91,7 +91,7 @@ void Arcade::NCurses::NCurses::renderScores(IGameData &gameData)
     }
 }
 
-void Arcade::NCurses::NCurses::renderEntities(IGameData &gameData)
+void Arcade::Graphics::NCurses::NCurses::renderEntities(IGameData &gameData)
 {
     Size winSize = _win.getSize();
     Size availableSize = {winSize.first, winSize.second - 3};
@@ -122,7 +122,7 @@ void Arcade::NCurses::NCurses::renderEntities(IGameData &gameData)
     textures.clear();
 }
 
-void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+void Arcade::Graphics::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
                                           int selectedGame, int selectedGraph, const ControlMap &map)
 {
     waitUntilNextFrame();
@@ -159,7 +159,7 @@ void Arcade::NCurses::NCurses::renderMenu(const std::vector<std::string> &games,
     Arcade::XDisplay::setInputDelay(0);
 }
 
-void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedIndex)
+void Arcade::Graphics::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedIndex)
 {
     Size winSize = _win.getSize();
     Size menuSize = getMaxSize(getSizeForMenu("Graphical libraries", _graphicalNames), getSizeForMenu("Game libraries", _gameNames),
@@ -190,7 +190,7 @@ void Arcade::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedInd
     _controlMenu = std::make_unique<Menu>(&_win, "Controls", controlsPos, getNames(_controls), -1, menuSize);
 }
 
-Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const std::vector<std::string> &items)
+Size Arcade::Graphics::NCurses::NCurses::getSizeForMenu(const std::string &title, const std::vector<std::string> &items)
 {
     // Menu should be large enough to contain the biggest item + 8 characters, for padding and box.
     // Or, name.size + 6 characters, for padding and box.
@@ -206,12 +206,12 @@ Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const st
     return {static_cast<int>(requiredWidth), static_cast<int>(items.size() + 5)};
 }
 
-Size Arcade::NCurses::NCurses::getSizeForMenu(const std::string &title, const ControlMap &items)
+Size Arcade::Graphics::NCurses::NCurses::getSizeForMenu(const std::string &title, const ControlMap &items)
 {
     return getSizeForMenu(title, getNames(items));
 }
 
-std::vector<std::string> Arcade::NCurses::NCurses::getNames(const ControlMap &items)
+std::vector<std::string> Arcade::Graphics::NCurses::NCurses::getNames(const ControlMap &items)
 {
     std::vector<std::string> stringItems{items.size(), ""};
 
@@ -221,7 +221,7 @@ std::vector<std::string> Arcade::NCurses::NCurses::getNames(const ControlMap &it
     return stringItems;
 }
 
-Size Arcade::NCurses::NCurses::getMaxSize(const Size &a, const Size &b, const Size &c)
+Size Arcade::Graphics::NCurses::NCurses::getMaxSize(const Size &a, const Size &b, const Size &c)
 {
     Size max;
 
@@ -230,12 +230,12 @@ Size Arcade::NCurses::NCurses::getMaxSize(const Size &a, const Size &b, const Si
     return max;
 }
 
-void Arcade::NCurses::NCurses::setFramerateLimit(int fps)
+void Arcade::Graphics::NCurses::NCurses::setFramerateLimit(int fps)
 {
     _fps = fps;
 }
 
-void Arcade::NCurses::NCurses::waitUntilNextFrame()
+void Arcade::Graphics::NCurses::NCurses::waitUntilNextFrame()
 {
     if (_fps == -1)
         return;
@@ -250,23 +250,23 @@ void Arcade::NCurses::NCurses::waitUntilNextFrame()
     ).count();
 }
 
-bool Arcade::NCurses::NCurses::isPositionOk(const Pos &pos, const Size &size, const Size &winSize)
+bool Arcade::Graphics::NCurses::NCurses::isPositionOk(const Pos &pos, const Size &size, const Size &winSize)
 {
     return pos.first >= 0 && pos.first + size.first < winSize.first &&
            pos.second >= 0 && pos.second + size.second < winSize.second;
 }
 
-std::vector<Arcade::Key> Arcade::NCurses::NCurses::getPressedKeys()
+std::vector<Arcade::Key> Arcade::Graphics::NCurses::NCurses::getPressedKeys()
 {
     std::vector<Key> keys;
     Key k;
 
-    while ((k = Arcade::NCurses::Window::getKey()) != Key::Unknown)
+    while ((k = Arcade::Graphics::NCurses::Window::getKey()) != Key::Unknown)
         keys.push_back(k);
     return keys;
 }
 
-Arcade::NCurses::NCurses::~NCurses() noexcept
+Arcade::Graphics::NCurses::NCurses::~NCurses() noexcept
 {
     Arcade::XDisplay::setInputDelay(_baseInputDelay);
 }

@@ -14,22 +14,45 @@
 #include "sdl/Sprite.hpp"
 #include <memory>
 
-namespace Arcade {
-    namespace Sdl {
-        class Sdl;
-    } // Arcade
+/**
+ * @brief A wrapper around the SDL2 library.
+ */
+namespace Arcade::Graphics::Sdl {
+    class Sdl;
 } // Sdl
 
-class Arcade::Sdl::Sdl: public Arcade::IDisplay {
+/**
+ * @brief The SDL2 graphical library.
+ */
+class Arcade::Graphics::Sdl::Sdl: public Arcade::IDisplay {
 public:
+    /**
+     * @brief Creates a new SDL2 graphical library.
+     */
     Sdl();
     ~Sdl() override;
 
+    /**
+     * @see Arcade::IDisplay::getPressedKeys()
+     */
     std::vector<Key> getPressedKeys() override;
+
+    /**
+     * @see Arcade::IDisplay::render()
+     */
     void render(IGameData &gameData) override;
+
+    /**
+     * @see Arcade::IDisplay::renderMenu()
+     */
     void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
                     int selectedGame, int selectedGraph, const ControlMap &controls) override;
 
+    /**
+     * @brief Unloads all the textures.
+     *
+     * This method is only called when the SDL2 library is unloaded (via deleteDisplay)
+     */
     static void unloadTextures();
 private:
     // Globals
@@ -58,5 +81,19 @@ private:
     static std::string texturePath(const IEntity &entity, const std::string &gameName);
     void drawInfoPanel(Arcade::IGameData &gameData);
 };
+
+/**
+ * @brief Creates a new SDL2 graphical library.
+ * See Arcade::IDisplay::createDisplay() for more information.
+ * @return A pointer to the new SDL2 graphical library.
+ */
+extern "C" void *createDisplay();
+
+/**
+ * @brief Deletes a SDL2 graphical library.
+ * See Arcade::IDisplay::deleteDisplay() for more information.
+ * @param display The SDL2 graphical library to delete (which was created with createDisplay).
+ */
+extern "C" void deleteDisplay(void *display);
 
 #endif //EPITECH_ARCADE_SDL_HPP
