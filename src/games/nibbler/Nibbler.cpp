@@ -12,6 +12,7 @@
 #include <cmath>
 #include <memory>
 #include <chrono>
+#include <fstream>
 
 extern "C"
 {
@@ -75,6 +76,16 @@ void Arcade::Nibbler::Game::restart()
     _time_dif = 0;
     _is_stuck = false;
     _is_child = false;
+
+    std::ifstream inputFile("nibbler");
+    if (inputFile.is_open()) {
+        inputFile >> _best_score;
+        inputFile >> _name;
+        inputFile.close();
+    } else {
+        _best_score = 0;
+        _name = "???";
+    }
 }
 
 Arcade::Nibbler::Game::Game()
@@ -203,6 +214,19 @@ int Arcade::Nibbler::Game::isSnakeDead()
     return 0;
 }
 
+void Arcade::Nibbler::Game::save_score(const std::string &username)
+{
+    if (int(_body.size() - 4) < _best_score)
+        return;
+
+    std::ofstream outputFile("nibbler");
+    if (!outputFile.is_open())
+        return;
+    outputFile << _body.size() - 4;
+    outputFile << username;
+    outputFile.close();
+}
+
 void Arcade::Nibbler::Game::update(const std::string &username)
 {
     float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
@@ -225,8 +249,10 @@ void Arcade::Nibbler::Game::update(const std::string &username)
             _is_stuck = false;
             growUpSnake();
         }
-        if (isSnakeDead())
+        if (isSnakeDead()) {
+            save_score(username);
             return;
+        }
         _direction = dir;
         _time_dif -= 0.4;
         if (_is_stuck == true)
@@ -270,7 +296,9 @@ void Arcade::Nibbler::Game::convertToGameData()
         body.push_back({_body[i].first + pos.first, _body[i].second + pos.second});
     }
     _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(body, size, std::string("body"), 0.f));
+    _gameData->clearScores();
     _gameData->addScore("Score", _body.size() - 4);
+    _gameData->addScore("Best score : " + _name + " ", _best_score);
     _gameData->addScore("Time", _time);
 }
 

@@ -26,6 +26,11 @@ std::map<std::string, int> Arcade::Nibbler::GameData::getScores() const
     return _scores;
 }
 
+void Arcade::Nibbler::GameData::clearScores()
+{
+    _scores.clear();
+}
+
 std::string Arcade::Nibbler::GameData::getGameName() const
 {
     return "Nibbler";

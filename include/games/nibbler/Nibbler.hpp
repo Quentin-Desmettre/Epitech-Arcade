@@ -53,6 +53,7 @@ namespace Arcade::Nibbler {
             void folowSnake(std::pair<int, int> pos);
             void growUpSnake();
             int isSnakeDead();
+            void save_score(const std::string &username);
 
             std::shared_ptr<GameData> _gameData;
             char _map[19][19];
@@ -67,6 +68,8 @@ namespace Arcade::Nibbler {
             float _time_dif;
             float _offset;
             bool _is_stuck;
+            int _best_score;
+            std::string _name;
     };
 }
 #endif /* !NIBBLER_HPP_ */

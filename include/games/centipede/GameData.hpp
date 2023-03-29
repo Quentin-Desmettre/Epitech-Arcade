@@ -27,6 +27,9 @@ namespace Arcade::Centipede {
              * @see IGameData::getScores
              */
             std::map<std::string, int> getScores() const override;
+            
+            
+            void clearScores();
 
             /**
              * @see IGameData::getGameName

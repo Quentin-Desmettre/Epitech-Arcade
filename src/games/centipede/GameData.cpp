@@ -25,6 +25,11 @@ std::map<std::string, int> Arcade::Centipede::GameData::getScores() const
     return _scores;
 }
 
+void Arcade::Centipede::GameData::clearScores()
+{
+    _scores.clear();
+}
+
 std::string Arcade::Centipede::GameData::getGameName() const
 {
     return "Centipede";
