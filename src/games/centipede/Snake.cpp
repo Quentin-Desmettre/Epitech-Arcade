@@ -8,7 +8,7 @@
 #include "games/centipede/Snake.hpp"
 #include <iostream>
 
-Arcade::Centipede::Snake::Snake()
+Arcade::Games::Centipede::Snake::Snake()
 {
     _head = {12, 0};
     for (int i = 0; i < 8; i++) {
@@ -18,7 +18,7 @@ Arcade::Centipede::Snake::Snake()
     _dir = true;
 }
 
-Arcade::Centipede::Snake::Snake(std::pair<int, int> head, std::pair<int, int> tail, std::vector<std::pair<int, int>> body, bool dir)
+Arcade::Games::Centipede::Snake::Snake(std::pair<int, int> head, std::pair<int, int> tail, std::vector<std::pair<int, int>> body, bool dir)
 {
     _head = head;
     _tail = tail;
@@ -26,11 +26,11 @@ Arcade::Centipede::Snake::Snake(std::pair<int, int> head, std::pair<int, int> ta
     _dir = dir;
 }
 
-Arcade::Centipede::Snake::~Snake()
+Arcade::Games::Centipede::Snake::~Snake()
 {
 }
 
-void Arcade::Centipede::Snake::folow(std::pair<int, int> pos)
+void Arcade::Games::Centipede::Snake::folow(std::pair<int, int> pos)
 {
     _tail = _body.back();
     for (size_t i = _body.size() - 1; i > 0; i--) {
@@ -40,7 +40,7 @@ void Arcade::Centipede::Snake::folow(std::pair<int, int> pos)
     _head = pos;
 }
 
-void Arcade::Centipede::Snake::move(char map[25][25])
+void Arcade::Games::Centipede::Snake::move(char map[25][25])
 {
     int x = _head.first + (_dir ? 1 : -1);
     int y = _head.second;
@@ -55,7 +55,7 @@ void Arcade::Centipede::Snake::move(char map[25][25])
     return folow({_head.first, _head.second + 1});
 }
 
-int Arcade::Centipede::Snake::touch(std::pair<int, int> pos, std::vector<Arcade::Centipede::Snake> &snakes)
+int Arcade::Games::Centipede::Snake::touch(std::pair<int, int> pos, std::vector<Arcade::Games::Centipede::Snake> &snakes)
 {
     std::vector<std::pair<int, int>> tmp = {};
     size_t size = _body.size();
@@ -77,12 +77,12 @@ int Arcade::Centipede::Snake::touch(std::pair<int, int> pos, std::vector<Arcade:
     return 0;
 }
 
-std::vector<std::pair<int, int>> Arcade::Centipede::Snake::getBody() const
+std::vector<std::pair<int, int>> Arcade::Games::Centipede::Snake::getBody() const
 {
     return _body;
 }
 
-std::pair<int, int> Arcade::Centipede::Snake::getHead() const
+std::pair<int, int> Arcade::Games::Centipede::Snake::getHead() const
 {
     return _head;
 }

@@ -11,19 +11,21 @@
 #include <chrono>
 #include <iostream>
 #include <cmath>
+#include <iostream>
+#include <fstream>
 
 extern "C"
 {
     void *createGame() {
-        return new Arcade::Centipede::Game();
+        return new Arcade::Games::Centipede::Game();
     }
 
     void deleteGame(void *game) {
-        delete static_cast<Arcade::Centipede::Game *>(game);
+        delete static_cast<Arcade::Games::Centipede::Game *>(game);
     }
 }
 
-void Arcade::Centipede::Game::restart()
+void Arcade::Games::Centipede::Game::restart()
 {
     for (int i = 0; i < 25; i++) {
         for (int j = 0; j < 25; j++) {
@@ -47,16 +49,26 @@ void Arcade::Centipede::Game::restart()
     _time_dif = 0;
     _score = 0;
     nb_centi = 20;
+    _best_score = 0;
+    std::ifstream inputFile("centipede");
+    if (inputFile.is_open()) {
+        inputFile >> _best_score;
+        inputFile >> _name;
+        inputFile.close();
+    } else {
+        _best_score = 0;
+        _name = "???";
+    }
 }
 
-char Arcade::Centipede::Game::getAtPos(int x, int y)
+char Arcade::Games::Centipede::Game::getAtPos(int x, int y)
 {
     if (x < 0 || x >= 25 || y < 0 || y >= 25)
         return 0;
     return _map[x][y];
 }
 
-char Arcade::Centipede::Game::getAtPos(std::pair<int, int> pos, int x, int y)
+char Arcade::Games::Centipede::Game::getAtPos(std::pair<int, int> pos, int x, int y)
 {
     x += pos.first;
     y += pos.second;
@@ -65,7 +77,7 @@ char Arcade::Centipede::Game::getAtPos(std::pair<int, int> pos, int x, int y)
 }
 
 
-void Arcade::Centipede::Game::handleKeys(const std::vector<Arcade::Key> &pressedKeys)
+void Arcade::Games::Centipede::Game::handleKeys(const std::vector<Arcade::Key> &pressedKeys)
 {
     _direction = {0, 0};
     for (auto &key : pressedKeys) {
@@ -94,17 +106,17 @@ void Arcade::Centipede::Game::handleKeys(const std::vector<Arcade::Key> &pressed
     }
 }
 
-Arcade::Centipede::Game::Game()
+Arcade::Games::Centipede::Game::Game()
 {
-    _gameData = std::make_shared<Arcade::Centipede::GameData>();
+    _gameData = std::make_shared<Arcade::Games::Centipede::GameData>();
     restart();
 }
 
-Arcade::Centipede::Game::~Game()
+Arcade::Games::Centipede::Game::~Game()
 {
 }
 
-void Arcade::Centipede::Game::removeSnake()
+void Arcade::Games::Centipede::Game::removeSnake()
 {
     for (size_t i = 0; i < _snake.size(); i++) {
         if (_snake[i].getBody().size() == 0)
@@ -113,7 +125,7 @@ void Arcade::Centipede::Game::removeSnake()
     convertToGameData();
 }
 
-void Arcade::Centipede::Game::moveShip(float dif)
+void Arcade::Games::Centipede::Game::moveShip(float dif)
 {
     p_pos.first += _direction.first * dif * 25.0;
     p_pos.second += _direction.second * dif * 25.0;
@@ -129,7 +141,7 @@ void Arcade::Centipede::Game::moveShip(float dif)
 }
 
 
-void Arcade::Centipede::Game::moveBullet(float dif)
+void Arcade::Games::Centipede::Game::moveBullet(float dif)
 {
     if (_lauch == true && b_pos.first <= -3) {
         b_pos = p_pos;
@@ -142,7 +154,7 @@ void Arcade::Centipede::Game::moveBullet(float dif)
     }
 }
 
-int Arcade::Centipede::Game::checkBulletMove(int before)
+int Arcade::Games::Centipede::Game::checkBulletMove(int before)
 {
     std::pair<int, int> tmp;
 
@@ -167,19 +179,33 @@ int Arcade::Centipede::Game::checkBulletMove(int before)
             }
         }
     }
-    return 0;
-   
+    return 0;  
 }
 
-void Arcade::Centipede::Game::update(const std::string &username)
+void Arcade::Games::Centipede::Game::save_score(const std::string &username)
+{
+    if (_score < _best_score)
+        return;
+    
+    std::ofstream outputFile("centipede");
+    if (!outputFile.is_open())
+        return;
+    outputFile << _score;
+    outputFile << username;
+    outputFile.close();
+}
+
+
+void Arcade::Games::Centipede::Game::update(const std::string &username)
 {
     float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
     _clock = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     _time_dif += dif;
     int before = b_pos.second;
 
-    if (_exit == true)
+    if (_exit == true) {
         return convertToGameData();
+    }
     moveShip(dif);
     moveBullet(dif);
     while (_time_dif > 0.1) {
@@ -199,13 +225,16 @@ void Arcade::Centipede::Game::update(const std::string &username)
             }
         }
     }
-    if (_snake.size() == 0 && nb_centi == 0)
-        _exit = true;
+    if (_snake.size() == 0 && nb_centi == 0) {
+        save_score(username);
+        return restart();
+    }
     if (_snake.size() == 0 && nb_centi > 0)
         _snake.push_back(Snake());
     for (size_t i = 0; i < _snake.size(); i++) {
         if (_snake[i].touch(p_pos, _snake)) {
             _exit = true;
+            save_score(username);
             return removeSnake();
         }
     }
@@ -214,13 +243,15 @@ void Arcade::Centipede::Game::update(const std::string &username)
     convertToGameData();
 }
 
-void Arcade::Centipede::Game::convertToGameData()
+void Arcade::Games::Centipede::Game::convertToGameData()
 {
     if (_exit == true)
         _gameData->setGameOver(true);
     else
         _gameData->setGameOver(false);
+    _gameData->clearScores();
     _gameData->addScore("Score", _score);
+    _gameData->addScore("Best score : " + _name + " ", _best_score);
     _gameData->removeEntities();
     std::string tmp;
     std::pair<float, float> size = {1, 1};
@@ -228,12 +259,12 @@ void Arcade::Centipede::Game::convertToGameData()
         for (int j = 0; j < 24; j++) {
             if (_map[i][j] != ' ') {
                 tmp = _map[i][j];
-                _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::vector<std::pair<float, float>>{{i, j}}, size, tmp, 0.f));
+                _gameData->addEntity(std::make_shared<Arcade::Games::Centipede::Entity>(std::vector<std::pair<float, float>>{{i, j}}, size, tmp, 0.f));
             }
         }
     }
-    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::vector<std::pair<float, float>>{p_pos}, size, "ship", 0.f));
-    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(std::vector<std::pair<float, float>>{b_pos}, size, "bullet", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Centipede::Entity>(std::vector<std::pair<float, float>>{p_pos}, size, "ship", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Centipede::Entity>(std::vector<std::pair<float, float>>{b_pos}, size, "bullet", 0.f));
     std::vector<std::pair<float, float>> heads = {};
     std::vector<std::pair<float, float>> bodys = {};
     for (auto &snake : _snake) {
@@ -246,13 +277,13 @@ void Arcade::Centipede::Game::convertToGameData()
             bodys.push_back({body[i].first + pos.first, body[i].second + pos.second});
         }
     }
-    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(heads, size, "head", 0.f));
-    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(bodys, size, "body", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Centipede::Entity>(bodys, size, "body", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Centipede::Entity>(heads, size, "head", 0.f));
     // _gameData->addScore("Score", _body.size() - 4);
 }
 
 
-Arcade::IGameData &Arcade::Centipede::Game::getGameData() const
+Arcade::IGameData &Arcade::Games::Centipede::Game::getGameData() const
 {
     return *_gameData;
 }

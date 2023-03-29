@@ -9,7 +9,7 @@
 #define NIBBLERENTITY_HPP_
 #include "GameInterfaces.hpp"
 
-namespace Arcade::Nibbler {
+namespace Arcade::Games::Nibbler {
     /**
      * @brief A Nibbler Entity.
      */

@@ -12,19 +12,20 @@
 #include <cmath>
 #include <memory>
 #include <chrono>
+#include <fstream>
 
 extern "C"
 {
     void *createGame() {
-        return new Arcade::Nibbler::Game();
+        return new Arcade::Games::Nibbler::Game();
     }
 
     void deleteGame(void *game) {
-        delete static_cast<Arcade::Nibbler::Game *>(game);
+        delete static_cast<Arcade::Games::Nibbler::Game *>(game);
     }
 }
 
-void Arcade::Nibbler::Game::initMap()
+void Arcade::Games::Nibbler::Game::initMap()
 {
     std::string mapString =
         "XXXXXXXXXXXXXXXXXXX"
@@ -58,7 +59,7 @@ void Arcade::Nibbler::Game::initMap()
     }
 }
 
-void Arcade::Nibbler::Game::restart()
+void Arcade::Games::Nibbler::Game::restart()
 {
     initMap();
     _gameData->addScore("Score", 0);
@@ -75,22 +76,32 @@ void Arcade::Nibbler::Game::restart()
     _time_dif = 0;
     _is_stuck = false;
     _is_child = false;
+
+    std::ifstream inputFile("nibbler");
+    if (inputFile.is_open()) {
+        inputFile >> _best_score;
+        inputFile >> _name;
+        inputFile.close();
+    } else {
+        _best_score = 0;
+        _name = "???";
+    }
 }
 
-Arcade::Nibbler::Game::Game()
+Arcade::Games::Nibbler::Game::Game()
 {
     srand(time(NULL));
 
-    _gameData = std::make_shared<Arcade::Nibbler::GameData>();
+    _gameData = std::make_shared<Arcade::Games::Nibbler::GameData>();
     _body = {};
     restart();
 }
 
-Arcade::Nibbler::Game::~Game()
+Arcade::Games::Nibbler::Game::~Game()
 {
 }
 
-void Arcade::Nibbler::Game::handleKeys(const std::vector<Arcade::Key> &pressedKeys)
+void Arcade::Games::Nibbler::Game::handleKeys(const std::vector<Arcade::Key> &pressedKeys)
 {
     for (auto &key : pressedKeys)
     {
@@ -117,14 +128,14 @@ void Arcade::Nibbler::Game::handleKeys(const std::vector<Arcade::Key> &pressedKe
     }
 }
 
-char Arcade::Nibbler::Game::getAtPos(int x, int y)
+char Arcade::Games::Nibbler::Game::getAtPos(int x, int y)
 {
     if (x < 0 || x >= 19 || y < 0 || y >= 19)
         return 'X';
     return _map[x][y];
 }
 
-char Arcade::Nibbler::Game::getAtPos(std::pair<int, int> pos, int x, int y)
+char Arcade::Games::Nibbler::Game::getAtPos(std::pair<int, int> pos, int x, int y)
 {
     x += pos.first;
     y += pos.second;
@@ -132,7 +143,7 @@ char Arcade::Nibbler::Game::getAtPos(std::pair<int, int> pos, int x, int y)
     return getAtPos(x, y);
 }
 
-void Arcade::Nibbler::Game::folowSnake(std::pair<int, int> pos)
+void Arcade::Games::Nibbler::Game::folowSnake(std::pair<int, int> pos)
 {
     for (size_t i = _body.size() - 1; i > 0; i--) {
         _body[i] = _body[i - 1];
@@ -142,7 +153,7 @@ void Arcade::Nibbler::Game::folowSnake(std::pair<int, int> pos)
     _head.second += pos.second;
 }
 
-void Arcade::Nibbler::Game::growUpSnake()
+void Arcade::Games::Nibbler::Game::growUpSnake()
 {
     if (_is_child) {
         _body.push_back(_child);
@@ -155,7 +166,7 @@ void Arcade::Nibbler::Game::growUpSnake()
     }
 }
 
-std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
+std::pair<float, float> Arcade::Games::Nibbler::Game::changeDirection()
 {
     std::vector<std::pair<int, int>> dir = {
         {1, 0},
@@ -188,7 +199,7 @@ std::pair<float, float> Arcade::Nibbler::Game::changeDirection()
     return {0, 0};
 }
 
-int Arcade::Nibbler::Game::isSnakeDead()
+int Arcade::Games::Nibbler::Game::isSnakeDead()
 {
     for (size_t i = 1; i < _body.size(); i++) {
         if (_is_stuck && _head.first == _body[i].first && _head.second == _body[i].second) {
@@ -203,7 +214,20 @@ int Arcade::Nibbler::Game::isSnakeDead()
     return 0;
 }
 
-void Arcade::Nibbler::Game::update(const std::string &username)
+void Arcade::Games::Nibbler::Game::save_score(const std::string &username)
+{
+    if (int(_body.size() - 4) < _best_score)
+        return;
+
+    std::ofstream outputFile("nibbler");
+    if (!outputFile.is_open())
+        return;
+    outputFile << _body.size() - 4;
+    outputFile << username;
+    outputFile.close();
+}
+
+void Arcade::Games::Nibbler::Game::update(const std::string &username)
 {
     float dif = (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - _clock) / 1000.0;
     _clock = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -225,8 +249,10 @@ void Arcade::Nibbler::Game::update(const std::string &username)
             _is_stuck = false;
             growUpSnake();
         }
-        if (isSnakeDead())
+        if (isSnakeDead()) {
+            save_score(username);
             return;
+        }
         _direction = dir;
         _time_dif -= 0.4;
         if (_is_stuck == true)
@@ -239,7 +265,7 @@ void Arcade::Nibbler::Game::update(const std::string &username)
     convertToGameData();
 }
 
-void Arcade::Nibbler::Game::convertToGameData()
+void Arcade::Games::Nibbler::Game::convertToGameData()
 {
     _gameData->removeEntities();
     std::pair<float, float> size = {1, 1};
@@ -253,8 +279,8 @@ void Arcade::Nibbler::Game::convertToGameData()
                 fruit.push_back(std::pair<float, float>({i, j}));
         }
     }
-    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(wall, size, "wall", 0.f));
-    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(fruit, size, "fruit", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Nibbler::Entity>(wall, size, "wall", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Nibbler::Entity>(fruit, size, "fruit", 0.f));
 
     std::vector<std::pair<float, float>> body = {};
     if (_time == 0 || _exit == true || isSnakeDead())
@@ -264,17 +290,19 @@ void Arcade::Nibbler::Game::convertToGameData()
     if (_is_child)
         body.push_back(_child);
     std::pair<float, float> pos = {(_head.first - _body[0].first) * _offset * 10 / 4.0, (_head.second - _body[0].second) * _offset * 10 / 4.0};
-    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(std::vector<std::pair<float, float>>{{_body[0].first + pos.first, _body[0].second + pos.second}}, size, std::string("head"), 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Nibbler::Entity>(std::vector<std::pair<float, float>>{{_body[0].first + pos.first, _body[0].second + pos.second}}, size, std::string("head"), 0.f));
     for (size_t i = 1; i < _body.size(); i++) {
         pos = {(_body[i - 1].first - _body[i].first) * _offset * 10 / 4.0, (_body[i - 1].second - _body[i].second) * _offset * 10 / 4.0};
         body.push_back({_body[i].first + pos.first, _body[i].second + pos.second});
     }
-    _gameData->addEntity(std::make_shared<Arcade::Nibbler::Entity>(body, size, std::string("body"), 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Games::Nibbler::Entity>(body, size, std::string("body"), 0.f));
+    _gameData->clearScores();
     _gameData->addScore("Score", _body.size() - 4);
+    _gameData->addScore("Best score : " + _name + " ", _best_score);
     _gameData->addScore("Time", _time);
 }
 
-Arcade::IGameData &Arcade::Nibbler::Game::getGameData() const
+Arcade::IGameData &Arcade::Games::Nibbler::Game::getGameData() const
 {
     return *_gameData;
 }
