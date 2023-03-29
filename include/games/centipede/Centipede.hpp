@@ -35,6 +35,7 @@ namespace Arcade {
                 void moveShip(float dif);
                 void moveBullet(float dif);
                 int checkBulletMove(int before);
+                void save_score(const std::string &username);
 
                 std::shared_ptr<Arcade::Centipede::GameData> _gameData;
                 char _map[25][25];
@@ -49,6 +50,8 @@ namespace Arcade {
                 float _time_dif;
                 float _offset;
                 int _score;
+                int _best_score;
+                std::string _name;
                 int nb_centi;
         };
     }

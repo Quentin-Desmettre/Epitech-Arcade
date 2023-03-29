@@ -33,6 +33,7 @@ namespace Arcade {
                 void convertToGameData();
                 void folowSnake(std::pair<int, int> pos);
                 void growUpSnake();
+                void save_score(const std::string &username);
                 int isSnakeDead();
 
                 std::shared_ptr<GameData> _gameData;
@@ -48,6 +49,8 @@ namespace Arcade {
                 float _time_dif;
                 float _offset;
                 bool _is_stuck;
+                int _best_score;
+                std::string _name;
         };
     }
 }

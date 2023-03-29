@@ -11,6 +11,8 @@
 #include <chrono>
 #include <iostream>
 #include <cmath>
+#include <iostream>
+#include <fstream>
 
 void Arcade::Centipede::Game::restart()
 {
@@ -36,6 +38,16 @@ void Arcade::Centipede::Game::restart()
     _time_dif = 0;
     _score = 0;
     nb_centi = 20;
+    _best_score = 0;
+    std::ifstream inputFile("centipede");
+    if (inputFile.is_open()) {
+        inputFile >> _best_score;
+        inputFile >> _name;
+        inputFile.close();
+    } else {
+        _best_score = 0;
+        _name = "???";
+    }
 }
 
 char Arcade::Centipede::Game::getAtPos(int x, int y)
@@ -156,9 +168,22 @@ int Arcade::Centipede::Game::checkBulletMove(int before)
             }
         }
     }
-    return 0;
-   
+    return 0;  
 }
+
+void Arcade::Centipede::Game::save_score(const std::string &username)
+{
+    if (_score < _best_score)
+        return;
+    
+    std::ofstream outputFile("centipede");
+    if (!outputFile.is_open())
+        return;
+    outputFile << _score;
+    outputFile << username;
+    outputFile.close();
+}
+
 
 void Arcade::Centipede::Game::update(const std::string &username)
 {
@@ -167,8 +192,9 @@ void Arcade::Centipede::Game::update(const std::string &username)
     _time_dif += dif;
     int before = b_pos.second;
 
-    if (_exit == true)
+    if (_exit == true) {
         return convertToGameData();
+    }
     moveShip(dif);
     moveBullet(dif);
     while (_time_dif > 0.1) {
@@ -188,13 +214,16 @@ void Arcade::Centipede::Game::update(const std::string &username)
             }
         }
     }
-    if (_snake.size() == 0 && nb_centi == 0)
-        _exit = true;
+    if (_snake.size() == 0 && nb_centi == 0) {
+        save_score(username);
+        return restart();
+    }
     if (_snake.size() == 0 && nb_centi > 0)
         _snake.push_back(Snake());
     for (size_t i = 0; i < _snake.size(); i++) {
         if (_snake[i].touch(p_pos, _snake)) {
             _exit = true;
+            save_score(username);
             return removeSnake();
         }
     }
@@ -209,7 +238,9 @@ void Arcade::Centipede::Game::convertToGameData()
         _gameData->setGameOver(true);
     else
         _gameData->setGameOver(false);
+    _gameData->clearScores();
     _gameData->addScore("Score", _score);
+    _gameData->addScore("Best score : " + _name + " ", _best_score);
     _gameData->removeEntities();
     std::string tmp;
     std::pair<float, float> size = {1, 1};
@@ -235,8 +266,8 @@ void Arcade::Centipede::Game::convertToGameData()
             bodys.push_back({body[i].first + pos.first, body[i].second + pos.second});
         }
     }
-    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(heads, size, "head", 0.f));
     _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(bodys, size, "body", 0.f));
+    _gameData->addEntity(std::make_shared<Arcade::Centipede::Entity>(heads, size, "head", 0.f));
     // _gameData->addScore("Score", _body.size() - 4);
 }
 

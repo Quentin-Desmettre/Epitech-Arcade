@@ -20,6 +20,7 @@ namespace Arcade {
                 ~GameData();
                 bool isGameOver() const override;
                 std::map<std::string, int> getScores() const;
+                void clearScores();
                 std::string getGameName() const;
                 std::vector<std::shared_ptr<IEntity>> &getEntities();
                 std::pair<int, int> getMapSize() const;
