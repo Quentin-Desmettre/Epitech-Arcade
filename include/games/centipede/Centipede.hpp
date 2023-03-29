@@ -67,9 +67,9 @@ namespace Arcade::Games::Centipede {
             float _time;
             float _time_dif;
             float _offset;
-            int _score;
             int _best_score;
             std::string _name;
+            int _score;
             int nb_centi;
     };
 }
