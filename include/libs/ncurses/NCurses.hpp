@@ -7,7 +7,7 @@
 
 #ifndef NCURSES_HPP_
 #define NCURSES_HPP_
-#include "../../IDisplay.hpp"
+#include "IDisplay.hpp"
 #include <ncurses.h>
 #include <vector>
 #include "Window.hpp"
@@ -66,6 +66,7 @@ private:
     void createMenus(bool isSelectingGame, int selectedIndex);
     void renderScores(IGameData &gameData);
     void renderEntities(IGameData &gameData);
+    void renderControls(const ControlMap &controls);
 
     void waitUntilNextFrame();
 
