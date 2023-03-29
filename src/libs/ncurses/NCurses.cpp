@@ -5,7 +5,7 @@
 ** NCurses
 */
 
-#include "../../../include/libs/ncurses/NCurses.hpp"
+#include "NCurses.hpp"
 #include "Menu.hpp"
 #include <thread>
 #include <chrono>
@@ -20,7 +20,6 @@ extern "C" void *createDisplay()
     noecho();
     curs_set(0);
     keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
     if (has_colors() && can_change_color())
         start_color();
     return new Arcade::Graphics::NCurses::NCurses();
@@ -38,8 +37,8 @@ Arcade::Graphics::NCurses::NCurses::NCurses():
     _fps(60),
     _lastFrame(0)
 {
-    _baseInputDelay = Arcade::XDisplay::getInputDelay();
-    Arcade::XDisplay::setInputDelay(0);
+//    _baseInputDelay = Arcade::XDisplay::getInputDelay();
+//    Arcade::XDisplay::setInputDelay(0);
 }
 
 void Arcade::Graphics::NCurses::NCurses::render(IGameData &gameData)
@@ -64,6 +63,7 @@ void Arcade::Graphics::NCurses::NCurses::render(IGameData &gameData)
     _win.clear();
     renderScores(gameData);
     renderEntities(gameData);
+    renderControls(gameData.getControls());
     if (gameData.isGameOver()) {
         Texture t("", size.first / 4, size.second / 8);
         t.setBackgroundColor(Color::RED);
@@ -73,6 +73,21 @@ void Arcade::Graphics::NCurses::NCurses::render(IGameData &gameData)
         _win.draw("GAME OVER", {size.first / 2 - 4, size.second / 2 - 1});
     }
     refresh();
+}
+
+void Arcade::Graphics::NCurses::NCurses::renderControls(const ControlMap &controls)
+{
+    Size winSize = _win.getSize();
+    Window controlsWin(&_win, {0, 3}, {winSize.first * 0.25, winSize.second - 5});
+
+    controlsWin.drawBox();
+    controlsWin.draw("Controls:", {1, 1});
+    int i = 2;
+    for (const auto &control: controls) {
+        controlsWin.draw(control.first + ":", {1, i});
+        controlsWin.draw(control.second, {10, i});
+        i++;
+    }
 }
 
 void Arcade::Graphics::NCurses::NCurses::renderScores(IGameData &gameData)
@@ -268,5 +283,5 @@ std::vector<Arcade::Key> Arcade::Graphics::NCurses::NCurses::getPressedKeys()
 
 Arcade::Graphics::NCurses::NCurses::~NCurses() noexcept
 {
-    Arcade::XDisplay::setInputDelay(_baseInputDelay);
+//    Arcade::XDisplay::setInputDelay(_baseInputDelay);
 }

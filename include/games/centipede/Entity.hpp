@@ -9,7 +9,12 @@
 #define CENTIPEDEENTITY_HPP_
 #include "GameInterfaces.hpp"
 
-namespace Arcade::Centipede {
+/**
+ * @brief The Namespace containing all games.
+ */
+namespace Arcade::Games{}
+
+namespace Arcade::Games::Centipede {
     /**
      * @brief A Centipede Entity.
      */

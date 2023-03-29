@@ -12,75 +12,77 @@
 #include "GameInterfaces.hpp"
 #include "Entity.hpp"
 
-namespace Arcade::Nibbler {
+namespace Arcade::Games::Nibbler {
     /**
      * @brief The Nibbler GameData.
      */
     class GameData : public IGameData {
-        public:
-            GameData();
-            ~GameData();
+    public:
+        GameData();
 
-            /**
-             * @see IGameData::isGameOver
-             */
-            bool isGameOver() const override;
+        ~GameData();
 
-            /**
-             * @see IGameData::getScores
-             */
-            std::map<std::string, int> getScores() const override;
+        /**
+         * @see IGameData::isGameOver
+         */
+        bool isGameOver() const override;
 
-            void clearScores();
+        /**
+         * @see IGameData::getScores
+         */
+        std::map<std::string, int> getScores() const override;
 
-             /**
-             * @see IGameData::getGameName
-             */
-            std::string getGameName() const override;
+        /**
+         * @see IGameData::getGameName
+         */
+        std::string getGameName() const override;
 
-            /**
-             * @see IGameData::getEntities
-             */
-            std::vector<std::shared_ptr<IEntity>> &getEntities() override;
+        /**
+         * @see IGameData::getEntities
+         */
+        std::vector<std::shared_ptr<IEntity>> &getEntities() override;
 
-            /**
-             * @see IGameData::getMapSize
-             */
-            std::pair<int, int> getMapSize() const override;
+        /**
+         * @see IGameData::getMapSize
+         */
+        std::pair<int, int> getMapSize() const override;
 
-            /**
-             * @see IGameData::getControls
-             */
-            const ControlMap &getControls() const override {return _controls;}
+        /**
+         * @see IGameData::getControls
+         */
+        const ControlMap &getControls() const override { return _controls; }
 
-            /**
-             * @brief Adds a score to the GameData.
-             * @param name The score name
-             * @param score The score value
-             */
-            void addScore(std::string name, int score);
+        /**
+         * @brief Adds a score to the GameData.
+         * @param name The score name
+         * @param score The score value
+         */
+        void addScore(std::string name, int score);
 
-            /**
-             * @brief Adds an entity to the GameData.
-             * @param entity The entity to add
-             */
-            void addEntity(std::shared_ptr<IEntity> entity);
+        /**
+         * @brief Adds an entity to the GameData.
+         * @param entity The entity to add
+         */
+        void addEntity(std::shared_ptr<IEntity> entity);
 
-            /**
-             * @brief Removes all entities from the GameData.
-             */
-            void removeEntities();
+        /**
+         * @brief Removes all entities from the GameData.
+         */
+        void removeEntities();
 
-            /**
-             * @brief Sets the game over state.
-             * @param gameOver The game over state
-             */
-            void setGameOver(int gameOver);
-        private:
-            std::map<std::string, int> _scores;
-            std::vector<std::shared_ptr<IEntity>> _entities;
-            ControlMap _controls;
-            int _gameOver;
+        /**
+         * @brief Sets the game over state.
+         * @param gameOver The game over state
+         */
+        void setGameOver(int gameOver);
+
+        void clearScores();
+
+    private:
+        std::map<std::string, int> _scores;
+        std::vector<std::shared_ptr<IEntity>> _entities;
+        ControlMap _controls;
+        int _gameOver;
     };
 }
 #endif /* !GAMEDATA_HPP_ */

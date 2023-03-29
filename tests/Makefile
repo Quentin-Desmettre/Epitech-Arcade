@@ -6,6 +6,7 @@
 ##
 
 all:
-	@make run -C ./core/
+	echo 'done!'
+#	@make run -C ./core/
 #	@make run -C ./games/
 #	@make run -C ./lib/

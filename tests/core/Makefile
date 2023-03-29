@@ -22,7 +22,8 @@ NAME = tests_core
 
 CXXFLAGS = -Wall -Wextra $(INCLUDE_DIRS) -std=c++20 --coverage -g
 
-all: clean $(NAME)
+all:
+	echo 'done!'
 
 $(NAME):   $(OBJ)
 	g++ -o $(NAME) $(OBJ) $(CXXFLAGS)

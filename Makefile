@@ -36,3 +36,8 @@ clean: apply-rule-clean
 fclean: apply-rule-fclean
 
 re: fclean all
+
+build_doc:
+	(doxygen Arcade.doxy && cd doc/latex && pdflatex refman.tex && cp refman.pdf ../ArcadeDoc.pdf && cd ../..) > /dev/null 2>&1
+doc-open: build_doc
+	xdg-open doc/ArcadeDoc.pdf
