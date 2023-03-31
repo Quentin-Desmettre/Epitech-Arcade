@@ -53,6 +53,13 @@ void Arcade::Graphics::SFML::SFML::drawInfoPanel(Arcade::IGameData &gameData)
         _window.draw(_text);
         i++;
     }
+    for (int i = 0; auto &control : gameData.getControls()) {
+        std::cout << control.first << ": " << control.second << std::endl;
+        _text.setString(control.first + ": " + control.second);
+        _text.setPosition((0.3 + gameData.getMapSize().second) * _cellSize + 90, 500  + i * 50);
+        _window.draw(_text);
+        i++;
+    }
 
     if (gameData.isGameOver()) {
         _text.setCharacterSize(40);
@@ -159,7 +166,7 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     for (auto &key : map)
         controls.push_back(key.first + " : " + key.second);
     for (size_t i = 0; i < controls.size(); i++) {
-        _text.setString(truncString(controls[i]));
+        _text.setString(controls[i]);
         _text.setPosition(235, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(sf::Color::White);
