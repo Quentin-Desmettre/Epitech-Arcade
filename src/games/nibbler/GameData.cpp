@@ -6,7 +6,6 @@
 */
 
 #include "games/nibbler/GameData.hpp"
-#include "games/nibbler/Nibbler.hpp"
 #include <iostream>
 
 Arcade::Games::Nibbler::GameData::GameData()
@@ -15,6 +14,13 @@ Arcade::Games::Nibbler::GameData::GameData()
     _scores["Time"] = 990;
     _scores["Score"] = 0;
     _entities = {};
+    _controls = {
+            {"Up", "Z"},
+            {"Down", "S"},
+            {"Left", "Q"},
+            {"Right", "D"},
+            {"Restart", "R"}
+    };
 }
 
 Arcade::Games::Nibbler::GameData::~GameData()
