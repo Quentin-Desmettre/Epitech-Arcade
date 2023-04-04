@@ -145,11 +145,19 @@ void Arcade::Graphics::Sdl::Sdl::renderMenu(const std::vector<std::string> &game
     drawMenuTitlesAndBg();
     drawMenuItems(selectedGame, selectedGraph);
 
+    // Draw username
     Text usernameText(_window.getRenderer(), &_globalFont, "Username: " + username,
                       SDL_Color{255, 255, 255, 255});
     usernameText.setPosition({10, 10});
     _window.draw(usernameText);
 
+    // Draw best score
+    Text bestScoreText(_window.getRenderer(), &_globalFont, "Best score : " + bestScoreUsername + " : " + std::to_string(bestScore),
+                      SDL_Color{255, 255, 255, 255});
+    bestScoreText.setPosition({10, 40});
+    _window.draw(bestScoreText);
+
+    // Display
     _window.display();
 }
 

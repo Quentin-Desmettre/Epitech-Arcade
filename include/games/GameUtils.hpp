@@ -23,10 +23,8 @@ namespace Arcade::Games::GameUtils {
      */
     void fetchBestScores(const std::string &gameName, std::string &username, int &score) {
         std::ifstream file("scores/" + gameName + ".score");
-        if (!file) {
-            std::cerr << "Error: Could not open file scores/" << gameName << ".score" << std::endl;
+        if (!file)
             return;
-        }
 
         // Reset
         username = "N/A";
@@ -57,10 +55,8 @@ namespace Arcade::Games::GameUtils {
     void saveScore(const std::string &gameName, const std::string &username, int score) {
         std::ofstream file("scores/" + gameName + ".score");
 
-        if (!file) {
-            std::cerr << "Error: Could not open file scores/" << gameName << ".score" << std::endl;
+        if (!file)
             return;
-        }
         file << username << std::endl << score << std::endl;
     }
 }

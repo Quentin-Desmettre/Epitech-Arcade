@@ -161,7 +161,10 @@ void Arcade::Graphics::NCurses::NCurses::renderMenu(const std::vector<std::strin
         refresh();
         return;
     }
+
+    // Username & best score
     _win.draw("Username: " + username, {1, 1});
+    _win.draw("Best score: " + bestScoreUsername + " : " + std::to_string(bestScore), {1, 2});
 
     // If selected has changed, update it
     _gameMenu->setSelected(selectedGame);
@@ -171,6 +174,7 @@ void Arcade::Graphics::NCurses::NCurses::renderMenu(const std::vector<std::strin
     _gameMenu->render();
     _graphicalMenu->render();
     _controlMenu->render();
+
     refresh();
 }
 

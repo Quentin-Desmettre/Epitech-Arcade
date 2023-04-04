@@ -151,6 +151,12 @@ void Arcade::Core::Core::handleEvents(const std::vector<Key> &oldKeys, const std
             exitGame();
         return;
     }
+    if (isKeyPressed(Key::F4, oldKeys, newKeys)) {
+        if (!_isInMenu)
+            exitGame();
+        _run = false;
+        return;
+    }
 
     // Change selected game
     if (isKeyPressed(Key::Left, oldKeys, newKeys)
@@ -300,10 +306,8 @@ void Arcade::Core::Core::updateBestScore()
 
     // Load game lib
     IGame *game = _libLoader.loadGameLib("./lib/" + _gameLibs[_selectedGame]);
-    if (!game) {
-        std::cerr << "[WARNING] Error: Could not load game library \"" << _gameLibs[_selectedGame] << "\"" << std::endl;
+    if (!game)
         return;
-    }
 
     // Get best score
     Arcade::Games::GameUtils::fetchBestScores(game->getGameData().getGameName(), _bestScoreUser, _bestScore);

@@ -153,25 +153,25 @@ void Arcade::Graphics::SFML::SFML::renderMenu(const std::vector<std::string> &ga
     _window.clear();
     setupMenu();
 
+    // Draw graphic libs
     for (size_t i = 0; i < graphics.size(); i++) {
         _text.setString(truncString(graphics[i]));
         _text.setPosition(640, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGraph ? sf::Color::Red : sf::Color::White);
     }
+
+    // Draw games
     for (size_t i = 0; i < games.size(); i++) {
         _text.setString(truncString(games[i]));
         _text.setPosition(1010, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGame ? sf::Color::Red : sf::Color::White);
     }
-    std::cout << "here" << std::endl;
-    for (auto &key : map) {
-        std::cout << key.first << " : " << key.second << std::endl;
-        controls.push_back(key.first + " : " + key.second);
-    }
-    std::cout << "here" << std::endl;
 
+    // Draw controls
+    for (auto &key : map)
+        controls.push_back(key.first + " : " + key.second);
     for (size_t i = 0; i < controls.size(); i++) {
         _text.setString(controls[i]);
         _text.setPosition(235, 380 + i * 45);
@@ -179,10 +179,15 @@ void Arcade::Graphics::SFML::SFML::renderMenu(const std::vector<std::string> &ga
         drawTextWithColor(sf::Color::White);
     }
 
+    // Draw username
     sf::Text usernameText("Username : " + username, _font, 24);
     usernameText.setPosition(10, 10);
     _window.draw(usernameText);
 
+    // Draw best score
+    sf::Text bestScoreText("Best score : " + bestScoreUsername + " : " + std::to_string(bestScore), _font, 24);
+    bestScoreText.setPosition(10, 40);
+    _window.draw(bestScoreText);
     _window.display();
 }
 
