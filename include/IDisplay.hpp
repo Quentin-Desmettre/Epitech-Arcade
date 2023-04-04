@@ -9,6 +9,7 @@
 #define IDISPLAY_HPP_
 
 #include "GameInterfaces.hpp"
+#define UNUSED __attribute__((unused))
 
 namespace Arcade {
     class IDisplay;
@@ -60,7 +61,7 @@ class Arcade::IDisplay {
          */
         virtual void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
                                 int selectedGame, int selectedDisplay,
-                                const ControlMap &controls) = 0;
+                                const ControlMap &controls, const std::string &username, const std::string &bestScoreUsername, int bestScore) = 0;
 };
 
 #endif /* !IDISPLAY_HPP_ */

@@ -12,7 +12,7 @@ SOURCEDIR = ./
 SRC = Centipede.cpp \
 	Entity.cpp \
 	GameData.cpp \
-	Snake.cpp \
+	Snake.cpp
 
 CXX = g++
 

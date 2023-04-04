@@ -89,8 +89,13 @@ void Arcade::TestInterface::render(__attribute_maybe_unused__ Arcade::IGameData 
 {
 }
 
-void Arcade::TestInterface::renderMenu(__attribute_maybe_unused__ const std::vector<std::string> &games,
-__attribute_maybe_unused__ const std::vector<std::string> &graphics, __attribute_maybe_unused__ int selectedGame,
-__attribute_maybe_unused__ int selectedGraph, __attribute_maybe_unused__ const Arcade::ControlMap &map)
+void Arcade::TestInterface::renderMenu(UNUSED const std::vector<std::string> &games,
+                                       UNUSED const std::vector<std::string> &graphics,
+                                       UNUSED int selectedGame,
+                                       UNUSED int selectedDisplay,
+                                       UNUSED const ControlMap &controls,
+                                       UNUSED const std::string &username,
+                                       UNUSED const std::string &bestScoreUsername,
+                                       UNUSED int bestScore)
 {
 }

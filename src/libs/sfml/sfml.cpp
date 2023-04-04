@@ -53,10 +53,11 @@ void Arcade::Graphics::SFML::SFML::drawInfoPanel(Arcade::IGameData &gameData)
         _window.draw(_text);
         i++;
     }
+
+    _text.setCharacterSize(16);
     for (int i = 0; auto &control : gameData.getControls()) {
-        std::cout << control.first << ": " << control.second << std::endl;
         _text.setString(control.first + ": " + control.second);
-        _text.setPosition((0.3 + gameData.getMapSize().second) * _cellSize + 90, 500  + i * 50);
+        _text.setPosition((0.3 + gameData.getMapSize().second) * _cellSize + 90, 500  + i * 40);
         _window.draw(_text);
         i++;
     }
@@ -65,7 +66,7 @@ void Arcade::Graphics::SFML::SFML::drawInfoPanel(Arcade::IGameData &gameData)
         _text.setCharacterSize(40);
         _text.setString("GAME OVER");
         _text.setFillColor(sf::Color::Red);
-        _text.setPosition(((0.25 + gameData.getMapSize().second) * _cellSize + 1280) / 2, 700);
+        _text.setPosition(((0.25 + gameData.getMapSize().second) * _cellSize + 1280) / 2, 330);
         centerTextOrigin();
         _window.draw(_text);
         _text.setFillColor(sf::Color::White);
@@ -142,8 +143,9 @@ void Arcade::Graphics::SFML::SFML::setupMenu()
     _text.setCharacterSize(20);
 }
 
-void Arcade::Graphics::SFML::SFML::renderMenu(const std::vector<std::string> &games,
-const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map)
+void Arcade::Graphics::SFML::SFML::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                                              int selectedGame, int selectedGraph,
+                                              const ControlMap &map, const std::string &username, const std::string &bestScoreUsername, int bestScore)
 {
     std::vector<std::string> controls;
 
@@ -151,18 +153,23 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
     _window.clear();
     setupMenu();
 
+    // Draw graphic libs
     for (size_t i = 0; i < graphics.size(); i++) {
         _text.setString(truncString(graphics[i]));
         _text.setPosition(640, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGraph ? sf::Color::Red : sf::Color::White);
     }
+
+    // Draw games
     for (size_t i = 0; i < games.size(); i++) {
         _text.setString(truncString(games[i]));
         _text.setPosition(1010, 380 + i * 45);
         centerTextOrigin();
         drawTextWithColor(static_cast<int>(i) == selectedGame ? sf::Color::Red : sf::Color::White);
     }
+
+    // Draw controls
     for (auto &key : map)
         controls.push_back(key.first + " : " + key.second);
     for (size_t i = 0; i < controls.size(); i++) {
@@ -172,6 +179,15 @@ const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, c
         drawTextWithColor(sf::Color::White);
     }
 
+    // Draw username
+    sf::Text usernameText("Username : " + username, _font, 24);
+    usernameText.setPosition(10, 10);
+    _window.draw(usernameText);
+
+    // Draw best score
+    sf::Text bestScoreText("Best score : " + bestScoreUsername + " : " + std::to_string(bestScore), _font, 24);
+    bestScoreText.setPosition(10, 40);
+    _window.draw(bestScoreText);
     _window.display();
 }
 

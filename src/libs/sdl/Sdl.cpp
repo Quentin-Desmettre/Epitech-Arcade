@@ -88,7 +88,10 @@ const std::map<int, Arcade::Key> Arcade::Graphics::Sdl::Sdl::_keyMap = {
         {SDLK_F12, Arcade::Key::F12},
         {SDLK_F13, Arcade::Key::F13},
         {SDLK_F14, Arcade::Key::F14},
-        {SDLK_F15, Arcade::Key::F15}
+        {SDLK_F15, Arcade::Key::F15},
+        {SDLK_BACKSPACE, Arcade::Key::Backspace},
+        {SDLK_LCTRL, Arcade::Key::LControl},
+        {SDLK_RCTRL, Arcade::Key::RControl},
 };
 
 Arcade::Graphics::Sdl::Sdl::Sdl():
@@ -130,7 +133,8 @@ Arcade::Graphics::Sdl::Sdl::Sdl():
 Arcade::Graphics::Sdl::Sdl::~Sdl() = default;
 
 void Arcade::Graphics::Sdl::Sdl::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
-                                  int selectedGame, int selectedGraph, const ControlMap &controls)
+                                            int selectedGame, int selectedGraph,
+                                            const ControlMap &controls, const std::string &username, const std::string &bestScoreUsername, int bestScore)
 {
     if (graphics != _graphNames || games != _gameNames || controls != _controls)
         createMenus(games, graphics, controls);
@@ -141,6 +145,19 @@ void Arcade::Graphics::Sdl::Sdl::renderMenu(const std::vector<std::string> &game
     drawMenuTitlesAndBg();
     drawMenuItems(selectedGame, selectedGraph);
 
+    // Draw username
+    Text usernameText(_window.getRenderer(), &_globalFont, "Username: " + username,
+                      SDL_Color{255, 255, 255, 255});
+    usernameText.setPosition({10, 10});
+    _window.draw(usernameText);
+
+    // Draw best score
+    Text bestScoreText(_window.getRenderer(), &_globalFont, "Best score : " + bestScoreUsername + " : " + std::to_string(bestScore),
+                      SDL_Color{255, 255, 255, 255});
+    bestScoreText.setPosition({10, 40});
+    _window.draw(bestScoreText);
+
+    // Display
     _window.display();
 }
 
@@ -233,6 +250,8 @@ void Arcade::Graphics::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
         _infoPanelTitle->setPosition({(gameData.getMapSize().second * cellSize + 1280) / 2
         - _infoPanelTitle->getSize().first / 2, 25});
     }
+
+    // Draw scores
     _window.draw(*_infoPanelTitle);
     for (int i = 0; auto &score : gameData.getScores()) {
         _scoreText->setText(score.first + ": " + std::to_string(score.second));
@@ -241,10 +260,18 @@ void Arcade::Graphics::Sdl::Sdl::drawInfoPanel(Arcade::IGameData &gameData)
         i++;
     }
 
+    // Draw controls
+    for (int i = 0; auto &control : gameData.getControls()) {
+        _scoreText->setText(control.first + ": " + control.second);
+        _scoreText->setPosition({(0.3 + gameData.getMapSize().second) * cellSize + 90, 500  + i * 40});
+        _window.draw(*_scoreText);
+        i++;
+    }
+
     if (gameData.isGameOver()) {
         _infoPanelTitle->getRawTexture();
         _gameOverText->setPosition({((0.25 + gameData.getMapSize().second) * cellSize + 1280) / 2
-        - _gameOverText->getSize().first / 2, 700});
+        - _gameOverText->getSize().first / 2, 330});
         _window.draw(*_gameOverText);
     }
 }
@@ -258,6 +285,7 @@ void Arcade::Graphics::Sdl::Sdl::render(IGameData &gameData)
     SpriteSize pos, size;
 
     _window.clear();
+    // Draw entities
     for (auto &entity: gameData.getEntities()) {
         // Get texture
         texturePath = Sdl::texturePath(*entity, gameData.getGameName());

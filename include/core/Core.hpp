@@ -82,6 +82,8 @@ namespace Arcade::Core {
             IDisplay *_testInterface;
             bool _testOnly;
             std::string _username;
+            std::string _bestScoreUser;
+            int _bestScore;
 
             void handleEvents(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
             void exitGame();
@@ -93,6 +95,8 @@ namespace Arcade::Core {
             static void incrementIndex(int &index, std::size_t len, int dir);
             void fetchAvailableLibs();
             std::vector<Key> fetchPressedKeys();
+            void changeUsername(const std::vector<Key> &oldKeys, const std::vector<Key> &newKeys);
+            void updateBestScore();
     };
 };
 

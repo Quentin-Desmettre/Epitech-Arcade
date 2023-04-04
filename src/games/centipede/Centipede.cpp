@@ -11,8 +11,8 @@
 #include <chrono>
 #include <iostream>
 #include <cmath>
-#include <iostream>
 #include <fstream>
+#include "GameUtils.hpp"
 
 extern "C"
 {
@@ -50,15 +50,8 @@ void Arcade::Games::Centipede::Game::restart()
     _score = 0;
     nb_centi = 20;
     _best_score = 0;
-    std::ifstream inputFile("centipede");
-    if (inputFile.is_open()) {
-        inputFile >> _best_score;
-        inputFile >> _name;
-        inputFile.close();
-    } else {
-        _best_score = 0;
-        _name = "???";
-    }
+
+    Arcade::Games::GameUtils::fetchBestScores(_gameData->getGameName(), _name, _best_score);
 }
 
 char Arcade::Games::Centipede::Game::getAtPos(int x, int y)
@@ -186,13 +179,11 @@ void Arcade::Games::Centipede::Game::save_score(const std::string &username)
 {
     if (_score < _best_score)
         return;
-    
-    std::ofstream outputFile("centipede");
-    if (!outputFile.is_open())
-        return;
-    outputFile << _score;
-    outputFile << username;
-    outputFile.close();
+
+    Arcade::Games::GameUtils::saveScore(_gameData->getGameName(),
+                                        username,
+                                        _score);
+    _best_score = _score;
 }
 
 

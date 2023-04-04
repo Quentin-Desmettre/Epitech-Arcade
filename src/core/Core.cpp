@@ -9,6 +9,7 @@
 #include <iostream>
 #include <algorithm>
 #include <filesystem>
+#include "GameUtils.hpp"
 
 Arcade::Core::Core::LibraryNotLoadedException::LibraryNotLoadedException()
 {
@@ -42,26 +43,20 @@ Arcade::Core::Core::Core(int ac, char **av):
     _selectedGraph(0),
     _selectedGame(0),
     _testInterface(nullptr),
-    _testOnly(false)
+    _testOnly(false),
+    _username(""),
+    _bestScoreUser(""),
+    _bestScore(0)
 {
     if (ac == 1)
-        throw std::invalid_argument("Usage: ./arcade displayLib.so [-test] [-test-only] [-h] [--help] [--username=USERNAME]");
+        throw std::invalid_argument("Usage: ./arcade displayLib.so [-test]");
 
-    for (int i = 1; i < ac; i++) {
-        // Help
-        if (std::string(av[i]) == "-h" || std::string(av[i]) == "--help")
-            throw std::invalid_argument("Usage: ./arcade displayLib.so [-test] [-test-only] [-h] [--help] [--username=USERNAME]");
-
-        // Test
-        else if (std::string(av[i]) == "-test" || std::string(av[i]) == "-test-only") {
-            _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
-            _testOnly = std::string(av[i]) == "-test-only";
-        }
-
-        // Username
-        else if (std::string(av[i]).find("--username=") == 0 and std::string(av[i]).size() > 11)
-            _username = std::string(av[i]).substr(11);
-    }
+    // Test
+    if (ac > 2 && (std::string(av[2]) == "-test" || std::string(av[2]) == "-test-only")) {
+        _testInterface = _libLoader.loadGraphicalLib("./tests/test_interface.so");
+        _testOnly = std::string(av[2]) == "-test-only";
+    } else if (ac > 2)
+        throw std::invalid_argument("Usage: ./arcade displayLib.so [-test]");
 
     fetchAvailableLibs();
     loadGraphicLibrary(av[1]);
@@ -118,10 +113,13 @@ int Arcade::Core::Core::run(const std::string &libName)
             _selectedGraph = static_cast<int>(i);
 
     // Game loop
+    updateBestScore();
     while (_run) {
         pressedKeys = fetchPressedKeys();
         if (_isInMenu) {
-            _display->renderMenu(_gameLibs, _graphicalLibs, _selectedGame, _selectedGraph, _controls);
+            _display->renderMenu(_gameLibs, _graphicalLibs, _selectedGame,
+                                 _selectedGraph, _controls, _username,
+                                 _bestScoreUser, _bestScore);
         } else {
             _display->render(_game->getGameData());
             _game->handleKeys(pressedKeys);
@@ -153,6 +151,12 @@ void Arcade::Core::Core::handleEvents(const std::vector<Key> &oldKeys, const std
             exitGame();
         return;
     }
+    if (isKeyPressed(Key::F4, oldKeys, newKeys)) {
+        if (!_isInMenu)
+            exitGame();
+        _run = false;
+        return;
+    }
 
     // Change selected game
     if (isKeyPressed(Key::Left, oldKeys, newKeys)
@@ -161,6 +165,8 @@ void Arcade::Core::Core::handleEvents(const std::vector<Key> &oldKeys, const std
                        (isKeyPressed(Key::Left, oldKeys, newKeys) ? -1 : 1));
         if (!_isInMenu)
             loadGameLibrary("./lib/" + _gameLibs[_selectedGame]);
+        else
+            updateBestScore();
     }
 
     // Change selected graphical lib
@@ -171,6 +177,10 @@ void Arcade::Core::Core::handleEvents(const std::vector<Key> &oldKeys, const std
         if (!_isInMenu)
             loadGraphicLibrary("./lib/" + _graphicalLibs[_selectedGraph]);
     }
+
+    // Change username
+    if (_isInMenu)
+        changeUsername(oldKeys, newKeys);
 }
 
 void Arcade::Core::Core::incrementIndex(int &index, std::size_t len, int dir)
@@ -256,4 +266,52 @@ void Arcade::Core::Core::fetchAvailableLibs()
         throw NoLibraryException(LibLoader::GRAPHICAL);
     if (_gameLibs.empty())
         throw NoLibraryException(LibLoader::GAME);
+}
+
+void Arcade::Core::Core::changeUsername(const std::vector<Key> &oldKeys,
+                                        const std::vector<Key> &newKeys)
+{
+    static const std::map<Key, char> keyToChar = {
+            {Key::A, 'a'}, {Key::B, 'b'}, {Key::C, 'c'}, {Key::D, 'd'},
+            {Key::E, 'e'}, {Key::F, 'f'}, {Key::G, 'g'}, {Key::H, 'h'}, {Key::I, 'i'},
+            {Key::J, 'j'}, {Key::K, 'k'}, {Key::L, 'l'}, {Key::M, 'm'}, {Key::N, 'n'},
+            {Key::O, 'o'}, {Key::P, 'p'}, {Key::Q, 'q'}, {Key::R, 'r'}, {Key::S, 's'},
+            {Key::T, 't'}, {Key::U, 'u'}, {Key::V, 'v'}, {Key::W, 'w'}, {Key::X, 'x'},
+            {Key::Y, 'y'}, {Key::Z, 'z'}, {Key::Num0, '0'}, {Key::Num1, '1'},
+            {Key::Num2, '2'}, {Key::Num3, '3'}, {Key::Num4, '4'}, {Key::Num5, '5'},
+            {Key::Num6, '6'}, {Key::Num7, '7'}, {Key::Num8, '8'}, {Key::Num9, '9'},
+    };
+
+    std::vector<Key> newlyPressedKeys;
+    std::set_difference(newKeys.begin(), newKeys.end(),
+                        oldKeys.begin(), oldKeys.end(),
+                        std::back_inserter(newlyPressedKeys));
+
+    for (auto &key: newlyPressedKeys) {
+        if (key == Key::Backspace && !_username.empty() &&
+        std::find(newKeys.begin(), newKeys.end(), Key::LControl) != newKeys.end())
+            _username.clear();
+        else if (key == Key::Backspace && !_username.empty())
+            _username.pop_back();
+        else if (keyToChar.find(key) != keyToChar.end())
+            _username += keyToChar.at(key);
+    }
+}
+
+void Arcade::Core::Core::updateBestScore()
+{
+    // Reset scores
+    _bestScore = 0;
+    _bestScoreUser = "N/A";
+
+    // Load game lib
+    IGame *game = _libLoader.loadGameLib("./lib/" + _gameLibs[_selectedGame]);
+    if (!game)
+        return;
+
+    // Get best score
+    Arcade::Games::GameUtils::fetchBestScores(game->getGameData().getGameName(), _bestScoreUser, _bestScore);
+
+    // Unload
+    _libLoader.unloadGameLib(game);
 }
