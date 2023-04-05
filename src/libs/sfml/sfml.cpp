@@ -196,12 +196,11 @@ std::vector<Arcade::Key> Arcade::Graphics::SFML::SFML::getPressedKeys()
     std::vector<Arcade::Key> keys;
     sf::Event ev{};
 
-    for (int i = 0; i < Arcade::Key::KeyCount; i++) {
-        if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(i)))
-            keys.push_back(static_cast<Arcade::Key>(i));
-    }
-    while (_window.pollEvent(ev))
+    while (_window.pollEvent(ev)) {
         if (ev.type == sf::Event::Closed)
             keys.push_back(Arcade::Key::Escape);
+        else if (ev.type == sf::Event::KeyPressed)
+            keys.push_back(static_cast<Arcade::Key>(ev.key.code));
+    }
     return keys;
 }
