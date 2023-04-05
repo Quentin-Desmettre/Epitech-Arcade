@@ -9,6 +9,7 @@
 #define IGAME_HPP_
 
 #include <vector>
+#include <unordered_map>
 #include <map>
 #include <memory>
 #include <string>
@@ -127,7 +128,7 @@ namespace Arcade {
         KeyCount,     ///< Keep last -- the total number of keyboard keys
     };
 
-    typedef std::map<std::string, std::string> ControlMap;
+    typedef std::unordered_map<std::string, std::string> ControlMap;
 
     /**
      * @brief Interface of an entity.
@@ -239,6 +240,11 @@ namespace Arcade {
      * - "createGame" : A function that returns a pointer to an instance of Arcade::IGame.
      * - "destroyGame" : A function that takes a pointer to an instance of Arcade::IGame and deletes it.
      * The only role of the game library is to perform the game logic, given the user input.
+     *
+     * Moreover, the best score for this game must be stored in a file named "scores/<game_name>.score"; where <game_name> is the name of the game.
+     * This file must contain two lines, the first one being the name of the player, and the second one being the score.
+     *
+     * @note The game library must handle the best score itself.
      */
     class IGame {
         public:

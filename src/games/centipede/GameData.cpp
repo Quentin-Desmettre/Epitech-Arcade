@@ -14,6 +14,14 @@ Arcade::Games::Centipede::GameData::GameData()
     _scores = {};
     _scores["Score"] = 0;
     _entities = {};
+    _controls = {
+            {"Up",                "Z"},
+            {"Down",              "S"},
+            {"Left",              "Q"},
+            {"Right",             "D"},
+            {"Shoot",             "SPACE"},
+            {"Restart",           "R"},
+    };
 }
 
 Arcade::Games::Centipede::GameData::~GameData()

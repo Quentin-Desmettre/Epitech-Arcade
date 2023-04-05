@@ -138,10 +138,10 @@ void Arcade::Graphics::NCurses::NCurses::renderEntities(IGameData &gameData)
 }
 
 void Arcade::Graphics::NCurses::NCurses::renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
-                                          int selectedGame, int selectedGraph, const ControlMap &map)
+                                                    int selectedGame, int selectedGraph,
+                                                    const ControlMap &map, const std::string &username, const std::string &bestScoreUsername, int bestScore)
 {
     waitUntilNextFrame();
-    Arcade::XDisplay::setInputDelay(_baseInputDelay);
 
     // Re-create menus if files/winSize differ
     Size winSize = _win.getSize();
@@ -162,6 +162,10 @@ void Arcade::Graphics::NCurses::NCurses::renderMenu(const std::vector<std::strin
         return;
     }
 
+    // Username & best score
+    _win.draw("Username: " + username, {1, 1});
+    _win.draw("Best score: " + bestScoreUsername + " : " + std::to_string(bestScore), {1, 2});
+
     // If selected has changed, update it
     _gameMenu->setSelected(selectedGame);
     _graphicalMenu->setSelected(selectedGraph);
@@ -170,8 +174,8 @@ void Arcade::Graphics::NCurses::NCurses::renderMenu(const std::vector<std::strin
     _gameMenu->render();
     _graphicalMenu->render();
     _controlMenu->render();
+
     refresh();
-    Arcade::XDisplay::setInputDelay(0);
 }
 
 void Arcade::Graphics::NCurses::NCurses::createMenus(bool isSelectingGame, int selectedIndex)

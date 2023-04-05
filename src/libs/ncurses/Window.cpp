@@ -14,6 +14,7 @@ const std::map<int, Arcade::Key> Arcade::Graphics::NCurses::Window::_keyMap = {
         {KEY_DOWN, Arcade::Key::Down},
         {KEY_LEFT, Arcade::Key::Left},
         {KEY_RIGHT, Arcade::Key::Right},
+        {KEY_BACKSPACE, Arcade::Key::Backspace},
         {10, Arcade::Key::Enter},
         {' ', Arcade::Key::Space},
         {'A', Arcade::Key::A},

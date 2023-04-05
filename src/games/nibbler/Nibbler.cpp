@@ -13,6 +13,7 @@
 #include <memory>
 #include <chrono>
 #include <fstream>
+#include "GameUtils.hpp"
 
 extern "C"
 {
@@ -77,15 +78,7 @@ void Arcade::Games::Nibbler::Game::restart()
     _is_stuck = false;
     _is_child = false;
 
-    std::ifstream inputFile("nibbler");
-    if (inputFile.is_open()) {
-        inputFile >> _best_score;
-        inputFile >> _name;
-        inputFile.close();
-    } else {
-        _best_score = 0;
-        _name = "???";
-    }
+    Arcade::Games::GameUtils::fetchBestScores(_gameData->getGameName(), _name, _best_score);
 }
 
 Arcade::Games::Nibbler::Game::Game()
@@ -216,15 +209,15 @@ int Arcade::Games::Nibbler::Game::isSnakeDead()
 
 void Arcade::Games::Nibbler::Game::save_score(const std::string &username)
 {
-    if (int(_body.size() - 4) < _best_score)
+    int score = static_cast<int>(_body.size() - 4);
+
+    if (score < _best_score)
         return;
 
-    std::ofstream outputFile("nibbler");
-    if (!outputFile.is_open())
-        return;
-    outputFile << _body.size() - 4;
-    outputFile << username;
-    outputFile.close();
+    Arcade::Games::GameUtils::saveScore(_gameData->getGameName(),
+                                        username,
+                                        score);
+    _best_score = score;
 }
 
 void Arcade::Games::Nibbler::Game::update(const std::string &username)

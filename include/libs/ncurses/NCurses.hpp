@@ -48,7 +48,8 @@ public:
      * @see Arcade::IDisplay::renderMenu()
      */
     void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
-                    int selectedGame, int selectedGraph, const ControlMap &map) override;
+                    int selectedGame, int selectedDisplay,
+                    const ControlMap &controls, const std::string &username, const std::string &bestScoreUsername, int bestScore) override;
 
     /**
      * @brief Sets the framerate limit.

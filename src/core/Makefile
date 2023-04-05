@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-INCLUDE_DIRS = -I../../include -I../../include/core -I../../include/games/nibbler -I../../include/libs/ncurses -I../../include/libs/sdl -I../../include/libs/sfml -I../../include/libs/test
+INCLUDE_DIRS = -I../../include -I../../include/core -I../../include/games/nibbler -I../../include/libs/ncurses -I../../include/libs/sdl -I../../include/libs/sfml -I../../include/libs/test -I ../../include/games
 
 SRC = \
 	Core.cpp \

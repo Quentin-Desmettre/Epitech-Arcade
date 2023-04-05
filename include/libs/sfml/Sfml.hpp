@@ -46,8 +46,9 @@ class Arcade::Graphics::SFML::SFML : public Arcade::IDisplay {
         /**
          * @see Arcade::IDisplay::renderMenu()
          */
-        void renderMenu(const std::vector<std::string> &games,
-        const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map) override;
+        void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                        int selectedGame, int selectedDisplay,
+                        const ControlMap &controls, const std::string &username, const std::string &bestScoreUsername, int bestScore) override;
 
     private:
         std::map<std::string, std::unique_ptr<sf::Texture>> _textureMap;

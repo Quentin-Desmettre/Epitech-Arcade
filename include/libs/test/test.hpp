@@ -21,8 +21,9 @@ class Arcade::TestInterface : public Arcade::IDisplay {
         ~TestInterface();
         std::vector<Key> getPressedKeys() override;
         void render(IGameData &gameData) override;
-        void renderMenu(const std::vector<std::string> &games,
-        const std::vector<std::string> &graphics, int selectedGame, int selectedGraph, const ControlMap &map) override;
+        void renderMenu(const std::vector<std::string> &games, const std::vector<std::string> &graphics,
+                        int selectedGame, int selectedDisplay,
+                        const ControlMap &controls, const std::string &username, const std::string &bestScoreUsername, int bestScore) override;
     private:
         void getNextEvent();
         class Event {
